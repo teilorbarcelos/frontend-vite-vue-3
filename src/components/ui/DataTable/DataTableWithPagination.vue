@@ -26,7 +26,8 @@ const handlePageChange = (page: number) => {
 <template>
   <DataTable
     :data="paginatedData"
-    :headerMap="headerMap"
+    :headerMap="props.headerMap"
+    :totalItems="props.data.length"
     :class="props.class"
     :paginationProps="{
       currentPage: safePage,

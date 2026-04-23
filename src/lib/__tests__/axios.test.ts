@@ -148,4 +148,23 @@ describe('axios lib', () => {
     expect(localStorage.getItem('token')).toBeNull();
     window.location = originalLocation as any;
   });
+
+  it('request interceptor does not add token if isLoginRequest', async () => {
+    localStorage.setItem('token', 'test-token');
+    await import('../axios');
+    const requestInterceptor = (mockAxiosInstance.interceptors.request.use as any).mock.calls[0][0];
+    const config = { url: '/v1/auth/login', headers: {} };
+    const result = requestInterceptor(config);
+    expect(result.headers.Authorization).toBeUndefined();
+  });
+
+  it('response interceptor does not retry if isLoginRequest', async () => {
+    await import('../axios');
+    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock.calls[0][1];
+    const error = { 
+      response: { status: 401 }, 
+      config: { url: '/v1/auth/login', _retry: false } 
+    };
+    await expect(responseErrorInterceptor(error)).rejects.toEqual(error);
+  });
 });

@@ -135,6 +135,9 @@ describe('UserFormPage', () => {
     const cancelButtons = screen.getAllByRole('button', { name: /Cancel/i });
     await fireEvent.click(cancelButtons[0]);
     expect(mockNavigate).toHaveBeenCalledWith('/users');
+    
+    await fireEvent.click(cancelButtons[1]);
+    expect(mockNavigate).toHaveBeenCalledTimes(2);
   });
 
   it('handles submission error with message', async () => {
@@ -158,6 +161,27 @@ describe('UserFormPage', () => {
     expect(await screen.findByText(/API Error Message/i)).toBeInTheDocument();
   });
 
+  it('handles submission error without message', async () => {
+    const user = userEvent.setup();
+    (userService.createUser as Mock).mockRejectedValue({
+      response: { data: {} }
+    });
+    
+    renderWithProviders(UserFormPage, { queryClient });
+    
+    await user.type(screen.getByLabelText(/Name/i), 'New User');
+    await user.type(screen.getByLabelText(/Email/i), 'new@example.com');
+    await user.type(screen.getByLabelText(/Password/i), 'password123');
+    
+    await user.click(screen.getByLabelText(/Perfil/i));
+    await waitFor(() => screen.getByText('Admin'));
+    await user.click(screen.getByText('Admin'));
+
+    await user.click(screen.getByRole('button', { name: /Save User/i }));
+    
+    expect(await screen.findByText(/Erro ao salvar usuário. Tente novamente./i)).toBeInTheDocument();
+  });
+
   it('shows "Saving..." text when mutation is pending', async () => {
     const user = userEvent.setup();
     (userService.createUser as Mock).mockReturnValue(new Promise(() => {}));
@@ -174,5 +198,14 @@ describe('UserFormPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Saving...')).toBeInTheDocument();
     });
+  });
+
+  it('shows loading state when fetching user data', async () => {
+    (useRoute as Mock).mockReturnValue({ params: { id: '1' } });
+    (userService.getUser as Mock).mockReturnValue(new Promise(() => {}));
+    
+    renderWithProviders(UserFormPage, { queryClient });
+    
+    expect(screen.getByText('Loading user data...')).toBeInTheDocument();
   });
 });

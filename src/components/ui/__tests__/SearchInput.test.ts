@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/vue';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/vue';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import SearchInput from '../SearchInput.vue';
 
 describe('SearchInput', () => {
@@ -7,40 +7,56 @@ describe('SearchInput', () => {
     vi.useFakeTimers();
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it('renders correctly with placeholder', () => {
-    render(SearchInput, { props: { onSearch: () => {}, placeholder: 'Search here...' } });
-    expect(screen.getByPlaceholderText('Search here...')).toBeInTheDocument();
+    render(SearchInput, {
+      props: { placeholder: 'Custom Placeholder' }
+    });
+    expect(screen.getByPlaceholderText('Custom Placeholder')).toBeInTheDocument();
   });
 
-  it('calls onSearch with debounce', async () => {
-    const onSearch = vi.fn();
-    render(SearchInput, { props: { onSearch } });
+  it('emits search event after debounce', async () => {
+    const { emitted } = render(SearchInput);
     const input = screen.getByPlaceholderText('Pesquisar...');
 
-    await fireEvent.update(input, 'test');
-    
-    // Should not be called immediately
-    expect(onSearch).not.toHaveBeenCalled();
+    await fireEvent.update(input, 'test query');
 
-    // Advance time by 500ms
+    // Should not emit immediately
+    expect(emitted().search).toBeUndefined();
+
+    // Fast forward time
     vi.advanceTimersByTime(500);
 
-    expect(onSearch).toHaveBeenCalledWith('test');
+    expect(emitted().search).toBeTruthy();
+    expect(emitted().search[0]).toEqual(['test query']);
   });
 
-  it('clears input and calls onSearch immediately', async () => {
-    const onSearch = vi.fn();
-    // Use defaultValue instead of modelValue
-    render(SearchInput, { props: { onSearch, defaultValue: 'initial' } });
-    
+  it('clears input when clear button is clicked', async () => {
+    const { emitted } = render(SearchInput, {
+      props: { defaultValue: 'initial' }
+    });
+
     const clearButton = screen.getByRole('button');
     await fireEvent.click(clearButton);
 
     expect(screen.getByPlaceholderText('Pesquisar...')).toHaveValue('');
-    expect(onSearch).toHaveBeenCalledWith('');
+    expect(emitted().search).toBeTruthy();
+    expect(emitted().search[0]).toEqual(['']);
+  });
+
+  it('updates timeout on subsequent typing', async () => {
+    const { emitted } = render(SearchInput);
+    const input = screen.getByPlaceholderText('Pesquisar...');
+
+    await fireEvent.update(input, 'te');
+    vi.advanceTimersByTime(200);
+    await fireEvent.update(input, 'test');
+    vi.advanceTimersByTime(300);
+
+    // Should not have emitted yet because timer was reset
+    expect(emitted().search).toBeUndefined();
+
+    vi.advanceTimersByTime(200);
+    expect(emitted().search).toBeTruthy();
+    expect(emitted().search[0]).toEqual(['test']);
   });
 });

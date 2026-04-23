@@ -72,6 +72,13 @@ describe('Pagination', () => {
 
     await fireEvent.click(buttons[1]);
     expect(onPageChange).toHaveBeenCalledWith(2);
+
+    // Desktop buttons
+    await fireEvent.click(screen.getByTitle('Anterior'));
+    expect(onPageChange).toHaveBeenCalledWith(0);
+
+    await fireEvent.click(screen.getByTitle('Próximo'));
+    expect(onPageChange).toHaveBeenCalledWith(2);
   });
 
   it('updates page size when selected from dropdown', async () => {
@@ -107,5 +114,51 @@ describe('Pagination', () => {
     });
 
     expect(container.querySelector('div')).not.toBeInTheDocument();
+  });
+
+  it('displays "Exibindo" text when totalItems is provided', () => {
+    render(Pagination, {
+      props: {
+        currentPage: 0,
+        totalPages: 5,
+        totalItems: 50,
+        pageSize: 10,
+        onPageChange: vi.fn()
+      }
+    });
+
+    expect(screen.getByText(/Exibindo/)).toBeInTheDocument();
+    expect(screen.getByText(/Exibindo/)).toHaveTextContent('Exibindo 1 até 10 de 50');
+  });
+
+  it('displays "Exibindo" text on last page to cover Math.min branches', () => {
+    render(Pagination, {
+      props: {
+        currentPage: 4,
+        totalPages: 5,
+        totalItems: 45,
+        pageSize: 10,
+        onPageChange: vi.fn()
+      }
+    });
+
+    expect(screen.getByText(/Exibindo/)).toHaveTextContent('Exibindo 41 até 45 de 45');
+  });
+
+  it('handles page change with out-of-range values', async () => {
+    const onPageChange = vi.fn();
+    render(Pagination, {
+      props: {
+        currentPage: 0,
+        totalPages: 10,
+        onPageChange: onPageChange
+      }
+    });
+
+    const anteriorButton = screen.getByTitle('Anterior');
+    // fireEvent can trigger even if disabled in JSDOM, but we want to ensure 
+    // handlePageChange's internal check prevents the call
+    await fireEvent.click(anteriorButton);
+    expect(onPageChange).not.toHaveBeenCalled();
   });
 });

@@ -10,8 +10,8 @@ defineProps<Props>();
 </script>
 
 <template>
-  <CheckCircle2 v-if="variant === 'success'" class="h-5 w-5 text-green-500" />
-  <AlertCircle v-else-if="variant === 'error'" class="h-5 w-5 text-red-500" />
-  <AlertTriangle v-else-if="variant === 'warning'" class="h-5 w-5 text-yellow-500" />
-  <Info v-else-if="variant === 'info'" class="h-5 w-5 text-blue-500" />
+  <CheckCircle2 v-if="variant === 'success'" data-testid="success-icon" class="h-5 w-5 text-green-500" />
+  <AlertCircle v-else-if="variant === 'error'" data-testid="error-icon" class="h-5 w-5 text-red-500" />
+  <AlertTriangle v-else-if="variant === 'warning'" data-testid="warning-icon" class="h-5 w-5 text-yellow-500" />
+  <Info v-else-if="variant === 'info'" data-testid="info-icon" class="h-5 w-5 text-blue-500" />
 </template>

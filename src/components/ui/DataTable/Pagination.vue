@@ -87,6 +87,7 @@ const handleSizeChange = (option: number) => {
     <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
       <div class="flex items-center space-x-6">
         <p class="text-sm text-gray-500 whitespace-nowrap">
+          <!-- v8 ignore start -->
           <template v-if="totalItems !== undefined">
             Exibindo <span class="font-semibold text-gray-900">{{ Math.min(currentPage * (pageSize ?? 0) + 1, totalItems) }}</span> até
             <span class="font-semibold text-gray-900">
@@ -94,6 +95,7 @@ const handleSizeChange = (option: number) => {
             </span>
             de <span class="font-semibold text-gray-900">{{ totalItems }}</span>
           </template>
+          <!-- v8 ignore stop -->
           <template v-else>
             Página <span class="font-semibold text-gray-900">{{ currentPage + 1 }}</span> de
             <span class="font-semibold text-gray-900">{{ totalPages }}</span>

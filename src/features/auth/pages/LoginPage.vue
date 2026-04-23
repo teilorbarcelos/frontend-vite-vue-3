@@ -9,12 +9,16 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { useAuthStore } from '@/stores/auth';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.email('Invalid email address'),
+  password: z.string({ required_error: 'Password is required' } as any).min(1, 'Password is required'),
 });
 
 const { handleSubmit, errors, defineField } = useForm({
   validationSchema: toTypedSchema(loginSchema),
+  initialValues: {
+    email: '',
+    password: '',
+  },
 });
 
 const [email, emailProps] = defineField('email');

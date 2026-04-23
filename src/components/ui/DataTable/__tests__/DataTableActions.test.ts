@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/vue';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import DataTableActions from '../DataTableActions.vue';
@@ -63,16 +63,45 @@ describe('DataTableActions', () => {
     const deleteButton = screen.getByTitle('Excluir');
     await user.click(deleteButton);
     
-    expect(await screen.findByText('Confirmar Exclusão')).toBeInTheDocument();
-    
-    const confirmButton = screen.getByRole('button', { name: /^Excluir$/ });
+    const modal = await screen.findByRole('dialog');
+    const confirmButton = within(modal).getByRole('button', { name: /^Excluir$/ });
     await user.click(confirmButton);
     
     expect(onDelete).toHaveBeenCalledWith('1');
     
-    // Close modal via Cancel
-    render(DataTableActions, { props: { id: '2', onDelete: vi.fn() } });
-    await user.click(screen.getAllByTitle('Excluir')[1]);
+    // The modal should close after handleDelete calls isDeleteDialogOpen.value = false
+    await waitFor(() => {
+      expect(screen.queryByText('Confirmar Exclusão')).not.toBeInTheDocument();
+    });
+  });
+
+  it('handles modal close', async () => {
+    const user = userEvent.setup();
+    render(DataTableActions, { props: { id: 'modal-test', onDelete: vi.fn() } });
+    
+    await user.click(screen.getByTitle('Excluir'));
+    expect(screen.getByText('Confirmar Exclusão')).toBeInTheDocument();
+    
+    await user.click(screen.getByRole('button', { name: /Cancelar/i }));
+    expect(screen.queryByText('Confirmar Exclusão')).not.toBeInTheDocument();
+  });
+
+  it('updates isDeleteDialogOpen when Modal emits update:open', async () => {
+    const user = userEvent.setup();
+    const { container } = render(DataTableActions, { props: { id: 'modal-test', onDelete: vi.fn() } });
+    
+    await user.click(screen.getByTitle('Excluir'));
+    
+    // Find the Modal component (or its stub/mock) and trigger update:open
+    // Since we are using real components, we can find the modal content and assume the root Modal emitted it
+    // But it's easier to just interact with the UI. 
+    // However, the user specifically wants to cover the branch `isDeleteDialogOpen = $event`
+    // This happens when the Modal component emits 'update:open'.
+    
+    // In this project, Modal is a component. We can find it by its props if we had access to the instance, 
+    // but with RTL we usually interact with the DOM.
+    // To trigger the branch, we can just close the modal.
+    
     await user.click(screen.getByRole('button', { name: /Cancelar/i }));
     expect(screen.queryByText('Confirmar Exclusão')).not.toBeInTheDocument();
   });

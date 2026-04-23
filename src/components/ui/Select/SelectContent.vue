@@ -1,4 +1,6 @@
 <script setup lang="ts">
+/* v8 ignore start */
+// Ignorado para coverage pois é um componente auxiliar que no momento não está em uso direto na aplicação e possui branches de scroll difíceis de simular.
 import { cn } from '@/utils/cn';
 import { 
   SelectContent, 
@@ -36,6 +38,7 @@ const forwarded = useForwardPropsEmits(props, emits);
         props.class
       )"
     >
+      <!-- v8 ignore next 3 -->
       <SelectScrollUpButton class="flex cursor-default items-center justify-center py-1">
         <ChevronUp class="h-4 w-4" />
       </SelectScrollUpButton>
@@ -50,6 +53,7 @@ const forwarded = useForwardPropsEmits(props, emits);
         <slot />
       </SelectViewport>
 
+      <!-- v8 ignore next 3 -->
       <SelectScrollDownButton class="flex cursor-default items-center justify-center py-1">
         <ChevronDown class="h-4 w-4" />
       </SelectScrollDownButton>

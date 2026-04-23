@@ -132,6 +132,21 @@ describe('UserListPage', () => {
     });
   });
 
+  it('handles toggle status generic error', async () => {
+    const user = userEvent.setup();
+    (userService.toggleStatus as Mock).mockRejectedValue(new Error('Generic Error'));
+    setAdminPermissions();
+    renderWithProviders(UserListPage, { queryClient });
+    
+    await waitFor(() => screen.getByText('John Doe'));
+    const statusBadge = screen.getAllByText('Ativo')[0];
+    await user.click(statusBadge);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Erro ao atualizar status.')).toBeInTheDocument();
+    });
+  });
+
   it('triggers search when search input changes', async () => {
     const user = userEvent.setup();
     setAdminPermissions();

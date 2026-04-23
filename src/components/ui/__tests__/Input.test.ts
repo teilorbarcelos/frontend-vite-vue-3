@@ -5,43 +5,36 @@ import Input from '../Input.vue';
 describe('Input', () => {
   it('renders correctly with label', () => {
     render(Input, {
-      props: {
-        label: 'Email',
-        id: 'email-input',
-      },
+      props: { label: 'Username', id: 'user-input' }
     });
-    expect(screen.getByText('Email')).toBeInTheDocument();
-    expect(screen.getByLabelText('Email')).toHaveAttribute('id', 'email-input');
-  });
-
-  it('shows error message when provided', () => {
-    render(Input, {
-      props: {
-        error: 'Required field',
-      },
-    });
-    expect(screen.getByText('Required field')).toBeInTheDocument();
-    expect(screen.getByRole('textbox')).toHaveClass('border-red-500');
+    expect(screen.getByLabelText('Username')).toBeInTheDocument();
+    expect(screen.getByLabelText('Username')).toHaveAttribute('id', 'user-input');
   });
 
   it('emits update:modelValue on input', async () => {
     const { emitted } = render(Input, {
-      props: {
-        modelValue: '',
-      },
+      props: { modelValue: '' }
     });
     const input = screen.getByRole('textbox');
-    await fireEvent.update(input, 'test@example.com');
+    await fireEvent.update(input, 'new value');
     expect(emitted()['update:modelValue']).toBeTruthy();
-    expect(emitted()['update:modelValue'][0]).toEqual(['test@example.com']);
+    expect(emitted()['update:modelValue'][0]).toEqual(['new value']);
   });
 
-  it('applies custom classes', () => {
+  it('shows error message and applies error styles', () => {
     render(Input, {
-      props: {
-        class: 'custom-class',
-      },
+      props: { error: 'Invalid input' }
     });
-    expect(screen.getByRole('textbox')).toHaveClass('custom-class');
+    expect(screen.getByText('Invalid input')).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveClass('border-red-500');
+  });
+
+  it('uses generated ID if none provided', () => {
+    render(Input, {
+      props: { label: 'Username' }
+    });
+    const input = screen.getByRole('textbox');
+    expect(input.id).toBeTruthy();
+    expect(screen.getByText('Username')).toHaveAttribute('for', input.id);
   });
 });

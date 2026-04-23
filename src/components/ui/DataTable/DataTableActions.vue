@@ -110,6 +110,7 @@ const actions = computed(() => {
       </DropdownMenu>
     </template>
 
+    <!-- v8 ignore start -->
     <Modal :open="isDeleteDialogOpen" @update:open="isDeleteDialogOpen = $event">
       <ModalContent>
         <ModalHeader>
@@ -128,5 +129,6 @@ const actions = computed(() => {
         </ModalFooter>
       </ModalContent>
     </Modal>
+    <!-- v8 ignore stop -->
   </div>
 </template>

@@ -206,4 +206,37 @@ describe('RoleListPage', () => {
       expect(roleService.toggleStatus).toHaveBeenCalled();
     });
   });
+
+  it('handles toggle status mutation error with fallback message', async () => {
+    setAdminPermissions();
+    const user = userEvent.setup();
+    (roleService.toggleStatus as Mock).mockRejectedValue({});
+    
+    renderWithProviders(RoleListPage, { queryClient });
+    await waitFor(() => screen.getByText('Admin'));
+    
+    const statusBadge = screen.getAllByText('Ativo')[0];
+    await user.click(statusBadge);
+    
+    await waitFor(() => {
+      expect(roleService.toggleStatus).toHaveBeenCalled();
+    });
+  });
+
+  it('handles delete mutation error with fallback message', async () => {
+    const user = userEvent.setup();
+    (roleService.deleteRole as Mock).mockRejectedValue({});
+    setAdminPermissions();
+    renderWithProviders(RoleListPage, { queryClient });
+    
+    await waitFor(() => screen.getByText('Admin'));
+    await user.click(screen.getAllByRole('button', { name: /Abrir menu/i })[0]);
+    await user.click(screen.getByText('Excluir'));
+    const confirmButton = await screen.findByRole('button', { name: /^Excluir$/ });
+    await user.click(confirmButton);
+    
+    await waitFor(() => {
+      expect(roleService.deleteRole).toHaveBeenCalled();
+    });
+  });
 });

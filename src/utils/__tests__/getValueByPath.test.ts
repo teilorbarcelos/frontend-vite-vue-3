@@ -3,31 +3,26 @@ import { getValueByPath } from '../getValueByPath';
 
 describe('getValueByPath', () => {
   it('resolves simple path', () => {
-    const obj = { name: 'John' };
-    expect(getValueByPath(obj, 'name')).toBe('John');
+    expect(getValueByPath({ name: 'John' }, 'name')).toBe('John');
   });
 
   it('resolves nested path', () => {
-    const obj = { user: { profile: { email: 'test@test.com' } } };
-    expect(getValueByPath(obj, 'user.profile.email')).toBe('test@test.com');
+    const obj = { user: { profile: { email: 'test@example.com' } } };
+    expect(getValueByPath(obj, 'user.profile.email')).toBe('test@example.com');
   });
 
   it('returns undefined for non-existent path', () => {
-    const obj = { user: {} };
-    expect(getValueByPath(obj, 'user.profile.email')).toBeUndefined();
+    expect(getValueByPath({ a: 1 }, 'b')).toBeUndefined();
+    expect(getValueByPath({ a: { b: 1 } }, 'a.c')).toBeUndefined();
   });
 
-  it('returns undefined if obj is null or undefined', () => {
-    expect(getValueByPath(null, 'name')).toBeUndefined();
-    expect(getValueByPath(undefined, 'name')).toBeUndefined();
+  it('returns undefined if object or path is missing', () => {
+    expect(getValueByPath(null, 'a')).toBeUndefined();
+    expect(getValueByPath({}, '')).toBeUndefined();
   });
 
-  it('returns undefined if path is empty', () => {
-    expect(getValueByPath({ name: 'John' }, '')).toBeUndefined();
-  });
-
-  it('handles intermediate null values', () => {
-    const obj = { user: null };
-    expect(getValueByPath(obj, 'user.profile.email')).toBeUndefined();
+  it('returns undefined if path is interrupted by null/undefined', () => {
+    expect(getValueByPath({ a: null }, 'a.b')).toBeUndefined();
+    expect(getValueByPath({ a: undefined }, 'a.b')).toBeUndefined();
   });
 });

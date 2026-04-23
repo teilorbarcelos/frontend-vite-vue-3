@@ -45,6 +45,7 @@ const breadcrumbs = computed(() => {
         <RouterLink
           to="/dashboard"
           class="text-gray-400 hover:text-indigo-600 transition-colors"
+          title="Home"
         >
           <Home class="w-4 h-4" />
         </RouterLink>

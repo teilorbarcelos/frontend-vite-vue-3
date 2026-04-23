@@ -16,7 +16,7 @@ export const createTestQueryClient = () => new QueryClient({
 
 export function renderWithProviders(component: Component, options: any = {}) {
   const queryClient = options.queryClient || createTestQueryClient();
-  const pinia = createPinia();
+  const pinia = options.pinia || createPinia();
   setActivePinia(pinia);
 
   const router = createRouter({
@@ -24,6 +24,7 @@ export function renderWithProviders(component: Component, options: any = {}) {
     routes: [
       { path: '/', component: { template: '<div>Home</div>' } },
       { path: '/login', component: { template: '<div>Login</div>' } },
+      { path: '/dashboard', component: { template: '<div>Dashboard</div>' }, meta: { title: 'Dashboard' } },
       { path: '/products', component: { template: '<div>Products</div>' } },
       { path: '/products/new', component: { template: '<div>New Product</div>' } },
       { path: '/products/update/:id', component: { template: '<div>Update Product</div>' } },

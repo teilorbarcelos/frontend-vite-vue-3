@@ -56,9 +56,11 @@ describe('RoleFormPage', () => {
     await user.type(screen.getByLabelText(/Nome do Perfil/i), 'Admin');
     await user.type(screen.getByLabelText(/Descrição/i), 'Administrator role');
     
-    // Toggle a permission
+    // Toggle all permissions for the first feature
     const checkboxes = screen.getAllByRole('checkbox');
-    await user.click(checkboxes[0]); // View permission for first feature
+    for (const checkbox of checkboxes) {
+      await user.click(checkbox);
+    }
     
     await user.click(screen.getByText('Salvar Perfil'));
     await waitFor(() => {
