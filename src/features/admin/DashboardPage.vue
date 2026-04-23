@@ -11,7 +11,9 @@
         <p class="mt-2 text-3xl font-bold text-gray-900">48</p>
       </div>
       <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h2 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Produtos em Estoque</h2>
+        <h2 class="text-sm font-medium text-gray-500 uppercase tracking-wider">
+          Produtos em Estoque
+        </h2>
         <p class="mt-2 text-3xl font-bold text-gray-900">1,240</p>
       </div>
     </div>

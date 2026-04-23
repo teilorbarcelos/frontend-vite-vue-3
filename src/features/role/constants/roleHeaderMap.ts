@@ -18,20 +18,22 @@ export const getRoleColumns = (
     title: 'Status',
     keyItem: 'active',
     sortable: true,
-    parseItem: (active, role) => h(StatusBadge, {
-      active: !!active,
-      feature: 'role',
-      onClick: () => onToggleStatus(role.id, !role.active)
-    }),
+    parseItem: (active, role) =>
+      h(StatusBadge, {
+        active: !!active,
+        feature: 'role',
+        onClick: () => onToggleStatus(role.id, !role.active)
+      })
   },
   {
     title: '',
     keyItem: 'id',
-    parseItem: (id) => h(DataTableActions, {
-      id: id as string,
-      onEdit: permissions.canUpdate ? onEdit : undefined,
-      onDelete: permissions.canDelete ? onDelete : undefined,
-      deleteMessage: 'Tem certeza que deseja excluir esta role?'
-    }),
-  },
+    parseItem: (id) =>
+      h(DataTableActions, {
+        id: id as string,
+        onEdit: permissions.canUpdate ? onEdit : undefined,
+        onDelete: permissions.canDelete ? onDelete : undefined,
+        deleteMessage: 'Tem certeza que deseja excluir esta role?'
+      })
+  }
 ];

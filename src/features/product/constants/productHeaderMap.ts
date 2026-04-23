@@ -19,27 +19,29 @@ export const getProductColumns = (
     title: 'Preço',
     keyItem: 'price',
     sortable: true,
-    parseItem: (price) => `$${price != null ? Number(price).toFixed(2) : '0.00'}`,
+    parseItem: (price) => `$${price != null ? Number(price).toFixed(2) : '0.00'}`
   },
   { title: 'Estoque', keyItem: 'stock', sortable: true },
   {
     title: 'Status',
     keyItem: 'active',
     sortable: true,
-    parseItem: (active, product) => h(StatusBadge, {
-      active: !!active,
-      feature: 'product',
-      onClick: () => onToggleStatus(product.id, !product.active)
-    }),
+    parseItem: (active, product) =>
+      h(StatusBadge, {
+        active: !!active,
+        feature: 'product',
+        onClick: () => onToggleStatus(product.id, !product.active)
+      })
   },
   {
     title: '',
     keyItem: 'id',
-    parseItem: (id) => h(DataTableActions, {
-      id: id as string,
-      onEdit: permissions.canUpdate ? onEdit : undefined,
-      onDelete: permissions.canDelete ? onDelete : undefined,
-      deleteMessage: 'Tem certeza que deseja excluir este produto?'
-    }),
-  },
+    parseItem: (id) =>
+      h(DataTableActions, {
+        id: id as string,
+        onEdit: permissions.canUpdate ? onEdit : undefined,
+        onDelete: permissions.canDelete ? onDelete : undefined,
+        deleteMessage: 'Tem certeza que deseja excluir este produto?'
+      })
+  }
 ];

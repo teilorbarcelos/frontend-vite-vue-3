@@ -36,10 +36,10 @@ describe('useDataTable', () => {
 
   it('updates page and size via tableProps', () => {
     const { page, size, tableProps } = useDataTable();
-    
+
     tableProps.paginationProps.onPageChange(3);
     expect(page.value).toBe(3);
-    
+
     tableProps.paginationProps.onPageSizeChange(50);
     expect(size.value).toBe(50);
   });

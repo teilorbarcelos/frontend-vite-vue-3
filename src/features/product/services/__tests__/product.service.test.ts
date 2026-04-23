@@ -8,8 +8,8 @@ vi.mock('@/lib/axios', () => ({
     post: vi.fn(),
     put: vi.fn(),
     delete: vi.fn(),
-    patch: vi.fn(),
-  },
+    patch: vi.fn()
+  }
 }));
 
 describe('productService', () => {
@@ -56,8 +56,22 @@ describe('productService', () => {
 
   it('createProduct calls correct endpoint', async () => {
     (api.post as Mock).mockResolvedValue({ data: {} });
-    await productService.createProduct({ name: 'P1', sku: 'S1', category: 'C1', price: 10, stock: 100, description: 'D1' });
-    expect(api.post).toHaveBeenCalledWith('/v1/product', { name: 'P1', sku: 'S1', category: 'C1', price: 10, stock: 100, description: 'D1' });
+    await productService.createProduct({
+      name: 'P1',
+      sku: 'S1',
+      category: 'C1',
+      price: 10,
+      stock: 100,
+      description: 'D1'
+    });
+    expect(api.post).toHaveBeenCalledWith('/v1/product', {
+      name: 'P1',
+      sku: 'S1',
+      category: 'C1',
+      price: 10,
+      stock: 100,
+      description: 'D1'
+    });
   });
 
   it('updateProduct calls correct endpoint', async () => {

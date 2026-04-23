@@ -1,9 +1,9 @@
-import { screen, waitFor, fireEvent } from '@testing-library/vue';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import AdminLayout from '../AdminLayout.vue';
-import { renderWithProviders } from '@/test/test-utils';
 import { useAuthStore } from '@/stores/auth';
+import { renderWithProviders } from '@/test/test-utils';
+import { fireEvent, screen, waitFor } from '@testing-library/vue';
 import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import AdminLayout from '../AdminLayout.vue';
 
 vi.mock('@tanstack/vue-query', async (importOriginal) => {
   const actual = await importOriginal<any>();
@@ -12,12 +12,12 @@ vi.mock('@tanstack/vue-query', async (importOriginal) => {
     useQueryClient: vi.fn(() => ({
       invalidateQueries: vi.fn(),
       removeQueries: vi.fn(),
-      clear: vi.fn(),
+      clear: vi.fn()
     })),
     useQuery: vi.fn(() => ({
       data: { value: null },
-      isLoading: { value: false },
-    })),
+      isLoading: { value: false }
+    }))
   };
 });
 
@@ -45,7 +45,7 @@ describe('AdminLayout', () => {
     const pinia = createPinia();
     setActivePinia(pinia);
     const authStore = useAuthStore(pinia);
-    
+
     // Only allow dashboard
     authStore.hasPermission = vi.fn().mockImplementation((feature) => feature === 'dashboard');
 
@@ -54,7 +54,7 @@ describe('AdminLayout', () => {
     await waitFor(() => {
       expect(screen.getByText('Dashboard')).toBeInTheDocument();
     });
-    
+
     expect(screen.queryByText('Perfis')).not.toBeInTheDocument();
     expect(screen.queryByText('Usuários')).not.toBeInTheDocument();
     expect(screen.queryByText('Produtos')).not.toBeInTheDocument();
@@ -65,7 +65,7 @@ describe('AdminLayout', () => {
     setActivePinia(pinia);
     const authStore = useAuthStore(pinia);
     const logoutSpy = vi.spyOn(authStore, 'logout');
-    
+
     const originalLocation = window.location;
     delete (window as any).location;
     window.location = { href: '' } as any;
@@ -78,7 +78,7 @@ describe('AdminLayout', () => {
     expect(logoutSpy).toHaveBeenCalled();
     expect(window.location.href).toBe('/login');
 
-    window.location = originalLocation;
+    window.location = originalLocation as string & Location;
   });
 
   it('shows fallback "User" when name is missing', async () => {
@@ -101,7 +101,7 @@ describe('AdminLayout', () => {
     authStore.hasPermission = vi.fn().mockReturnValue(true);
 
     const { router } = renderWithProviders(AdminLayout, { pinia });
-    
+
     // Navigate to /dashboard
     await router.push('/dashboard');
     await router.isReady();

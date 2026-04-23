@@ -4,7 +4,12 @@ import FilterDrawer, { type FilterField } from '../FilterDrawer.vue';
 
 describe('FilterDrawer', () => {
   const fields: FilterField[] = [
-    { name: 'status', label: 'Status', type: 'select', options: [{ label: 'Ativo', value: 'active' }] },
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      options: [{ label: 'Ativo', value: 'active' }]
+    },
     { name: 'name', label: 'Nome', type: 'text', placeholder: 'Filtrar por nome' },
     { name: 'created_at', label: 'Data', type: 'dateRange' }
   ];

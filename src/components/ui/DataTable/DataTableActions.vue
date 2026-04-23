@@ -6,7 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '../DropdownMenu';
 import {
   Modal,
@@ -14,7 +14,7 @@ import {
   ModalDescription,
   ModalFooter,
   ModalHeader,
-  ModalTitle,
+  ModalTitle
 } from '../Modal';
 
 interface Props {
@@ -32,7 +32,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   deleteMessage: 'Tem certeza que deseja excluir este registro?',
-  extraActions: () => [],
+  extraActions: () => []
 });
 
 const isDeleteDialogOpen = ref(false);
@@ -44,33 +44,33 @@ const handleDelete = () => {
 
 const actions = computed(() => {
   const result = [];
-  
+
   if (props.onEdit) {
-    result.push({ 
-      label: 'Editar', 
-      icon: Edit2, 
-      onClick: () => props.onEdit!(props.id) 
+    result.push({
+      label: 'Editar',
+      icon: Edit2,
+      onClick: () => props.onEdit!(props.id)
     });
   }
-  
+
   if (props.onDelete) {
-    result.push({ 
-      label: 'Excluir', 
-      icon: Trash2, 
+    result.push({
+      label: 'Excluir',
+      icon: Trash2,
       onClick: () => (isDeleteDialogOpen.value = true),
       className: 'text-red-600 focus:text-red-600 focus:bg-red-50'
     });
   }
-  
-  props.extraActions.forEach(a => {
-    result.push({ 
+
+  props.extraActions.forEach((a) => {
+    result.push({
       label: a.label,
       icon: a.icon,
       onClick: () => a.onClick(props.id),
       className: a.className
     });
   });
-  
+
   return result;
 });
 </script>
@@ -78,10 +78,10 @@ const actions = computed(() => {
 <template>
   <div class="flex justify-end">
     <template v-if="actions.length === 1">
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        @click="actions[0].onClick" 
+      <Button
+        variant="ghost"
+        size="sm"
+        @click="actions[0].onClick"
         :class="actions[0].className"
         :title="actions[0].label"
       >
@@ -97,9 +97,9 @@ const actions = computed(() => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem 
-            v-for="(action, idx) in actions" 
-            :key="idx" 
+          <DropdownMenuItem
+            v-for="(action, idx) in actions"
+            :key="idx"
             @click="action.onClick"
             :class="action.className"
           >
@@ -120,12 +120,8 @@ const actions = computed(() => {
           </ModalDescription>
         </ModalHeader>
         <ModalFooter>
-          <Button variant="ghost" @click="isDeleteDialogOpen = false">
-            Cancelar
-          </Button>
-          <Button variant="danger" @click="handleDelete">
-            Excluir
-          </Button>
+          <Button variant="ghost" @click="isDeleteDialogOpen = false"> Cancelar </Button>
+          <Button variant="danger" @click="handleDelete"> Excluir </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

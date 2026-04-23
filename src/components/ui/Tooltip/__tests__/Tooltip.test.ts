@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/vue';
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/vue';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '../index';
 
 describe('Tooltip', () => {

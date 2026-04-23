@@ -6,7 +6,7 @@ import { api } from '@/lib/axios';
 const mockQueryClient = {
   setQueryData: vi.fn(),
   removeQueries: vi.fn(),
-  clear: vi.fn(),
+  clear: vi.fn()
 };
 
 let capturedQueryFn: any = null;
@@ -18,19 +18,19 @@ vi.mock('@tanstack/vue-query', () => {
       capturedQueryFn = options.queryFn;
       return {
         data: { value: null },
-        isLoading: { value: false },
+        isLoading: { value: false }
       };
     }),
     VueQueryPlugin: {
-      install: vi.fn(),
-    },
+      install: vi.fn()
+    }
   };
 });
 
 vi.mock('@/lib/axios', () => ({
   api: {
-    get: vi.fn(),
-  },
+    get: vi.fn()
+  }
 }));
 
 describe('auth store', () => {
@@ -49,7 +49,7 @@ describe('auth store', () => {
     useAuthStore(); // Trigger useQuery
     localStorage.setItem('token', 'test-token');
     (api.get as any).mockResolvedValue({ data: { user: { id: '1', name: 'John' } } });
-    
+
     const user = await capturedQueryFn();
     expect(user).toEqual({ id: '1', name: 'John' });
     expect(api.get).toHaveBeenCalledWith('/v1/auth/me');
@@ -59,7 +59,7 @@ describe('auth store', () => {
     useAuthStore();
     localStorage.setItem('token', 'test-token');
     (api.get as any).mockRejectedValue(new Error('Unauthorized'));
-    
+
     const user = await capturedQueryFn();
     expect(user).toBeNull();
     expect(localStorage.getItem('token')).toBeNull();
@@ -68,7 +68,7 @@ describe('auth store', () => {
   it('queryFn returns null if no token', async () => {
     useAuthStore();
     localStorage.removeItem('token');
-    
+
     const user = await capturedQueryFn();
     expect(user).toBeNull();
   });
@@ -77,7 +77,7 @@ describe('auth store', () => {
     const store = useAuthStore();
     const user = { id: '1', name: 'Test' };
     store.login('test-token', 'refresh-token', user as any);
-    
+
     expect(localStorage.getItem('token')).toBe('test-token');
     expect(localStorage.getItem('refreshToken')).toBe('refresh-token');
     expect(mockQueryClient.setQueryData).toHaveBeenCalledWith(['auth-user'], user);
@@ -87,9 +87,9 @@ describe('auth store', () => {
     const store = useAuthStore();
     localStorage.setItem('token', 'test-token');
     localStorage.setItem('refreshToken', 'test-refresh');
-    
+
     store.logout();
-    
+
     expect(localStorage.getItem('token')).toBeNull();
     expect(localStorage.getItem('refreshToken')).toBeNull();
     expect(mockQueryClient.removeQueries).toHaveBeenCalledWith({ queryKey: ['auth-user'] });
@@ -100,10 +100,12 @@ describe('auth store', () => {
     const store = useAuthStore();
     (store.user as any).value = {
       role: {
-        permissions: [{ feature: 'product', view: true, create: false, delete: true, activate: true }]
+        permissions: [
+          { feature: 'product', view: true, create: false, delete: true, activate: true }
+        ]
       }
     };
-    
+
     expect(store.hasPermission('product', 'view')).toBe(true);
     expect(store.hasPermission('product', 'create')).toBe(false);
     expect(store.hasPermission('other', 'view')).toBe(false);

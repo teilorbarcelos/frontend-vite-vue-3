@@ -7,7 +7,7 @@ describe('DataTable Sorting', () => {
     { keyItem: 'name', title: 'Name', sortable: true },
     { keyItem: 'age', title: 'Age', sortable: false }
   ];
-  
+
   const data = [
     { id: '1', name: 'John', age: 30 },
     { id: '2', name: 'Jane', age: 25 }
@@ -28,7 +28,7 @@ describe('DataTable Sorting', () => {
 
     const nameHeader = screen.getByText('Name');
     await fireEvent.click(nameHeader);
-    
+
     expect(onChange).toHaveBeenCalledWith({
       orderBy: 'name',
       orderDirection: 'desc'
@@ -50,13 +50,13 @@ describe('DataTable Sorting', () => {
 
     const ageHeader = screen.getByText('Age');
     await fireEvent.click(ageHeader);
-    
+
     expect(onChange).not.toHaveBeenCalled();
   });
 
   it('rotates sorting direction (asc -> desc -> undefined)', async () => {
     const onChange = vi.fn();
-    
+
     // Test desc -> undefined
     const { rerender } = render(DataTable, {
       props: {

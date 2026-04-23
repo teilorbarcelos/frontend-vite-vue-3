@@ -9,14 +9,20 @@ describe('SelectContent', () => {
     // SelectContent must be inside SelectRoot
     const Wrapper = {
       setup() {
-        return () => h(SelectRoot, { open: true }, {
-          default: () => h(SelectContent, null, {
-            default: () => h('div', 'Content')
-          })
-        });
+        return () =>
+          h(
+            SelectRoot,
+            { open: true },
+            {
+              default: () =>
+                h(SelectContent, null, {
+                  default: () => h('div', 'Content')
+                })
+            }
+          );
       }
     };
-    
+
     render(Wrapper);
     expect(await screen.findByText('Content')).toBeInTheDocument();
   });

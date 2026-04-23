@@ -9,6 +9,7 @@ describe('Pagination', () => {
       props: {
         currentPage: 0,
         totalPages: 10,
+        pageSize: 10,
         onPageChange: vi.fn()
       }
     });
@@ -16,7 +17,7 @@ describe('Pagination', () => {
     expect(screen.getByText(/Página/)).toBeInTheDocument();
     expect(screen.getAllByText('1').length).toBeGreaterThan(0);
     expect(screen.getAllByText('10').length).toBeGreaterThan(0);
-    
+
     expect(screen.getByTitle('Próximo')).not.toBeDisabled();
     expect(screen.getByTitle('Anterior')).toBeDisabled();
   });
@@ -27,6 +28,7 @@ describe('Pagination', () => {
       props: {
         currentPage: 0,
         totalPages: 10,
+        pageSize: 10,
         onPageChange: onPageChange
       }
     });
@@ -43,6 +45,7 @@ describe('Pagination', () => {
       props: {
         currentPage: 5,
         totalPages: 10,
+        pageSize: 10,
         onPageChange: onPageChange
       }
     });
@@ -60,6 +63,7 @@ describe('Pagination', () => {
       props: {
         currentPage: 1,
         totalPages: 10,
+        pageSize: 10,
         onPageChange: onPageChange
       }
     });
@@ -109,6 +113,7 @@ describe('Pagination', () => {
       props: {
         currentPage: 0,
         totalPages: 1,
+        pageSize: 10,
         onPageChange: vi.fn()
       }
     });
@@ -151,12 +156,13 @@ describe('Pagination', () => {
       props: {
         currentPage: 0,
         totalPages: 10,
+        pageSize: 10,
         onPageChange: onPageChange
       }
     });
 
     const anteriorButton = screen.getByTitle('Anterior');
-    // fireEvent can trigger even if disabled in JSDOM, but we want to ensure 
+    // fireEvent can trigger even if disabled in JSDOM, but we want to ensure
     // handlePageChange's internal check prevents the call
     await fireEvent.click(anteriorButton);
     expect(onPageChange).not.toHaveBeenCalled();

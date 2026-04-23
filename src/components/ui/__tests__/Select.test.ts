@@ -49,18 +49,19 @@ describe('Select', () => {
 
     const user = userEvent.setup({ pointerEventsCheck: 0 as any });
     await user.click(trigger);
-    
+
     // Find the option in the portal, avoiding the native select options
     const appleOption = await waitFor(() => {
       const elements = screen.queryAllByText(/Apple/i);
-      const target = elements.find(el => el.closest('[role="option"]'));
+      const target = elements.find((el) => el.closest('[role="option"]'));
       if (!target) throw new Error('Apple option not found');
       return target;
     });
 
-    const bananaOption = screen.queryAllByText(/Banana/i)
-      .find(el => el.closest('[role="option"]'));
-    
+    const bananaOption = screen
+      .queryAllByText(/Banana/i)
+      .find((el) => el.closest('[role="option"]'));
+
     expect(appleOption).toBeInTheDocument();
     expect(bananaOption).toBeInTheDocument();
   });
@@ -93,10 +94,10 @@ describe('Select', () => {
 
     const user = userEvent.setup({ pointerEventsCheck: 0 as any });
     await user.click(screen.getByRole('combobox'));
-    
+
     const appleOption = await waitFor(() => {
       const elements = screen.queryAllByText(/Apple/i);
-      const target = elements.find(el => el.closest('[role="option"]'));
+      const target = elements.find((el) => el.closest('[role="option"]'));
       if (!target) throw new Error('Apple option not found');
       return target;
     });

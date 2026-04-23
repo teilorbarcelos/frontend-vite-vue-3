@@ -9,14 +9,14 @@ vi.mock('../../services/product.service', () => ({
   productService: {
     getProducts: vi.fn(),
     deleteProduct: vi.fn(),
-    toggleStatus: vi.fn(),
-  },
+    toggleStatus: vi.fn()
+  }
 }));
 
 describe('ProductListPage', () => {
   const mockProducts = [
     { id: '1', name: 'Product A', sku: 'SKU1', price: 100, active: true, created_at: '2023-01-01' },
-    { id: '2', name: 'Product B', sku: 'SKU2', price: 200, active: false, created_at: '2023-01-02' },
+    { id: '2', name: 'Product B', sku: 'SKU2', price: 200, active: false, created_at: '2023-01-02' }
   ];
 
   let queryClient: any;
@@ -25,7 +25,7 @@ describe('ProductListPage', () => {
     vi.clearAllMocks();
     (productService.getProducts as Mock).mockResolvedValue({
       items: mockProducts,
-      total: 2,
+      total: 2
     });
     queryClient = createTestQueryClient();
   });
@@ -47,7 +47,7 @@ describe('ProductListPage', () => {
   it('renders page title and product data', async () => {
     setAdminPermissions();
     renderWithProviders(ProductListPage, { queryClient });
-    
+
     expect(screen.getByText('Produtos')).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByText('Product A')).toBeInTheDocument();
@@ -63,16 +63,16 @@ describe('ProductListPage', () => {
     renderWithProviders(ProductListPage, { queryClient });
 
     await waitFor(() => screen.getByText('Product A'));
-    
+
     const menuTriggers = screen.getAllByRole('button', { name: /Abrir menu/i });
     await user.click(menuTriggers[0]);
-    
+
     const deleteOption = await screen.findByText('Excluir');
     await user.click(deleteOption);
-    
+
     const confirmButton = await screen.findByRole('button', { name: /^Excluir$/ });
     await user.click(confirmButton);
-    
+
     await waitFor(() => expect(productService.deleteProduct).toHaveBeenCalledWith('1'));
   });
 
@@ -92,11 +92,11 @@ describe('ProductListPage', () => {
     setAdminPermissions();
 
     renderWithProviders(ProductListPage, { queryClient });
-    
+
     await waitFor(() => screen.getByText('Product A'));
     const statusButtons = screen.getAllByRole('button', { name: /Ativo/i });
     await user.click(statusButtons[0]);
-    
+
     await waitFor(() => {
       expect(productService.toggleStatus).toHaveBeenCalledWith('1', false);
     });
@@ -107,10 +107,10 @@ describe('ProductListPage', () => {
     setAdminPermissions();
 
     renderWithProviders(ProductListPage, { queryClient });
-    
+
     const filterButton = await screen.findByText('Filtros');
     await user.click(filterButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Filtros Avançados')).toBeInTheDocument();
     });
@@ -127,13 +127,16 @@ describe('ProductListPage', () => {
     setAdminPermissions();
 
     renderWithProviders(ProductListPage, { queryClient });
-    
+
     const searchInput = await screen.findByPlaceholderText(/Pesquisar/i);
     await user.type(searchInput, 'New Search');
-    
-    await waitFor(() => {
-      expect(productService.getProducts).toHaveBeenCalled();
-    }, { timeout: 1500 });
+
+    await waitFor(
+      () => {
+        expect(productService.getProducts).toHaveBeenCalled();
+      },
+      { timeout: 1500 }
+    );
   });
 
   it('handles delete mutation error', async () => {
@@ -144,12 +147,12 @@ describe('ProductListPage', () => {
     setAdminPermissions();
 
     renderWithProviders(ProductListPage, { queryClient });
-    
+
     await waitFor(() => screen.getByText('Product A'));
     await user.click(screen.getAllByRole('button', { name: /Abrir menu/i })[0]);
     await user.click(await screen.findByText('Excluir'));
     await user.click(await screen.findByRole('button', { name: /^Excluir$/ }));
-    
+
     await waitFor(() => {
       expect(screen.getByText('Delete failed')).toBeInTheDocument();
     });
@@ -185,15 +188,15 @@ describe('ProductListPage', () => {
     (productService.deleteProduct as Mock).mockRejectedValue({
       response: { data: { message: 'Delete failed' } }
     });
-    
+
     renderWithProviders(ProductListPage, { queryClient });
     await waitFor(() => screen.getByText('Product A'));
-    
+
     await user.click(screen.getAllByRole('button', { name: /Abrir menu/i })[0]);
     await user.click(screen.getByText('Excluir'));
     const confirmButton = await screen.findByRole('button', { name: /^Excluir$/ });
     await user.click(confirmButton);
-    
+
     await waitFor(() => {
       expect(productService.deleteProduct).toHaveBeenCalled();
     });
@@ -202,14 +205,14 @@ describe('ProductListPage', () => {
   it('navigates to edit page when edit is clicked', async () => {
     setAdminPermissions();
     const user = userEvent.setup();
-    
+
     const { router } = renderWithProviders(ProductListPage, { queryClient });
     const pushSpy = vi.spyOn(router, 'push');
     await waitFor(() => screen.getByText('Product A'));
-    
+
     await user.click(screen.getAllByRole('button', { name: /Abrir menu/i })[0]);
     await user.click(screen.getByText('Editar'));
-    
+
     expect(pushSpy).toHaveBeenCalledWith('/products/update/1');
   });
 
@@ -217,13 +220,13 @@ describe('ProductListPage', () => {
     setAdminPermissions();
     const user = userEvent.setup();
     (productService.toggleStatus as Mock).mockResolvedValue({});
-    
+
     renderWithProviders(ProductListPage, { queryClient });
     await waitFor(() => screen.getByText('Product A'));
-    
+
     const statusBadge = screen.getAllByText('Ativo')[0];
     await user.click(statusBadge);
-    
+
     await waitFor(() => {
       expect(productService.toggleStatus).toHaveBeenCalled();
     });
@@ -233,13 +236,13 @@ describe('ProductListPage', () => {
     setAdminPermissions();
     const user = userEvent.setup();
     (productService.toggleStatus as Mock).mockRejectedValue(new Error('Toggle failed'));
-    
+
     renderWithProviders(ProductListPage, { queryClient });
     await waitFor(() => screen.getByText('Product A'));
-    
+
     const statusBadge = screen.getAllByText('Ativo')[0];
     await user.click(statusBadge);
-    
+
     await waitFor(() => {
       expect(productService.toggleStatus).toHaveBeenCalled();
     });
@@ -249,15 +252,15 @@ describe('ProductListPage', () => {
     setAdminPermissions();
     const user = userEvent.setup();
     (productService.deleteProduct as Mock).mockRejectedValue(new Error('Generic Error'));
-    
+
     renderWithProviders(ProductListPage, { queryClient });
     await waitFor(() => screen.getByText('Product A'));
-    
+
     await user.click(screen.getAllByRole('button', { name: /Abrir menu/i })[0]);
     await user.click(screen.getByText('Excluir'));
     const confirmButton = await screen.findByRole('button', { name: /^Excluir$/ });
     await user.click(confirmButton);
-    
+
     await waitFor(() => {
       expect(productService.deleteProduct).toHaveBeenCalled();
     });

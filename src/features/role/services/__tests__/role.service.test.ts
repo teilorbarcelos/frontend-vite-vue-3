@@ -8,8 +8,8 @@ vi.mock('@/lib/axios', () => ({
     post: vi.fn(),
     put: vi.fn(),
     delete: vi.fn(),
-    patch: vi.fn(),
-  },
+    patch: vi.fn()
+  }
 }));
 
 describe('roleService', () => {
@@ -63,13 +63,21 @@ describe('roleService', () => {
   it('createRole calls correct endpoint', async () => {
     (api.post as Mock).mockResolvedValue({ data: {} });
     await roleService.createRole({ name: 'R1', description: 'D1', permissions: [] });
-    expect(api.post).toHaveBeenCalledWith('/v1/role', { name: 'R1', description: 'D1', permissions: [] });
+    expect(api.post).toHaveBeenCalledWith('/v1/role', {
+      name: 'R1',
+      description: 'D1',
+      permissions: []
+    });
   });
 
   it('updateRole calls correct endpoint', async () => {
     (api.put as Mock).mockResolvedValue({ data: {} });
     await roleService.updateRole('1', { name: 'R1', description: 'D1', permissions: [] });
-    expect(api.put).toHaveBeenCalledWith('/v1/role/1', { name: 'R1', description: 'D1', permissions: [] });
+    expect(api.put).toHaveBeenCalledWith('/v1/role/1', {
+      name: 'R1',
+      description: 'D1',
+      permissions: []
+    });
   });
 
   it('deleteRole calls correct endpoint', async () => {
@@ -87,12 +95,14 @@ describe('roleService', () => {
   it('mageSelect calls getRoles', async () => {
     const spy = vi.spyOn(roleService, 'getRoles').mockResolvedValue({ items: [], total: 0 });
     await roleService.mageSelect(0, 'query', { searchFields: ['name'] });
-    expect(spy).toHaveBeenCalledWith(expect.objectContaining({
-      page: 0,
-      size: 10,
-      searchWord: 'query',
-      searchFields: ['name']
-    }));
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        page: 0,
+        size: 10,
+        searchWord: 'query',
+        searchFields: ['name']
+      })
+    );
   });
 
   it('mageHydrate returns empty array for empty ids', async () => {
@@ -108,7 +118,9 @@ describe('roleService', () => {
   });
 
   it('mageHydrate handles getRole errors', async () => {
-    vi.spyOn(roleService, 'getRole').mockRejectedValueOnce(new Error('Failed')).mockResolvedValueOnce({ id: '2', name: 'R2' } as any);
+    vi.spyOn(roleService, 'getRole')
+      .mockRejectedValueOnce(new Error('Failed'))
+      .mockResolvedValueOnce({ id: '2', name: 'R2' } as any);
     const results = await roleService.mageHydrate(['1', '2']);
     expect(results).toHaveLength(1);
     expect(results[0].id).toBe('2');

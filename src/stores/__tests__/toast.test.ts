@@ -10,11 +10,11 @@ describe('toast store', () => {
   it('adds a toast', () => {
     const store = useToastStore();
     store.success('Success message');
-    
+
     expect(store.toasts).toHaveLength(1);
     expect(store.toasts[0]).toMatchObject({
       description: 'Success message',
-      variant: 'success',
+      variant: 'success'
     });
   });
 
@@ -22,10 +22,10 @@ describe('toast store', () => {
     const store = useToastStore();
     store.error('Error message');
     expect(store.toasts[0].variant).toBe('error');
-    
+
     store.info('Info message');
     expect(store.toasts[1].variant).toBe('info');
-    
+
     store.warning('Warning message');
     expect(store.toasts[2].variant).toBe('warning');
   });
@@ -35,7 +35,7 @@ describe('toast store', () => {
     store.success('Message 1');
     const id = store.toasts[0].id;
     store.success('Message 2');
-    
+
     store.removeToast(id);
     expect(store.toasts).toHaveLength(1);
     expect(store.toasts[0].description).toBe('Message 2');

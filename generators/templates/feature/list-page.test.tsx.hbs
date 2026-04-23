@@ -1,0 +1,47 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/vue';
+import { createTestingPinia } from '@pinia/testing';
+import { QueryClient, QueryClientProvider } from '@tanstack/vue-query';
+import {{pascalCase name}}ListPage from '../{{pascalCase name}}ListPage.vue';
+import { {{camelCase name}}Service } from '../../services/{{kebabCase name}}.service';
+
+vi.mock('../../services/{{kebabCase name}}.service', () => ({
+  {{camelCase name}}Service: {
+    get{{pascalCase name}}s: vi.fn(),
+    toggleStatus: vi.fn(),
+    delete{{pascalCase name}}: vi.fn(),
+  },
+}));
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false } },
+});
+
+describe('{{pascalCase name}}ListPage', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should render the list page', async () => {
+    vi.mocked({{camelCase name}}Service.get{{pascalCase name}}s).mockResolvedValue({
+      items: [{ id: '1', name: 'Test {{pascalCase name}}', active: true }],
+      total: 1,
+    });
+
+    render({{pascalCase name}}ListPage, {
+      global: {
+        plugins: [
+          createTestingPinia({ createSpy: vi.fn }),
+          [QueryClientProvider, queryClient],
+        ],
+        stubs: {
+          'router-link': true,
+          'router-view': true,
+        },
+      },
+    });
+
+    expect(screen.getByText('{{pascalCase name}}s')).toBeDefined();
+    expect(await screen.findByText('Test {{pascalCase name}}')).toBeDefined();
+  });
+});

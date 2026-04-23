@@ -6,7 +6,7 @@ import { renderWithProviders } from '@/test/test-utils';
 describe('DashboardPage', () => {
   it('renders dashboard metrics', () => {
     renderWithProviders(DashboardPage);
-    
+
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Vendas Totais')).toBeInTheDocument();
     expect(screen.getByText('$12,845')).toBeInTheDocument();

@@ -31,7 +31,10 @@ class IntersectionObserverMock {
 // Global helper to trigger intersection
 (globalThis as any).fireIntersection = (isIntersecting: boolean) => {
   observers.forEach((observer) => {
-    observer.callback([{ isIntersecting, target: Array.from(observer.elements)[0] }] as IntersectionObserverEntry[], observer as unknown as IntersectionObserver);
+    observer.callback(
+      [{ isIntersecting, target: Array.from(observer.elements)[0] }] as IntersectionObserverEntry[],
+      observer as unknown as IntersectionObserver
+    );
   });
 };
 
@@ -77,13 +80,13 @@ vi.mock('radix-vue', async (importOriginal) => {
       name: 'FocusScope',
       setup(_, { slots }) {
         return () => slots.default?.();
-      },
-    }),
+      }
+    })
   };
 });
 
 Object.defineProperty(window, 'IntersectionObserver', {
   writable: true,
   configurable: true,
-  value: IntersectionObserverMock,
+  value: IntersectionObserverMock
 });

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/vue';
+import { screen, fireEvent } from '@testing-library/vue';
 import { describe, it, expect, vi } from 'vitest';
 import ErrorPage from '../ErrorPage.vue';
 import { renderWithProviders } from '@/test/test-utils';
@@ -41,21 +41,26 @@ describe('ErrorPage', () => {
 
   it('handles reload', async () => {
     const originalLocation = window.location;
-    delete (window as any).location;
-    window.location = { ...originalLocation, reload: vi.fn() };
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { ...originalLocation, reload: vi.fn() }
+    });
 
     renderWithProviders(ErrorPage);
     const reloadButton = screen.getByText('Try Again');
     await fireEvent.click(reloadButton);
 
     expect(window.location.reload).toHaveBeenCalled();
-    window.location = originalLocation;
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: originalLocation
+    });
   });
 
   it('handles back to home', async () => {
     const { router } = renderWithProviders(ErrorPage);
     const pushSpy = vi.spyOn(router, 'push');
-    
+
     const homeButton = screen.getByText('Back to Home');
     await fireEvent.click(homeButton);
 

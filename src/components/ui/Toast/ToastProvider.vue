@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useToastStore } from '@/stores/toast';
-import { 
-  ToastProvider, 
-  ToastViewport, 
-  ToastRoot, 
-  ToastTitle, 
-  ToastDescription, 
+import {
+  ToastProvider,
+  ToastViewport,
+  ToastRoot,
+  ToastTitle,
+  ToastDescription,
   ToastClose,
   ToastProgress,
   ToastIcon
@@ -32,12 +32,12 @@ const handleOpenChange = (id: string, isOpen: boolean) => {
 <template>
   <ToastProvider swipe-direction="right">
     <slot />
-    
+
     <template v-for="toast in toastStore.toasts" :key="toast.id">
-      <ToastRoot 
+      <ToastRoot
         :open="toastState[toast.id] ?? true"
         @update:open="handleOpenChange(toast.id, $event)"
-        :variant="toast.variant" 
+        :variant="toast.variant"
         :duration="toast.duration || 3000"
       >
         <div class="flex gap-3 items-start">
@@ -47,13 +47,29 @@ const handleOpenChange = (id: string, isOpen: boolean) => {
             <ToastDescription v-if="toast.description">{{ toast.description }}</ToastDescription>
           </div>
         </div>
-        <ToastClose class="absolute right-2 top-2 rounded-md p-1 text-gray-950/50 opacity-0 transition-opacity hover:text-gray-950 focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        <ToastClose
+          class="absolute right-2 top-2 rounded-md p-1 text-gray-950/50 opacity-0 transition-opacity hover:text-gray-950 focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-4 w-4"
+          >
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
         </ToastClose>
         <ToastProgress :duration="toast.duration || 3000" :variant="toast.variant" />
       </ToastRoot>
     </template>
-    
+
     <ToastViewport />
   </ToastProvider>
 </template>

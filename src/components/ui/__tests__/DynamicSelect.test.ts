@@ -6,7 +6,7 @@ import DynamicSelect from '../DynamicSelect.vue';
 describe.skip('DynamicSelect', () => {
   const mockItems = [
     { id: '1', name: 'Option 1' },
-    { id: '2', name: 'Option 2' },
+    { id: '2', name: 'Option 2' }
   ];
 
   const fetchPage = vi.fn().mockResolvedValue({ items: mockItems, hasMore: false });
@@ -85,7 +85,7 @@ describe.skip('DynamicSelect', () => {
 
     await user.click(screen.getByRole('combobox'));
     await waitFor(() => screen.getByText('Option 1'));
-    
+
     await user.click(screen.getByText('Option 1'));
 
     expect(emitted()['update:modelValue']).toBeTruthy();
@@ -131,7 +131,7 @@ describe.skip('DynamicSelect', () => {
     await waitFor(() => {
       expect(screen.getByText('Option 1')).toBeInTheDocument();
     });
-    
+
     const removeButton = screen.getByLabelText('Remove');
     await fireEvent.click(removeButton);
 
@@ -160,7 +160,7 @@ describe.skip('DynamicSelect', () => {
     const mockObserver = vi.fn().mockImplementation(() => ({
       observe,
       disconnect: vi.fn(),
-      unobserve: vi.fn(),
+      unobserve: vi.fn()
     }));
     vi.stubGlobal('IntersectionObserver', mockObserver);
 
@@ -174,11 +174,14 @@ describe.skip('DynamicSelect', () => {
     });
 
     await user.click(screen.getByRole('combobox'));
-    
+
     // Wait for the observer to be initialized and observe called
-    await waitFor(() => {
-      expect(observe).toHaveBeenCalled();
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(observe).toHaveBeenCalled();
+      },
+      { timeout: 2000 }
+    );
 
     vi.unstubAllGlobals();
   });

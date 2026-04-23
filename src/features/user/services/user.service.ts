@@ -22,14 +22,14 @@ export const userService = {
     all?: boolean;
   }) => {
     const { page = 0, size = 25, searchWord, searchFields, filters = {}, sort, all } = options;
-    const res = await api.get(`/v1/user${all ? '/all' : ''}`, { 
-      params: { 
-        page, 
+    const res = await api.get(`/v1/user${all ? '/all' : ''}`, {
+      params: {
+        page,
         size,
         ...(searchWord ? { searchWord, searchFields: searchFields?.join(',') } : {}),
         ...filters,
         ...(sort?.orderBy ? { orderBy: sort.orderBy, orderDirection: sort.orderDirection } : {})
-      } 
+      }
     });
     return res.data;
   },

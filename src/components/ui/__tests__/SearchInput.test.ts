@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/vue';
+import { render, screen, fireEvent } from '@testing-library/vue';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import SearchInput from '../SearchInput.vue';
 

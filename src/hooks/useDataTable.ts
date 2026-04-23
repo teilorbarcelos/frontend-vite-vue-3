@@ -50,7 +50,7 @@ export function useDataTable(options: UseDataTableOptions = {}) {
         currentPage: page,
         onPageChange: (p: number) => (page.value = p),
         pageSize: size,
-        onPageSizeChange: (s: number) => (size.value = s),
+        onPageSizeChange: (s: number) => (size.value = s)
       }
     })
   };

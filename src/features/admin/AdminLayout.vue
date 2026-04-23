@@ -14,12 +14,14 @@ const handleLogout = () => {
   window.location.href = '/login';
 };
 
-const navItems = computed(() => [
-  { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, feature: 'dashboard' },
-  { name: 'Perfis', path: '/roles', icon: Shield, feature: 'role' },
-  { name: 'Usuários', path: '/users', icon: Users, feature: 'user' },
-  { name: 'Produtos', path: '/products', icon: Package, feature: 'product' },
-].filter(item => !item.feature || authStore.hasPermission(item.feature, 'view')));
+const navItems = computed(() =>
+  [
+    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, feature: 'dashboard' },
+    { name: 'Perfis', path: '/roles', icon: Shield, feature: 'role' },
+    { name: 'Usuários', path: '/users', icon: Users, feature: 'user' },
+    { name: 'Produtos', path: '/products', icon: Package, feature: 'product' }
+  ].filter((item) => !item.feature || authStore.hasPermission(item.feature, 'view'))
+);
 
 const isActive = (path: string) => route.path.startsWith(path);
 </script>
@@ -35,10 +37,14 @@ const isActive = (path: string) => route.path.startsWith(path);
           v-for="item in navItems"
           :key="item.path"
           :to="item.path"
-          :class="cn(
-            'flex items-center px-4 py-2 rounded-md transition-colors',
-            isActive(item.path) ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100'
-          )"
+          :class="
+            cn(
+              'flex items-center px-4 py-2 rounded-md transition-colors',
+              isActive(item.path)
+                ? 'bg-indigo-50 text-indigo-700 font-medium'
+                : 'text-gray-700 hover:bg-gray-100'
+            )
+          "
         >
           <component :is="item.icon" class="w-5 h-5 mr-3" />
           {{ item.name }}
@@ -46,7 +52,9 @@ const isActive = (path: string) => route.path.startsWith(path);
       </nav>
     </aside>
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-end px-6 space-x-4">
+      <header
+        class="h-16 bg-white border-b border-gray-200 flex items-center justify-end px-6 space-x-4"
+      >
         <div class="flex items-center space-x-2 text-gray-600">
           <UserIcon class="w-5 h-5" />
           <span class="text-sm font-medium">{{ authStore.user?.name || 'User' }}</span>

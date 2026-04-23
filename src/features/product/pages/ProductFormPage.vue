@@ -18,7 +18,7 @@ const productSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   price: z.number().min(0, 'Invalid price'),
   stock: z.number().int().min(0, 'Invalid stock'),
-  description: z.string().min(1, 'Description is required'),
+  description: z.string().min(1, 'Description is required')
 });
 
 type ProductForm = z.infer<typeof productSchema>;
@@ -34,7 +34,7 @@ const loadingStore = useLoadingStore();
 const { data: product, isLoading: isLoadingProduct } = useQuery({
   queryKey: computed(() => ['product', id]),
   queryFn: () => productService.getProduct(id),
-  enabled: isEditing,
+  enabled: isEditing
 });
 
 const { handleSubmit, resetForm, defineField, errors } = useForm<ProductForm>({
@@ -45,8 +45,8 @@ const { handleSubmit, resetForm, defineField, errors } = useForm<ProductForm>({
     category: '',
     price: 0,
     stock: 0,
-    description: '',
-  },
+    description: ''
+  }
 });
 
 const [name, nameProps] = defineField('name');
@@ -56,20 +56,24 @@ const [price, priceProps] = defineField('price');
 const [stock, stockProps] = defineField('stock');
 const [description, descriptionProps] = defineField('description');
 
-watch(product, (newProduct) => {
-  if (newProduct) {
-    resetForm({
-      values: {
-        name: newProduct.name,
-        sku: newProduct.sku,
-        category: newProduct.category,
-        price: newProduct.price,
-        stock: newProduct.stock,
-        description: newProduct.description,
-      }
-    });
-  }
-}, { immediate: true });
+watch(
+  product,
+  (newProduct) => {
+    if (newProduct) {
+      resetForm({
+        values: {
+          name: newProduct.name,
+          sku: newProduct.sku,
+          category: newProduct.category,
+          price: newProduct.price,
+          stock: newProduct.stock,
+          description: newProduct.description
+        }
+      });
+    }
+  },
+  { immediate: true }
+);
 
 const mutation = useMutation({
   mutationFn: (data: ProductForm) => {
@@ -82,7 +86,9 @@ const mutation = useMutation({
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['products'] });
     loadingStore.hideLoading();
-    toastStore.success(isEditing.value ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!');
+    toastStore.success(
+      isEditing.value ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!'
+    );
     router.push('/products');
   },
   onError: (err: AxiosError<{ message?: string }>) => {
@@ -100,16 +106,16 @@ const onSubmit = handleSubmit((data) => {
   <div v-if="isEditing && isLoadingProduct" class="p-8 text-center text-gray-500">
     Loading product data...
   </div>
-  
+
   <div v-else class="overflow-y-auto flex-1 pb-8">
-    <div class="max-w-2xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+    <div
+      class="max-w-2xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+    >
       <div class="flex items-center justify-between border-b border-gray-200 pb-4">
         <h1 class="text-xl font-bold text-gray-900">
           {{ isEditing ? 'Edit Product' : 'New Product' }}
         </h1>
-        <Button variant="ghost" @click="router.push('/products')">
-          Cancel
-        </Button>
+        <Button variant="ghost" @click="router.push('/products')"> Cancel </Button>
       </div>
 
       <form @submit="onSubmit" class="space-y-4">
@@ -120,7 +126,7 @@ const onSubmit = handleSubmit((data) => {
           :error="errors.name"
           placeholder="Product Name"
         />
-        
+
         <div class="grid grid-cols-2 gap-4">
           <Input
             label="SKU"

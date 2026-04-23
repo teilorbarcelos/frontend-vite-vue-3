@@ -22,14 +22,14 @@ describe('HeaderMaps Coverage', () => {
 
   it('ProductHeaderMap coverage', () => {
     const columns = getProductColumns(mockFn, mockFn, mockFn, permissions);
-    
+
     // Test parseItem for Price
-    const priceCol = columns.find(c => c.keyItem === 'price');
+    const priceCol = columns.find((c) => c.keyItem === 'price');
     expect(priceCol?.parseItem?.(100.5, {} as any)).toBe('$100.50');
     expect(priceCol?.parseItem?.(null, {} as any)).toBe('$0.00');
 
     // Test parseItem for Status
-    const statusCol = columns.find(c => c.keyItem === 'active');
+    const statusCol = columns.find((c) => c.keyItem === 'active');
     render({
       render() {
         return statusCol?.parseItem?.(true, { id: '1', active: true } as any) as any;
@@ -39,7 +39,7 @@ describe('HeaderMaps Coverage', () => {
     cleanup();
 
     // Test parseItem for Actions
-    const actionsCol = columns.find(c => c.title === '');
+    const actionsCol = columns.find((c) => c.title === '');
     render({
       render() {
         return actionsCol?.parseItem?.('1', { id: '1' } as any) as any;
@@ -50,9 +50,9 @@ describe('HeaderMaps Coverage', () => {
 
   it('RoleHeaderMap coverage', () => {
     const columns = getRoleColumns(mockFn, mockFn, mockFn, permissions);
-    
+
     // Test parseItem for Status
-    const statusCol = columns.find(c => c.keyItem === 'active');
+    const statusCol = columns.find((c) => c.keyItem === 'active');
     render({
       render() {
         return statusCol?.parseItem?.(true, { id: '1', active: true } as any) as any;
@@ -62,7 +62,7 @@ describe('HeaderMaps Coverage', () => {
     cleanup();
 
     // Test parseItem for Actions
-    const actionsCol = columns.find(c => c.title === '');
+    const actionsCol = columns.find((c) => c.title === '');
     render({
       render() {
         return actionsCol?.parseItem?.('1', { id: '1' } as any) as any;
@@ -73,9 +73,9 @@ describe('HeaderMaps Coverage', () => {
 
   it('UserHeaderMap coverage', () => {
     const columns = getUserColumns(mockFn, mockFn, mockFn, permissions);
-    
+
     // Test parseItem for Status
-    const statusCol = columns.find(c => c.keyItem === 'active');
+    const statusCol = columns.find((c) => c.keyItem === 'active');
     render({
       render() {
         return statusCol?.parseItem?.(true, { id: '1', active: true } as any) as any;
@@ -85,7 +85,7 @@ describe('HeaderMaps Coverage', () => {
     cleanup();
 
     // Test parseItem for Actions
-    const actionsCol = columns.find(c => c.title === '');
+    const actionsCol = columns.find((c) => c.title === '');
     render({
       render() {
         return actionsCol?.parseItem?.('1', { id: '1' } as any) as any;
@@ -96,13 +96,13 @@ describe('HeaderMaps Coverage', () => {
 
   it('renders correctly without permissions', () => {
     const noPermissions = { canUpdate: false, canDelete: false };
-    
+
     const userCols = getUserColumns(mockFn, mockFn, mockFn, noPermissions);
     const roleCols = getRoleColumns(mockFn, mockFn, mockFn, noPermissions);
     const prodCols = getProductColumns(mockFn, mockFn, mockFn, noPermissions);
 
-    [userCols, roleCols, prodCols].forEach(cols => {
-      const actionsCol = cols.find(c => c.title === '');
+    [userCols, roleCols, prodCols].forEach((cols) => {
+      const actionsCol = cols.find((c) => c.title === '');
       render({
         render() {
           return actionsCol?.parseItem?.('1', { id: '1' } as any) as any;

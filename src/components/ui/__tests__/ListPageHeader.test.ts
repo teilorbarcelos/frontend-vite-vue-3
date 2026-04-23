@@ -46,18 +46,18 @@ describe('ListPageHeader', () => {
     });
     expect(screen.queryByRole('button', { name: /Novo/i })).not.toBeInTheDocument();
   });
-  
+
   it('emits search event when search input changes', async () => {
     const { emitted } = render(ListPageHeader, {
       props: { title: 'Test', filterCount: 0 }
     });
-    
+
     const searchInput = screen.getByPlaceholderText(/Pesquisar/i);
     await fireEvent.update(searchInput, 'new search');
-    
+
     // Search is debounced (500ms)
     await vi.advanceTimersByTime(500);
-    
+
     expect(emitted().search).toBeTruthy();
     expect(emitted().search[0]).toEqual(['new search']);
   });

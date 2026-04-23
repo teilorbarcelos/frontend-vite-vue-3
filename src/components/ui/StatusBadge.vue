@@ -26,13 +26,18 @@ const handleClick = () => {
     @click="handleClick"
     :disabled="!canActivate"
     type="button"
-    :class="cn(
-      'px-2 inline-flex text-xs leading-5 font-semibold rounded-full transition-all',
-      active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800',
-      canActivate 
-        ? ['cursor-pointer hover:ring-2 hover:ring-offset-1', active ? 'hover:ring-green-300' : 'hover:ring-red-300']
-        : 'cursor-not-allowed opacity-70'
-    )"
+    :class="
+      cn(
+        'px-2 inline-flex text-xs leading-5 font-semibold rounded-full transition-all',
+        active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800',
+        canActivate
+          ? [
+              'cursor-pointer hover:ring-2 hover:ring-offset-1',
+              active ? 'hover:ring-green-300' : 'hover:ring-red-300'
+            ]
+          : 'cursor-not-allowed opacity-70'
+      )
+    "
   >
     {{ active ? 'Ativo' : 'Inativo' }}
   </button>

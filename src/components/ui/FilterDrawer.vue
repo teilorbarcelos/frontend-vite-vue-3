@@ -5,13 +5,7 @@ import { parseISO } from 'date-fns';
 import { Filter } from 'lucide-vue-next';
 import Button from './Button.vue';
 import DateRangePicker from './DateRangePicker.vue';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle
-} from './Drawer';
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from './Drawer';
 import Input from './Input.vue';
 
 export interface FilterField {
@@ -30,7 +24,7 @@ interface Props {
 
 /* v8 ignore start */
 const props = withDefaults(defineProps<Props>(), {
-  initialValues: () => ({}),
+  initialValues: () => ({})
 });
 
 const emit = defineEmits(['close', 'filter']);
@@ -40,12 +34,12 @@ const formValues = ref<Record<string, any>>({});
 
 const initForm = () => {
   const values: Record<string, any> = { ...props.initialValues };
-  
-  props.fields.forEach(field => {
+
+  props.fields.forEach((field) => {
     if (field.type === 'dateRange') {
       const start = props.initialValues[`${field.name}_start`];
       const end = props.initialValues[`${field.name}_end`];
-      
+
       /* v8 ignore start */
       if (start || end) {
         values[field.name] = {
@@ -54,31 +48,38 @@ const initForm = () => {
         };
       }
       /* v8 ignore stop */
-    } else if (field.type === 'select' && (values[field.name] === undefined || values[field.name] === null)) {
+    } else if (
+      field.type === 'select' &&
+      (values[field.name] === undefined || values[field.name] === null)
+    ) {
       values[field.name] = '';
     }
   });
-  
+
   formValues.value = values;
 };
 
 /* v8 ignore start */
-watch(() => props.isOpen, (val) => {
-  if (val) initForm();
-}, { immediate: true });
+watch(
+  () => props.isOpen,
+  (val) => {
+    if (val) initForm();
+  },
+  { immediate: true }
+);
 /* v8 ignore stop */
 
 const onSubmit = () => {
   const data = { ...formValues.value };
   const formattedData: Record<string, any> = { ...data };
-  
-  props.fields.forEach(field => {
+
+  props.fields.forEach((field) => {
     /* v8 ignore next */
     if (field.type === 'dateRange' && data[field.name]) {
       /* v8 ignore start */
       const range = data[field.name];
       delete formattedData[field.name];
-      
+
       if (range?.from) {
         const dates = formatDateRange(field.name, range.from, range.to);
         Object.assign(formattedData, dates);
@@ -124,20 +125,17 @@ const handleOpenChange = (open: boolean) => {
       <div class="flex-1 overflow-y-auto p-6 space-y-6">
         <div class="grid grid-cols-1 gap-6">
           <div v-for="field in fields" :key="field.name" class="space-y-2">
-            <label 
-              :for="field.name"
-              class="text-sm font-medium text-gray-700"
-            >
+            <label :for="field.name" class="text-sm font-medium text-gray-700">
               {{ field.label }}
             </label>
-            
+
             <!-- v8 ignore start -->
             <DateRangePicker
               v-if="field.type === 'dateRange'"
               :id="field.name"
               v-model="formValues[field.name]"
             />
-            
+
             <select
               v-else-if="field.type === 'select'"
               :id="field.name"
@@ -149,7 +147,7 @@ const handleOpenChange = (open: boolean) => {
                 {{ opt.label }}
               </option>
             </select>
-            
+
             <Input
               v-else
               :id="field.name"
@@ -163,19 +161,8 @@ const handleOpenChange = (open: boolean) => {
       </div>
 
       <DrawerFooter>
-        <Button 
-          variant="secondary" 
-          @click="handleReset"
-          class="flex-1"
-        >
-          Limpar
-        </Button>
-        <Button 
-          @click="onSubmit"
-          class="flex-1"
-        >
-          Aplicar
-        </Button>
+        <Button variant="secondary" @click="handleReset" class="flex-1"> Limpar </Button>
+        <Button @click="onSubmit" class="flex-1"> Aplicar </Button>
       </DrawerFooter>
     </DrawerContent>
   </Drawer>

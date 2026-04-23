@@ -12,9 +12,11 @@ const props = defineProps<Props>();
 <template>
   <ToastViewport
     v-bind="props"
-    :class="cn(
-      'fixed top-0 right-0 z-100 flex max-h-screen w-full flex-col p-4 md:max-w-[420px]',
-      props.class
-    )"
+    :class="
+      cn(
+        'fixed top-0 right-0 z-100 flex max-h-screen w-full flex-col p-4 md:max-w-[420px]',
+        props.class
+      )
+    "
   />
 </template>

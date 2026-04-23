@@ -1,12 +1,7 @@
 <script setup lang="ts" generic="T">
 import { cn } from '@/utils/cn';
 import { getValueByPath } from '@/utils/getValueByPath';
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  Loader2
-} from 'lucide-vue-next';
+import { ArrowDown, ArrowUp, ArrowUpDown, Loader2 } from 'lucide-vue-next';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../Tooltip';
 import Pagination from './Pagination.vue';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './TableAtoms';
@@ -48,8 +43,18 @@ const computedTotalPages = computed(() => {
 
 <template>
   <TooltipProvider>
-    <div :class="cn('relative flex flex-col h-fit max-h-full w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm', props.class)">
-      <div v-if="isLoading" class="absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-[1px] transition-all animate-in fade-in">
+    <div
+      :class="
+        cn(
+          'relative flex flex-col h-fit max-h-full w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm',
+          props.class
+        )
+      "
+    >
+      <div
+        v-if="isLoading"
+        class="absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-[1px] transition-all animate-in fade-in"
+      >
         <Loader2 class="w-8 h-8 text-indigo-600 animate-spin" />
       </div>
       <div class="flex-1 overflow-auto min-h-0">
@@ -60,16 +65,26 @@ const computedTotalPages = computed(() => {
                 v-for="(col, idx) in headerMap"
                 :key="idx"
                 @click="col.sortable && handleSort(col.keyItem)"
-                :class="cn(
-                  col.sortable && 'cursor-pointer select-none hover:bg-gray-50 transition-colors group'
-                )"
+                :class="
+                  cn(
+                    col.sortable &&
+                      'cursor-pointer select-none hover:bg-gray-50 transition-colors group'
+                  )
+                "
               >
                 <div class="flex items-center space-x-2">
                   <span>{{ col.title }}</span>
-                  <span v-if="col.sortable" :class="cn(
-                    'transition-colors',
-                    sorting?.value.orderBy === col.keyItem ? 'text-indigo-600' : 'text-gray-300 group-hover:text-gray-400'
-                  )">
+                  <span
+                    v-if="col.sortable"
+                    :class="
+                      cn(
+                        'transition-colors',
+                        sorting?.value.orderBy === col.keyItem
+                          ? 'text-indigo-600'
+                          : 'text-gray-300 group-hover:text-gray-400'
+                      )
+                    "
+                  >
                     <template v-if="sorting?.value.orderBy === col.keyItem">
                       <ArrowUp v-if="sorting.value.orderDirection === 'asc'" class="w-4 h-4" />
                       <ArrowDown v-else class="w-4 h-4" />
@@ -90,7 +105,12 @@ const computedTotalPages = computed(() => {
                         <div class="max-w-[300px] truncate cursor-help">
                           <template v-if="col.parseItem">
                             <component
-                              v-if="typeof col.parseItem(getValueByPath(item, col.keyItem), item) !== 'string' && typeof col.parseItem(getValueByPath(item, col.keyItem), item) !== 'number'"
+                              v-if="
+                                typeof col.parseItem(getValueByPath(item, col.keyItem), item) !==
+                                  'string' &&
+                                typeof col.parseItem(getValueByPath(item, col.keyItem), item) !==
+                                  'number'
+                              "
                               :is="col.parseItem(getValueByPath(item, col.keyItem), item)"
                             />
                             <template v-else>
@@ -105,7 +125,12 @@ const computedTotalPages = computed(() => {
                         <div class="max-w-xs wrap-break-word">
                           <template v-if="col.parseItem">
                             <component
-                              v-if="typeof col.parseItem(getValueByPath(item, col.keyItem), item) !== 'string' && typeof col.parseItem(getValueByPath(item, col.keyItem), item) !== 'number'"
+                              v-if="
+                                typeof col.parseItem(getValueByPath(item, col.keyItem), item) !==
+                                  'string' &&
+                                typeof col.parseItem(getValueByPath(item, col.keyItem), item) !==
+                                  'number'
+                              "
                               :is="col.parseItem(getValueByPath(item, col.keyItem), item)"
                             />
                             <template v-else>
@@ -121,7 +146,11 @@ const computedTotalPages = computed(() => {
                   <template v-else>
                     <template v-if="col.parseItem">
                       <component
-                        v-if="typeof col.parseItem(getValueByPath(item, col.keyItem), item) !== 'string' && typeof col.parseItem(getValueByPath(item, col.keyItem), item) !== 'number'"
+                        v-if="
+                          typeof col.parseItem(getValueByPath(item, col.keyItem), item) !==
+                            'string' &&
+                          typeof col.parseItem(getValueByPath(item, col.keyItem), item) !== 'number'
+                        "
                         :is="col.parseItem(getValueByPath(item, col.keyItem), item)"
                       />
                       <template v-else>
@@ -142,7 +171,7 @@ const computedTotalPages = computed(() => {
         </Table>
       </div>
       <!-- v8 ignore start -->
-      <Pagination 
+      <Pagination
         v-if="paginationProps"
         v-bind="paginationProps"
         :totalItems="totalItems ?? paginationProps.totalItems"

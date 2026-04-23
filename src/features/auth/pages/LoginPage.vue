@@ -10,15 +10,17 @@ import { useAuthStore } from '@/stores/auth';
 
 const loginSchema = z.object({
   email: z.email('Invalid email address'),
-  password: z.string({ required_error: 'Password is required' } as any).min(1, 'Password is required'),
+  password: z
+    .string({ required_error: 'Password is required' } as any)
+    .min(1, 'Password is required')
 });
 
 const { handleSubmit, errors, defineField } = useForm({
   validationSchema: toTypedSchema(loginSchema),
   initialValues: {
     email: '',
-    password: '',
-  },
+    password: ''
+  }
 });
 
 const [email, emailProps] = defineField('email');
@@ -35,7 +37,7 @@ const loginMutation = useMutation({
   onSuccess: (data) => {
     authStore.login(data.token, data.refreshToken, data.user);
     router.push('/dashboard');
-  },
+  }
 });
 
 const onSubmit = handleSubmit((values) => {
@@ -87,10 +89,17 @@ const onSubmit = handleSubmit((values) => {
           </div>
         </div>
 
-        <div v-if="loginMutation.isError.value" class="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200 font-medium">
-          {{ axios.isAxiosError(loginMutation.error.value) && (loginMutation.error.value.code === 'ERR_NETWORK' || !loginMutation.error.value.response)
-            ? 'O servidor está offline. Tente novamente mais tarde.'
-            : 'Usuário ou senha incorretos. Verifique seus dados.' }}
+        <div
+          v-if="loginMutation.isError.value"
+          class="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200 font-medium"
+        >
+          {{
+            axios.isAxiosError(loginMutation.error.value) &&
+            (loginMutation.error.value.code === 'ERR_NETWORK' ||
+              !loginMutation.error.value.response)
+              ? 'O servidor está offline. Tente novamente mais tarde.'
+              : 'Usuário ou senha incorretos. Verifique seus dados.'
+          }}
         </div>
 
         <div>

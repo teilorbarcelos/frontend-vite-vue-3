@@ -35,7 +35,6 @@ describe('Toast Component System', () => {
     render(ToastProvider);
 
     toastStore.addToast({
-      id: 'test-id',
       title: 'Removable Toast',
       variant: 'default'
     });
@@ -52,14 +51,14 @@ describe('Toast Component System', () => {
 
     // Should wait for the 500ms timeout in handleOpenChange
     vi.advanceTimersByTime(600);
-    
+
     expect(toastStore.toasts).toHaveLength(0);
   });
 
   it('ToastIcon renders different variants', async () => {
     const { rerender } = render(ToastIcon, { props: { variant: 'success' } });
     expect(screen.getByTestId('success-icon')).toBeInTheDocument();
-    
+
     await rerender({ variant: 'error' });
     expect(screen.getByTestId('error-icon')).toBeInTheDocument();
 
@@ -78,7 +77,7 @@ describe('Toast Component System', () => {
     toastStore.error('Error message');
     toastStore.info('Info message');
     toastStore.warning('Warning message');
-    
+
     expect(toastStore.toasts).toHaveLength(4);
     expect(toastStore.toasts[0].variant).toBe('success');
     expect(toastStore.toasts[1].variant).toBe('error');
@@ -103,14 +102,14 @@ describe('Toast Component System', () => {
   it('ToastProvider handleOpenChange covers false branch', async () => {
     const toastStore = useToastStore();
     render(ToastProvider);
-    
-    toastStore.addToast({ id: 'manual-id', title: 'Manual' });
+
+    toastStore.addToast({ title: 'Manual' });
     await nextTick();
-    
+
     // Find the close button and click it to trigger handleOpenChange(false)
     const closeButton = await screen.findByRole('button');
     await fireEvent.click(closeButton);
-    
+
     vi.advanceTimersByTime(600);
     expect(toastStore.toasts).toHaveLength(0);
   });

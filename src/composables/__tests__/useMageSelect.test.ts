@@ -5,12 +5,12 @@ import { defineComponent, nextTick, reactive } from 'vue';
 import { useMageSelect } from '../useMageSelect';
 
 vi.mock('mage-select-data-engine', () => ({
-  createMageSelectEngine: vi.fn(),
+  createMageSelectEngine: vi.fn()
 }));
 
 describe('useMageSelect', () => {
   const config = {
-    fetchData: vi.fn().mockResolvedValue({ items: [], total: 0 }),
+    fetchData: vi.fn().mockResolvedValue({ items: [], total: 0 })
   };
 
   beforeEach(() => {
@@ -21,7 +21,7 @@ describe('useMageSelect', () => {
       return {
         getState: () => state,
         subscribe: vi.fn().mockReturnValue(vi.fn()),
-        updateConfig: vi.fn(),
+        updateConfig: vi.fn()
       } as any;
     });
   });
@@ -35,24 +35,24 @@ describe('useMageSelect', () => {
   it('updates config when reactive config changes', async () => {
     const fetchFn = vi.fn();
     const configObj = reactive({ fetchData: fetchFn });
-    
+
     const { engine } = useMageSelect(configObj as any);
     const spy = vi.spyOn(engine, 'updateConfig');
-    
+
     configObj.fetchData = vi.fn();
     await nextTick();
-    
+
     expect(spy).toHaveBeenCalled();
   });
 
   it('unsubscribes on unmount', () => {
     const unsubscribeSpy = vi.fn();
     const subscribeSpy = vi.fn().mockReturnValue(unsubscribeSpy);
-    
+
     vi.mocked(createMageSelectEngine).mockReturnValue({
       getState: vi.fn().mockReturnValue({}),
       subscribe: subscribeSpy,
-      updateConfig: vi.fn(),
+      updateConfig: vi.fn()
     } as any);
 
     const TestComponent = defineComponent({
@@ -65,7 +65,7 @@ describe('useMageSelect', () => {
 
     const wrapper = mount(TestComponent);
     wrapper.unmount();
-    
+
     expect(unsubscribeSpy).toHaveBeenCalled();
   });
 });

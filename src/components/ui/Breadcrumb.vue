@@ -9,7 +9,7 @@ const routeMap: Record<string, string> = {
   roles: 'Perfis',
   products: 'Produtos',
   new: 'Novo',
-  update: 'Editar',
+  update: 'Editar'
 };
 
 const route = useRoute();
@@ -18,12 +18,13 @@ const pathnames = computed(() => route.path.split('/').filter((x) => x));
 const breadcrumbs = computed(() => {
   const paths = pathnames.value;
   const result: any[] = [];
-  
+
   paths.forEach((value, index) => {
     // Skip IDs after 'update'
     if (index > 0 && paths[index - 1] === 'update') return;
 
-    const isLast = index === paths.length - 1 || paths[index + 1] === undefined || value === 'update';
+    const isLast =
+      index === paths.length - 1 || paths[index + 1] === undefined || value === 'update';
     const to = `/${paths.slice(0, index + 1).join('/')}`;
     const displayName = routeMap[value] || value.charAt(0).toUpperCase() + value.slice(1);
 
@@ -33,7 +34,7 @@ const breadcrumbs = computed(() => {
       isLast
     });
   });
-  
+
   return result;
 });
 </script>

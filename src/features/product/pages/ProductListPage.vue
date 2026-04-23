@@ -13,16 +13,8 @@ import { productService } from '../services/product.service';
 import { getProductColumns } from '../constants/productHeaderMap';
 import { PRODUCT_SEARCHABLE_FIELDS as searchFields } from '../constants/product.constants';
 
-const {
-  page,
-  size,
-  searchWord,
-  filters,
-  sort,
-  handleSearch,
-  handleFilter,
-  tableProps
-} = useDataTable();
+const { page, size, searchWord, filters, sort, handleSearch, handleFilter, tableProps } =
+  useDataTable();
 
 const isFilterOpen = ref(false);
 const router = useRouter();
@@ -33,24 +25,33 @@ const toastStore = useToastStore();
 const permissions = computed(() => ({
   canCreate: authStore.hasPermission('product', 'create'),
   canUpdate: authStore.hasPermission('product', 'create'),
-  canDelete: authStore.hasPermission('product', 'delete'),
+  canDelete: authStore.hasPermission('product', 'delete')
 }));
 
 const { data, isError, isFetching } = useQuery({
-  queryKey: computed(() => ['products', page.value, size.value, searchWord.value, filters.value, sort.value]),
-  queryFn: () => productService.getProducts({
-    page: page.value, 
-    size: size.value, 
-    searchWord: searchWord.value, 
-    searchFields, 
-    filters: filters.value,
-    sort: sort.value,
-    all: true
-  }),
+  queryKey: computed(() => [
+    'products',
+    page.value,
+    size.value,
+    searchWord.value,
+    filters.value,
+    sort.value
+  ]),
+  queryFn: () =>
+    productService.getProducts({
+      page: page.value,
+      size: size.value,
+      searchWord: searchWord.value,
+      searchFields,
+      filters: filters.value,
+      sort: sort.value,
+      all: true
+    })
 });
 
 const toggleStatusMutation = useMutation({
-  mutationFn: ({ id, active }: { id: string; active: boolean }) => productService.toggleStatus(id, active),
+  mutationFn: ({ id, active }: { id: string; active: boolean }) =>
+    productService.toggleStatus(id, active),
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['products'] });
     toastStore.success('Status do produto atualizado!');
@@ -71,12 +72,14 @@ const deleteMutation = useMutation({
   }
 });
 
-const columns = computed(() => getProductColumns(
-  (id, active) => toggleStatusMutation.mutate({ id, active }),
-  (id) => router.push(`/products/update/${id}`),
-  (id) => deleteMutation.mutate(id),
-  permissions.value
-));
+const columns = computed(() =>
+  getProductColumns(
+    (id, active) => toggleStatusMutation.mutate({ id, active }),
+    (id) => router.push(`/products/update/${id}`),
+    (id) => deleteMutation.mutate(id),
+    permissions.value
+  )
+);
 </script>
 
 <template>

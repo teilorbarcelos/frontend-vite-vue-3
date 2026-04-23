@@ -4,7 +4,7 @@ import DataTable from './DataTable.vue';
 import type { DataTableWithPaginationProps } from './types';
 
 const props = withDefaults(defineProps<DataTableWithPaginationProps<T>>(), {
-  pageSize: 10,
+  pageSize: 10
 });
 
 const currentPage = ref(0);

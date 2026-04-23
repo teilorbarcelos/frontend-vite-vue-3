@@ -9,18 +9,18 @@ export const buttonVariants = cva(
         secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
         outline: 'border border-gray-200 bg-white hover:bg-gray-100 text-gray-700',
         danger: 'bg-red-600 text-white hover:bg-red-700',
-        ghost: 'hover:bg-gray-100 text-gray-700',
+        ghost: 'hover:bg-gray-100 text-gray-700'
       },
       size: {
         sm: 'h-9 px-3',
         md: 'h-10 py-2 px-4',
-        lg: 'h-11 px-8',
-      },
+        lg: 'h-11 px-8'
+      }
     },
     defaultVariants: {
       variant: 'primary',
-      size: 'md',
-    },
+      size: 'md'
+    }
   }
 );
 

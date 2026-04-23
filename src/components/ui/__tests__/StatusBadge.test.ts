@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/vue';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import StatusBadge from '../StatusBadge.vue';
 import { createPinia, setActivePinia } from 'pinia';
 import { VueQueryPlugin } from '@tanstack/vue-query';
-import { renderWithProviders, createTestQueryClient } from '@/test/test-utils';
+import { createTestQueryClient } from '@/test/test-utils';
 
 describe('StatusBadge', () => {
   it('renders "Ativo" when active is true', () => {
@@ -40,7 +40,7 @@ describe('StatusBadge', () => {
 
     const pinia = createPinia();
     setActivePinia(pinia);
-    
+
     const { emitted } = render(StatusBadge, {
       props: { active: true, feature: 'product' },
       global: {

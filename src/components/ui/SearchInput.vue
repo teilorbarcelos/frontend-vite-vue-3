@@ -11,7 +11,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Pesquisar...',
-  defaultValue: '',
+  defaultValue: ''
 });
 
 const emit = defineEmits(['search']);
@@ -41,15 +41,12 @@ const handleClear = () => {
 <template>
   <div :class="props.class">
     <div class="relative group">
-      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors z-10">
+      <div
+        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors z-10"
+      >
         <Search class="h-4 w-4" />
       </div>
-      <Input
-        type="text"
-        v-model="value"
-        :placeholder="placeholder"
-        class="pl-10 pr-10"
-      />
+      <Input type="text" v-model="value" :placeholder="placeholder" class="pl-10 pr-10" />
       <button
         v-if="value"
         type="button"

@@ -6,7 +6,7 @@ const createMockAxiosInstance = () => {
   const instance = vi.fn() as any;
   instance.interceptors = {
     request: { use: vi.fn(), eject: vi.fn() },
-    response: { use: vi.fn(), eject: vi.fn() },
+    response: { use: vi.fn(), eject: vi.fn() }
   };
   instance.get = vi.fn();
   instance.post = vi.fn();
@@ -23,7 +23,7 @@ vi.mock('axios', () => {
   return {
     default: {
       create: vi.fn(() => mockAxiosInstance),
-      post: vi.fn(),
+      post: vi.fn()
     }
   };
 });
@@ -46,30 +46,33 @@ describe('axios lib', () => {
     await import('../axios');
     const requestInterceptor = (mockAxiosInstance.interceptors.request.use as any).mock.calls[0][0];
     localStorage.setItem('token', 'test-token');
-    
+
     const config = { headers: {} };
     const result = requestInterceptor(config);
-    
+
     expect(result.headers.Authorization).toBe('Bearer test-token');
   });
 
   it('response interceptor handles 401 error and tries to refresh token', async () => {
     await import('../axios');
-    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock.calls[0][1];
-    
+    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock
+      .calls[0][1];
+
     localStorage.setItem('refreshToken', 'old-refresh-token');
     const mockResponse = { data: { token: 'new-token', refreshToken: 'new-refresh-token' } };
     (axios.post as any).mockResolvedValue(mockResponse);
-    
+
     const error = {
       response: { status: 401 },
       config: { url: '/test', headers: {}, _retry: false }
     };
-    
+
     // Trigger the interceptor
     await responseErrorInterceptor(error);
-    
-    expect(axios.post).toHaveBeenCalledWith(expect.stringContaining('/refresh'), { refreshToken: 'old-refresh-token' });
+
+    expect(axios.post).toHaveBeenCalledWith(expect.stringContaining('/refresh'), {
+      refreshToken: 'old-refresh-token'
+    });
     expect(localStorage.getItem('token')).toBe('new-token');
     expect(localStorage.getItem('refreshToken')).toBe('new-refresh-token');
     // Verify that it tried to re-run the request
@@ -78,72 +81,78 @@ describe('axios lib', () => {
 
   it('response interceptor redirects to login on refresh failure', async () => {
     await import('../axios');
-    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock.calls[0][1];
-    
+    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock
+      .calls[0][1];
+
     localStorage.setItem('refreshToken', 'old-refresh-token');
     (axios.post as any).mockRejectedValue(new Error('Refresh failed'));
-    
+
     const originalLocation = window.location;
     delete (window as any).location;
     window.location = { ...originalLocation, href: '' } as any;
-    
+
     const error = {
       response: { status: 401 },
       config: { url: '/test', headers: {}, _retry: false }
     };
-    
+
     try {
       await responseErrorInterceptor(error);
     } catch (e) {
       // Expected
     }
-    
+
     expect(window.location.href).toBe('/login');
     window.location = originalLocation as any;
   });
 
   it('response interceptor rethrows non-401 errors', async () => {
     await import('../axios');
-    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock.calls[0][1];
+    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock
+      .calls[0][1];
     const error = { response: { status: 500 }, config: {} };
     await expect(responseErrorInterceptor(error)).rejects.toEqual(error);
   });
 
   it('response interceptor does not retry if already a retry', async () => {
     await import('../axios');
-    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock.calls[0][1];
+    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock
+      .calls[0][1];
     const error = { response: { status: 401 }, config: { _retry: true } };
     await expect(responseErrorInterceptor(error)).rejects.toEqual(error);
   });
 
   it('response interceptor does not retry on login request', async () => {
     await import('../axios');
-    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock.calls[0][1];
+    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock
+      .calls[0][1];
     const error = { response: { status: 401 }, config: { url: '/v1/auth/login' } };
     await expect(responseErrorInterceptor(error)).rejects.toEqual(error);
   });
   it('response interceptor handles successful response', async () => {
     await import('../axios');
-    const responseInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock.calls[0][0];
+    const responseInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock
+      .calls[0][0];
     const response = { data: 'ok' };
     expect(responseInterceptor(response)).toBe(response);
   });
 
   it('response interceptor redirects to login if no refresh token', async () => {
     await import('../axios');
-    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock.calls[0][1];
-    
+    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock
+      .calls[0][1];
+
     const originalLocation = window.location;
     delete (window as any).location;
     window.location = { ...originalLocation, href: '' } as any;
-    
+
     const error = {
       response: { status: 401 },
       config: { url: '/test', headers: {}, _retry: false }
     };
-    
+
     await expect(responseErrorInterceptor(error)).rejects.toEqual(error);
-    
+
     expect(window.location.href).toBe('/login');
     expect(localStorage.getItem('token')).toBeNull();
     window.location = originalLocation as any;
@@ -160,10 +169,11 @@ describe('axios lib', () => {
 
   it('response interceptor does not retry if isLoginRequest', async () => {
     await import('../axios');
-    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock.calls[0][1];
-    const error = { 
-      response: { status: 401 }, 
-      config: { url: '/v1/auth/login', _retry: false } 
+    const responseErrorInterceptor = (mockAxiosInstance.interceptors.response.use as any).mock
+      .calls[0][1];
+    const error = {
+      response: { status: 401 },
+      config: { url: '/v1/auth/login', _retry: false }
     };
     await expect(responseErrorInterceptor(error)).rejects.toEqual(error);
   });

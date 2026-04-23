@@ -8,8 +8,8 @@ vi.mock('@/lib/axios', () => ({
     post: vi.fn(),
     put: vi.fn(),
     delete: vi.fn(),
-    patch: vi.fn(),
-  },
+    patch: vi.fn()
+  }
 }));
 
 describe('userService', () => {
@@ -19,19 +19,28 @@ describe('userService', () => {
 
   it('getUsers calls correct endpoint with params', async () => {
     (api.get as Mock).mockResolvedValue({ data: { items: [], total: 0 } });
-    
-    await userService.getUsers({ page: 1, size: 10, searchWord: 'test', searchFields: ['name'], sort: { orderBy: 'name', orderDirection: 'asc' } });
-    
-    expect(api.get).toHaveBeenCalledWith('/v1/user', expect.objectContaining({
-      params: expect.objectContaining({
-        page: 1,
-        size: 10,
-        searchWord: 'test',
-        searchFields: 'name',
-        orderBy: 'name',
-        orderDirection: 'asc'
+
+    await userService.getUsers({
+      page: 1,
+      size: 10,
+      searchWord: 'test',
+      searchFields: ['name'],
+      sort: { orderBy: 'name', orderDirection: 'asc' }
+    });
+
+    expect(api.get).toHaveBeenCalledWith(
+      '/v1/user',
+      expect.objectContaining({
+        params: expect.objectContaining({
+          page: 1,
+          size: 10,
+          searchWord: 'test',
+          searchFields: 'name',
+          orderBy: 'name',
+          orderDirection: 'asc'
+        })
       })
-    }));
+    );
   });
 
   it('getUsers calls correct endpoint with minimal options', async () => {
@@ -60,7 +69,11 @@ describe('userService', () => {
   it('createUser calls correct endpoint', async () => {
     (api.post as Mock).mockResolvedValue({ data: {} });
     await userService.createUser({ name: 'John', email: 'a@b.com', id_role: 'r1' });
-    expect(api.post).toHaveBeenCalledWith('/v1/user', { name: 'John', email: 'a@b.com', id_role: 'r1' });
+    expect(api.post).toHaveBeenCalledWith('/v1/user', {
+      name: 'John',
+      email: 'a@b.com',
+      id_role: 'r1'
+    });
   });
 
   it('updateUser calls correct endpoint', async () => {

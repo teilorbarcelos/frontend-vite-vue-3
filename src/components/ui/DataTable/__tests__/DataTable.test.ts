@@ -7,12 +7,12 @@ import type { HeaderMapItem } from '../types';
 describe('DataTable', () => {
   const mockData = [
     { id: '1', name: 'John Doe', email: 'john@example.com' },
-    { id: '2', name: 'Jane Smith', email: 'jane@example.com' },
+    { id: '2', name: 'Jane Smith', email: 'jane@example.com' }
   ];
 
   const headerMap: HeaderMapItem<any>[] = [
     { title: 'Name', keyItem: 'name', sortable: true },
-    { title: 'Email', keyItem: 'email' },
+    { title: 'Email', keyItem: 'email' }
   ];
 
   it('renders data correctly', () => {
@@ -52,7 +52,9 @@ describe('DataTable', () => {
     });
 
     // Check for the loader icon (Loader2)
-    expect(screen.getByRole('table').parentElement?.previousSibling).toHaveClass('absolute inset-0');
+    expect(screen.getByRole('table').parentElement?.previousSibling).toHaveClass(
+      'absolute inset-0'
+    );
   });
 
   it('handles sorting click', async () => {
@@ -120,17 +122,22 @@ describe('DataTable', () => {
     });
     const trigger = screen.getByText('This is a very long text that should be truncated');
     expect(trigger).toHaveClass('truncate');
-    
+
     // Hover to open tooltip
     await user.hover(trigger);
-    
-    // We try to find the tooltip content. If it fails due to JSDOM/Portal issues, 
+
+    // We try to find the tooltip content. If it fails due to JSDOM/Portal issues,
     // we still have coverage for the trigger branch.
     try {
-      await waitFor(() => {
-        // The text appears twice: once in the trigger and once in the tooltip
-        expect(screen.getAllByText('This is a very long text that should be truncated').length).toBeGreaterThan(1);
-      }, { timeout: 2000 });
+      await waitFor(
+        () => {
+          // The text appears twice: once in the trigger and once in the tooltip
+          expect(
+            screen.getAllByText('This is a very long text that should be truncated').length
+          ).toBeGreaterThan(1);
+        },
+        { timeout: 2000 }
+      );
     } catch (e) {
       // Fallback: if tooltip doesn't open in test, we don't fail the suite
       // as long as the trigger was rendered (which we already checked)
@@ -140,9 +147,9 @@ describe('DataTable', () => {
 
   it('handles truncated content with custom parseItem returning a component', () => {
     const headerWithTruncate: HeaderMapItem<any>[] = [
-      { 
-        title: 'Long Text', 
-        keyItem: 'text', 
+      {
+        title: 'Long Text',
+        keyItem: 'text',
         truncate: true,
         parseItem: (val) => ({ template: `<span class="custom-comp">${val}</span>` })
       }
@@ -160,9 +167,9 @@ describe('DataTable', () => {
 
   it('handles truncated content with custom parseItem returning a string', () => {
     const headerWithTruncate: HeaderMapItem<any>[] = [
-      { 
-        title: 'Long Text', 
-        keyItem: 'text', 
+      {
+        title: 'Long Text',
+        keyItem: 'text',
         truncate: true,
         parseItem: (val) => `Prefix: ${val}`
       }
@@ -179,10 +186,10 @@ describe('DataTable', () => {
 
   it('handles custom parseItem returning a component', () => {
     const headerWithComponent: HeaderMapItem<any>[] = [
-      { 
-        title: 'Status', 
-        keyItem: 'active', 
-        parseItem: (val) => ({ template: `<span>${val ? 'Active' : 'Inactive'}</span>` }) 
+      {
+        title: 'Status',
+        keyItem: 'active',
+        parseItem: (val) => ({ template: `<span>${val ? 'Active' : 'Inactive'}</span>` })
       }
     ];
     render(DataTable, {
@@ -197,10 +204,10 @@ describe('DataTable', () => {
 
   it('handles custom parseItem returning a string', () => {
     const headerWithString: HeaderMapItem<any>[] = [
-      { 
-        title: 'Price', 
-        keyItem: 'price', 
-        parseItem: (val) => `$${val}` 
+      {
+        title: 'Price',
+        keyItem: 'price',
+        parseItem: (val) => `$${val}`
       }
     ];
     render(DataTable, {
@@ -277,7 +284,7 @@ describe('DataTable', () => {
         isLoading: true
       }
     });
-    
+
     // Check for the Loader2 component container
     const loaderContainer = container.querySelector('.animate-spin');
     expect(loaderContainer).toBeInTheDocument();

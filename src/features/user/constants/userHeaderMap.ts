@@ -18,20 +18,22 @@ export const getUserColumns = (
     title: 'Status',
     keyItem: 'active',
     sortable: true,
-    parseItem: (active, user) => h(StatusBadge, {
-      active: !!active,
-      feature: 'user',
-      onClick: () => onToggleStatus(user.id, !user.active)
-    }),
+    parseItem: (active, user) =>
+      h(StatusBadge, {
+        active: !!active,
+        feature: 'user',
+        onClick: () => onToggleStatus(user.id, !user.active)
+      })
   },
   {
     title: '',
     keyItem: 'id',
-    parseItem: (id) => h(DataTableActions, {
-      id: id as string,
-      onEdit: permissions.canUpdate ? onEdit : undefined,
-      onDelete: permissions.canDelete ? onDelete : undefined,
-      deleteMessage: 'Tem certeza que deseja excluir este usuário?'
-    }),
-  },
+    parseItem: (id) =>
+      h(DataTableActions, {
+        id: id as string,
+        onEdit: permissions.canUpdate ? onEdit : undefined,
+        onDelete: permissions.canDelete ? onDelete : undefined,
+        deleteMessage: 'Tem certeza que deseja excluir este usuário?'
+      })
+  }
 ];

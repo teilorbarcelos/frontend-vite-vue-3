@@ -15,7 +15,7 @@ import { useAuthStore } from '@/stores/auth';
 
 describe('UI Component Edge Cases', () => {
   it('Input with error', () => {
-    render(Input, { 
+    render(Input, {
       props: { error: 'This is required' }
     });
     expect(screen.getByText('This is required')).toBeInTheDocument();
@@ -33,7 +33,7 @@ describe('UI Component Edge Cases', () => {
         onPageChange: vi.fn()
       }
     });
-    
+
     const select = container.querySelector('select');
     if (select) {
       await fireEvent.update(select, '20');
@@ -65,7 +65,7 @@ describe('UI Component Edge Cases', () => {
     const { emitted } = render(SearchInput, {
       props: { defaultValue: 'test', onSearch }
     });
-    
+
     const clearButton = screen.getByRole('button');
     await fireEvent.click(clearButton);
     expect(emitted().search).toBeTruthy();
@@ -81,12 +81,12 @@ describe('UI Component Edge Cases', () => {
   it('DataTableActions extra actions click', async () => {
     const onExtra = vi.fn();
     render(DataTableActions, {
-      props: { 
-        id: '1', 
+      props: {
+        id: '1',
         extraActions: [{ label: 'Extra', onClick: onExtra }]
       }
     });
-    
+
     const extraButton = screen.getByTitle('Extra');
     await fireEvent.click(extraButton);
     expect(onExtra).toHaveBeenCalledWith('1');
@@ -95,29 +95,29 @@ describe('UI Component Edge Cases', () => {
   it('FilterDrawer handles dateRange initial values and close', async () => {
     const onClose = vi.fn();
     const { rerender } = renderWithProviders(FilterDrawer, {
-      props: { 
-        isOpen: true, 
+      props: {
+        isOpen: true,
         fields: [{ name: 'date', label: 'Date', type: 'dateRange' }],
         initialValues: { date_start: '2023-01-01', date_end: '2023-01-02' },
         onClose
       }
     });
-    
+
     await waitFor(() => {
       expect(screen.getByText('01/01/2023 - 02/01/2023')).toBeInTheDocument();
     });
-    
+
     await rerender({ isOpen: false });
   });
 
   it('DateRangePicker start only and placeholder', async () => {
     const { rerender } = render(DateRangePicker, {
-      props: { 
+      props: {
         modelValue: { from: new Date(2023, 0, 1) }
       }
     });
     expect(screen.getByText('01/01/2023')).toBeInTheDocument();
-    
+
     await rerender({ modelValue: undefined, placeholder: 'Pick a date' });
     expect(screen.getByText('Pick a date')).toBeInTheDocument();
   });
@@ -135,7 +135,7 @@ describe('UI Component Edge Cases', () => {
         'onUpdate:modelValue': onUpdate
       }
     });
-    
+
     const removeButton = await screen.findByLabelText('Remove');
     await fireEvent.click(removeButton);
   });
@@ -149,9 +149,9 @@ describe('UI Component Edge Cases', () => {
         getOptionValue: (i: any) => i.id
       }
     });
-    
+
     await fireEvent.click(screen.getByRole('combobox'));
-    
+
     if ((globalThis as any).fireIntersection) {
       (globalThis as any).fireIntersection(true);
     }
@@ -166,7 +166,7 @@ describe('UI Component Edge Cases', () => {
         getOptionValue: (i: any) => i.id
       }
     });
-    
+
     await fireEvent.click(screen.getByRole('combobox'));
     const input = screen.getByPlaceholderText('Pesquisar...');
     await fireEvent.update(input, 'new search');

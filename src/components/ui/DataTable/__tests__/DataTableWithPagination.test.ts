@@ -1,22 +1,25 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/vue';
 import DataTableWithPagination from '../DataTableWithPagination.vue';
-import { nextTick } from 'vue';
 
 describe('DataTableWithPagination', () => {
   const headerMap = [
     { keyItem: 'name', title: 'Name' },
     { keyItem: 'age', title: 'Age' }
   ];
-  
-  const data = Array.from({ length: 15 }, (_, i) => ({ id: `${i}`, name: `User ${i}`, age: 20 + i }));
+
+  const data = Array.from({ length: 15 }, (_, i) => ({
+    id: `${i}`,
+    name: `User ${i}`,
+    age: 20 + i
+  }));
 
   it('renders table and pagination', () => {
     render(DataTableWithPagination, {
       props: {
         headerMap,
         data,
-        pageSize: 10,
+        pageSize: 10
       }
     });
 
@@ -27,7 +30,11 @@ describe('DataTableWithPagination', () => {
   });
 
   it('triggers page change', async () => {
-    const manyData = Array.from({ length: 25 }, (_, i) => ({ id: `${i}`, name: `User ${i}`, age: 20 + i }));
+    const manyData = Array.from({ length: 25 }, (_, i) => ({
+      id: `${i}`,
+      name: `User ${i}`,
+      age: 20 + i
+    }));
     render(DataTableWithPagination, {
       props: {
         headerMap,

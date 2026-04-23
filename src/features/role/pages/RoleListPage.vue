@@ -13,16 +13,8 @@ import { roleService } from '../services/role.service';
 import { getRoleColumns } from '../constants/roleHeaderMap';
 import { ROLE_SEARCHABLE_FIELDS as searchFields } from '../constants/role.constants';
 
-const {
-  page,
-  size,
-  searchWord,
-  filters,
-  sort,
-  handleSearch,
-  handleFilter,
-  tableProps
-} = useDataTable();
+const { page, size, searchWord, filters, sort, handleSearch, handleFilter, tableProps } =
+  useDataTable();
 
 const isFilterOpen = ref(false);
 const router = useRouter();
@@ -33,24 +25,33 @@ const toastStore = useToastStore();
 const permissions = computed(() => ({
   canCreate: authStore.hasPermission('role', 'create'),
   canUpdate: authStore.hasPermission('role', 'create'),
-  canDelete: authStore.hasPermission('role', 'delete'),
+  canDelete: authStore.hasPermission('role', 'delete')
 }));
 
 const { data, isError, isFetching } = useQuery({
-  queryKey: computed(() => ['roles', page.value, size.value, searchWord.value, filters.value, sort.value]),
-  queryFn: () => roleService.getRoles({
-    page: page.value, 
-    size: size.value, 
-    searchWord: searchWord.value, 
-    searchFields, 
-    filters: filters.value,
-    sort: sort.value,
-    all: true
-  }),
+  queryKey: computed(() => [
+    'roles',
+    page.value,
+    size.value,
+    searchWord.value,
+    filters.value,
+    sort.value
+  ]),
+  queryFn: () =>
+    roleService.getRoles({
+      page: page.value,
+      size: size.value,
+      searchWord: searchWord.value,
+      searchFields,
+      filters: filters.value,
+      sort: sort.value,
+      all: true
+    })
 });
 
 const toggleStatusMutation = useMutation({
-  mutationFn: ({ id, active }: { id: string; active: boolean }) => roleService.toggleStatus(id, active),
+  mutationFn: ({ id, active }: { id: string; active: boolean }) =>
+    roleService.toggleStatus(id, active),
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['roles'] });
     toastStore.success('Status da role atualizado!');
@@ -71,12 +72,14 @@ const deleteMutation = useMutation({
   }
 });
 
-const columns = computed(() => getRoleColumns(
-  (id, active) => toggleStatusMutation.mutate({ id, active }),
-  (id) => router.push(`/roles/update/${id}`),
-  (id) => deleteMutation.mutate(id),
-  permissions.value
-));
+const columns = computed(() =>
+  getRoleColumns(
+    (id, active) => toggleStatusMutation.mutate({ id, active }),
+    (id) => router.push(`/roles/update/${id}`),
+    (id) => deleteMutation.mutate(id),
+    permissions.value
+  )
+);
 </script>
 
 <template>

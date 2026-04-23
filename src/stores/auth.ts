@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
     },
     staleTime: Infinity,
-    retry: false,
+    retry: false
   });
 
   const isAuthenticated = computed(() => !!user.value);
@@ -62,7 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
   const hasPermission = (feature: string, action: keyof Omit<Permission, 'feature'>) => {
     if (!user.value || !user.value.role) return false;
     const permissions = getRolePermissions(user.value.role) as Permission[];
-    const permission = permissions.find(p => p.feature === feature);
+    const permission = permissions.find((p) => p.feature === feature);
     return permission ? !!permission[action] : false;
   };
 
@@ -72,6 +72,6 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading,
     login,
     logout,
-    hasPermission,
+    hasPermission
   };
 });

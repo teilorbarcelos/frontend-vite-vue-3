@@ -33,14 +33,14 @@ export const roleService = {
     all?: boolean;
   }) => {
     const { page = 0, size = 25, searchWord, searchFields, filters = {}, sort, all } = options;
-    const res = await api.get(`/v1/role${all ? '/all' : ''}`, { 
-      params: { 
-        page, 
+    const res = await api.get(`/v1/role${all ? '/all' : ''}`, {
+      params: {
+        page,
         size,
         ...(searchWord ? { searchWord, searchFields: searchFields?.join(',') } : {}),
         ...filters,
         ...(sort?.orderBy ? { orderBy: sort.orderBy, orderDirection: sort.orderDirection } : {})
-      } 
+      }
     });
     return res.data;
   },
@@ -56,7 +56,10 @@ export const roleService = {
     const res = await api.post('/v1/role', data);
     return res.data;
   },
-  updateRole: async (id: string, data: { name: string; description: string; permissions: RoleFeature[] }) => {
+  updateRole: async (
+    id: string,
+    data: { name: string; description: string; permissions: RoleFeature[] }
+  ) => {
     const res = await api.put(`/v1/role/${id}`, data);
     return res.data;
   },
@@ -68,7 +71,7 @@ export const roleService = {
     const res = await api.patch(`/v1/role/${id}/status`, { active });
     return res.data;
   },
-  
+
   // DynamicSelect Helpers
   mageSelect: async (page: number, query: string, options: { searchFields?: string[] }) => {
     const size = 10;
@@ -78,7 +81,7 @@ export const roleService = {
       searchWord: query,
       searchFields: options.searchFields
     });
-    
+
     return {
       items: res.items as Role[],
       hasMore: (page + 1) * size < res.total
@@ -87,9 +90,7 @@ export const roleService = {
 
   mageHydrate: async (ids: string[]): Promise<Role[]> => {
     if (!ids.length) return [];
-    const roles = await Promise.all(
-      ids.map(id => roleService.getRole(id).catch(() => null))
-    );
+    const roles = await Promise.all(ids.map((id) => roleService.getRole(id).catch(() => null)));
     return roles.filter(Boolean) as Role[];
   }
 };

@@ -18,6 +18,6 @@ export const useLoadingStore = defineStore('loading', () => {
     isLoading,
     message,
     showLoading,
-    hideLoading,
+    hideLoading
   };
 });

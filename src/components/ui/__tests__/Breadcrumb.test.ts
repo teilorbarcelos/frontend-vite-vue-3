@@ -6,7 +6,7 @@ import { renderWithProviders } from '@/test/test-utils';
 describe('Breadcrumb', () => {
   it('renders breadcrumbs based on route', async () => {
     const { router } = renderWithProviders(Breadcrumb);
-    
+
     // Simulate route change to products
     await router.push('/products');
     await router.isReady();
@@ -17,7 +17,7 @@ describe('Breadcrumb', () => {
 
   it('renders deep breadcrumbs', async () => {
     const { router } = renderWithProviders(Breadcrumb);
-    
+
     await router.push('/products/update/123');
     await router.isReady();
 
@@ -28,10 +28,10 @@ describe('Breadcrumb', () => {
 
   it('handles unknown route segments correctly', async () => {
     const { router } = renderWithProviders(Breadcrumb);
-    
+
     await router.push('/unknown-segment');
     await router.isReady();
-    
+
     expect(screen.getByText('Unknown-segment')).toBeInTheDocument();
   });
 });

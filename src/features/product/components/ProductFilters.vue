@@ -6,18 +6,18 @@ interface Props {
   initialValues?: Record<string, any>;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits(['close', 'filter']);
 
 const PRODUCT_FILTER_CONFIG: FilterField[] = [
-  { 
-    name: 'active', 
-    label: 'Status', 
-    type: 'select', 
+  {
+    name: 'active',
+    label: 'Status',
+    type: 'select',
     options: [
       { label: 'Ativo', value: 'true' },
       { label: 'Inativo', value: 'false' }
-    ] 
+    ]
   },
   { name: 'createdAt', label: 'Data de Criação', type: 'dateRange' }
 ];

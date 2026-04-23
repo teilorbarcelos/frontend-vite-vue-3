@@ -6,13 +6,14 @@ import type { Component } from 'vue';
 import ToastProvider from '@/components/ui/Toast/ToastProvider.vue';
 import { h } from 'vue';
 
-export const createTestQueryClient = () => new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
+export const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
+    }
+  });
 
 export function renderWithProviders(component: Component, options: any = {}) {
   const queryClient = options.queryClient || createTestQueryClient();
@@ -24,43 +25,44 @@ export function renderWithProviders(component: Component, options: any = {}) {
     routes: [
       { path: '/', component: { template: '<div>Home</div>' } },
       { path: '/login', component: { template: '<div>Login</div>' } },
-      { path: '/dashboard', component: { template: '<div>Dashboard</div>' }, meta: { title: 'Dashboard' } },
+      {
+        path: '/dashboard',
+        component: { template: '<div>Dashboard</div>' },
+        meta: { title: 'Dashboard' }
+      },
       { path: '/products', component: { template: '<div>Products</div>' } },
       { path: '/products/new', component: { template: '<div>New Product</div>' } },
       { path: '/products/update/:id', component: { template: '<div>Update Product</div>' } },
       { path: '/users', component: { template: '<div>Users</div>' } },
-      { path: '/roles', component: { template: '<div>Roles</div>' } },
-    ],
+      { path: '/roles', component: { template: '<div>Roles</div>' } }
+    ]
   });
 
   // Wrap component in ToastProvider to support toast testing
   const WrappedComponent = {
     setup() {
-      return () => h(ToastProvider, null, {
-        default: () => h(component, options.props)
-      });
+      return () =>
+        h(ToastProvider, null, {
+          default: () => h(component, options.props)
+        });
     }
   };
 
   const result = render(WrappedComponent, {
     global: {
-      plugins: [
-        pinia,
-        router,
-        [VueQueryPlugin, { queryClient }]
-      ],
+      plugins: [pinia, router, [VueQueryPlugin, { queryClient }]],
       stubs: {
-        'RouterLink': false,
-        'RouterView': false,
-      },
+        RouterLink: false,
+        RouterView: false
+      }
     },
-    ...options,
+    ...options
   });
 
   return {
     ...result,
     router,
     queryClient,
-    pinia,
+    pinia
   };
 }

@@ -7,8 +7,8 @@ import { api } from '@/lib/axios';
 
 vi.mock('@/lib/axios', () => ({
   api: {
-    post: vi.fn(),
-  },
+    post: vi.fn()
+  }
 }));
 
 vi.mock('axios', async (importOriginal) => {
@@ -17,9 +17,9 @@ vi.mock('axios', async (importOriginal) => {
     ...actual,
     default: {
       ...actual.default,
-      isAxiosError: vi.fn((err) => err && !!err.isAxiosError),
+      isAxiosError: vi.fn((err) => err && !!err.isAxiosError)
     },
-    isAxiosError: vi.fn((err) => err && !!err.isAxiosError),
+    isAxiosError: vi.fn((err) => err && !!err.isAxiosError)
   };
 });
 
@@ -37,14 +37,18 @@ describe('LoginPage', () => {
 
   it('shows validation errors for empty fields', async () => {
     renderWithProviders(LoginPage);
-    
+
     const submitButton = screen.getByRole('button', { name: /Sign in/i });
     await fireEvent.click(submitButton);
 
     await waitFor(() => {
       // Expect either custom or default zod messages if custom ones fail to trigger
-      expect(screen.queryByText(/Invalid email address/i) || screen.queryByText(/Invalid email/i)).toBeInTheDocument();
-      expect(screen.queryByText(/Password is required/i) || screen.queryByText(/expected string/i)).toBeInTheDocument();
+      expect(
+        screen.queryByText(/Invalid email address/i) || screen.queryByText(/Invalid email/i)
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText(/Password is required/i) || screen.queryByText(/expected string/i)
+      ).toBeInTheDocument();
     });
   });
 
@@ -54,8 +58,8 @@ describe('LoginPage', () => {
       data: {
         token: 'fake-token',
         refreshToken: 'fake-refresh',
-        user: { id: '1', name: 'Test User' },
-      },
+        user: { id: '1', name: 'Test User' }
+      }
     };
     (api.post as any).mockResolvedValue(mockResponse);
 
@@ -64,14 +68,14 @@ describe('LoginPage', () => {
 
     await user.type(screen.getByLabelText(/Email address/i), 'test@example.com');
     await user.type(screen.getByLabelText(/Password/i), 'password123');
-    
+
     const submitButton = screen.getByRole('button', { name: /Sign in/i });
     await user.click(submitButton);
 
     await waitFor(() => {
       expect(api.post).toHaveBeenCalledWith('/v1/auth/login', {
         email: 'test@example.com',
-        password: 'password123',
+        password: 'password123'
       });
       expect(pushSpy).toHaveBeenCalledWith('/dashboard');
     });

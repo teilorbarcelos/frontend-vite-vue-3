@@ -20,7 +20,7 @@ const userSchema = z.object({
   password: z.string().optional(),
   id_role: z.string().min(1, 'Role is required'),
   phone: z.string().optional(),
-  document: z.string().optional(),
+  document: z.string().optional()
 });
 
 type UserForm = z.infer<typeof userSchema>;
@@ -36,7 +36,7 @@ const loadingStore = useLoadingStore();
 const { data: user, isLoading: isLoadingUser } = useQuery({
   queryKey: computed(() => ['user', id]),
   queryFn: () => userService.getUser(id),
-  enabled: isEditing,
+  enabled: isEditing
 });
 
 const { handleSubmit, resetForm, defineField, errors } = useForm<UserForm>({
@@ -47,8 +47,8 @@ const { handleSubmit, resetForm, defineField, errors } = useForm<UserForm>({
     id_role: '',
     phone: '',
     document: '',
-    password: '',
-  },
+    password: ''
+  }
 });
 
 const [name, nameProps] = defineField('name');
@@ -58,20 +58,24 @@ const [id_role, id_roleProps] = defineField('id_role');
 const [phone, phoneProps] = defineField('phone');
 const [document, documentProps] = defineField('document');
 
-watch(user, (newUser) => {
-  if (newUser) {
-    resetForm({
-      values: {
-        name: newUser.name,
-        email: newUser.email,
-        id_role: newUser.id_role,
-        phone: newUser.phone || '',
-        document: newUser.document || '',
-        password: '',
-      }
-    });
-  }
-}, { immediate: true });
+watch(
+  user,
+  (newUser) => {
+    if (newUser) {
+      resetForm({
+        values: {
+          name: newUser.name,
+          email: newUser.email,
+          id_role: newUser.id_role,
+          phone: newUser.phone || '',
+          document: newUser.document || '',
+          password: ''
+        }
+      });
+    }
+  },
+  { immediate: true }
+);
 
 const mutation = useMutation({
   mutationFn: (data: UserForm) => {
@@ -89,7 +93,9 @@ const mutation = useMutation({
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['users'] });
     loadingStore.hideLoading();
-    toastStore.success(isEditing.value ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
+    toastStore.success(
+      isEditing.value ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!'
+    );
     router.push('/users');
   },
   onError: (err: AxiosError<{ message?: string }>) => {
@@ -111,16 +117,16 @@ const onSubmit = handleSubmit((data) => {
   <div v-if="isEditing && isLoadingUser" class="p-8 text-center text-gray-500">
     Loading user data...
   </div>
-  
+
   <div v-else class="overflow-y-auto flex-1 pb-8">
-    <div class="max-w-2xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+    <div
+      class="max-w-2xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+    >
       <div class="flex items-center justify-between border-b border-gray-200 pb-4">
         <h1 class="text-xl font-bold text-gray-900">
           {{ isEditing ? 'Edit User' : 'New User' }}
         </h1>
-        <Button variant="ghost" @click="router.push('/users')">
-          Cancel
-        </Button>
+        <Button variant="ghost" @click="router.push('/users')"> Cancel </Button>
       </div>
 
       <form @submit="onSubmit" class="space-y-4">
@@ -181,9 +187,7 @@ const onSubmit = handleSubmit((data) => {
         />
 
         <div class="pt-4 flex justify-end space-x-3">
-          <Button type="button" variant="secondary" @click="router.push('/users')">
-            Cancel
-          </Button>
+          <Button type="button" variant="secondary" @click="router.push('/users')"> Cancel </Button>
           <Button type="submit" :disabled="mutation.isPending.value">
             {{ mutation.isPending.value ? 'Saving...' : 'Save User' }}
           </Button>

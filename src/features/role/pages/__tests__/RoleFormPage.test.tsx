@@ -11,8 +11,8 @@ vi.mock('../../services/role.service', () => ({
     getRole: vi.fn(),
     createRole: vi.fn(),
     updateRole: vi.fn(),
-    getFeatures: vi.fn(),
-  },
+    getFeatures: vi.fn()
+  }
 }));
 
 vi.mock('vue-router', async (importOriginal) => {
@@ -20,14 +20,12 @@ vi.mock('vue-router', async (importOriginal) => {
   return {
     ...actual,
     useRoute: vi.fn(),
-    useRouter: vi.fn(),
+    useRouter: vi.fn()
   };
 });
 
 describe('RoleFormPage', () => {
-  const mockFeatures = [
-    { id: 'f1', name: 'user', description: 'User Management' },
-  ];
+  const mockFeatures = [{ id: 'f1', name: 'user', description: 'User Management' }];
   const mockNavigate = vi.fn();
   let queryClient: any;
 
@@ -51,17 +49,17 @@ describe('RoleFormPage', () => {
     const user = userEvent.setup();
     (roleService.createRole as Mock).mockResolvedValue({});
     renderWithProviders(RoleFormPage, { queryClient });
-    
+
     await waitFor(() => screen.getByLabelText(/Nome do Perfil/i));
     await user.type(screen.getByLabelText(/Nome do Perfil/i), 'Admin');
     await user.type(screen.getByLabelText(/Descrição/i), 'Administrator role');
-    
+
     // Toggle all permissions for the first feature
     const checkboxes = screen.getAllByRole('checkbox');
     for (const checkbox of checkboxes) {
       await user.click(checkbox);
     }
-    
+
     await user.click(screen.getByText('Salvar Perfil'));
     await waitFor(() => {
       expect(roleService.createRole).toHaveBeenCalled();
@@ -71,9 +69,9 @@ describe('RoleFormPage', () => {
 
   it('submits correctly in edit mode', async () => {
     const user = userEvent.setup();
-    const mockRole = { 
-      id: '1', 
-      name: 'Existing Role', 
+    const mockRole = {
+      id: '1',
+      name: 'Existing Role',
       description: 'Desc',
       RoleFeature: [{ id_feature: 'f1', view: true, create: false, delete: false, activate: false }]
     };
@@ -82,11 +80,11 @@ describe('RoleFormPage', () => {
     (roleService.updateRole as Mock).mockResolvedValue({});
 
     renderWithProviders(RoleFormPage, { queryClient });
-    
+
     await waitFor(() => {
       expect(screen.getByLabelText(/Nome do Perfil/i)).toHaveValue('Existing Role');
     });
-    
+
     await user.click(screen.getByText('Salvar Perfil'));
     await waitFor(() => {
       expect(roleService.updateRole).toHaveBeenCalled();
@@ -97,12 +95,12 @@ describe('RoleFormPage', () => {
   it('navigates back when cancel is clicked', async () => {
     const user = userEvent.setup();
     renderWithProviders(RoleFormPage, { queryClient });
-    
+
     await waitFor(() => screen.getAllByRole('button', { name: /Cancelar/i }));
     const cancelButtons = screen.getAllByRole('button', { name: /Cancelar/i });
     await user.click(cancelButtons[0]);
     expect(mockNavigate).toHaveBeenCalledWith('/roles');
-    
+
     await user.click(cancelButtons[1]);
     expect(mockNavigate).toHaveBeenCalledTimes(2);
   });
@@ -112,30 +110,30 @@ describe('RoleFormPage', () => {
     (roleService.createRole as Mock).mockRejectedValue({
       response: { data: { message: 'API Error Message' } }
     });
-    
+
     renderWithProviders(RoleFormPage, { queryClient });
-    
+
     await waitFor(() => screen.getByLabelText(/Nome do Perfil/i));
     await user.type(screen.getByLabelText(/Nome do Perfil/i), 'Admin');
     await user.type(screen.getByLabelText(/Descrição/i), 'Desc');
 
     await user.click(screen.getByText('Salvar Perfil'));
-    
+
     expect(await screen.findByText(/API Error Message/i)).toBeInTheDocument();
   });
 
   it('handles submission error without message', async () => {
     const user = userEvent.setup();
     (roleService.createRole as Mock).mockRejectedValue(new Error('Generic Error'));
-    
+
     renderWithProviders(RoleFormPage, { queryClient });
-    
+
     await waitFor(() => screen.getByLabelText(/Nome do Perfil/i));
     await user.type(screen.getByLabelText(/Nome do Perfil/i), 'Admin');
     await user.type(screen.getByLabelText(/Descrição/i), 'Desc');
 
     await user.click(screen.getByText('Salvar Perfil'));
-    
+
     await waitFor(() => {
       expect(screen.getByText('Erro ao salvar perfil. Tente novamente.')).toBeInTheDocument();
     });

@@ -10,14 +10,16 @@ interface Props extends /* @vue-ignore */ ButtonVariantProps {
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'primary',
-  size: 'md',
+  size: 'md'
 });
 </script>
 
 <template>
   <button
     v-bind="$attrs"
-    :class="cn(buttonVariants({ variant: props.variant, size: props.size, className: props.class }))"
+    :class="
+      cn(buttonVariants({ variant: props.variant, size: props.size, className: props.class }))
+    "
   >
     <slot />
   </button>

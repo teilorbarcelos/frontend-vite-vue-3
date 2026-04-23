@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'login',
-    component: LoginPage,
+    component: LoginPage
   },
   {
     path: '/',
@@ -17,12 +17,12 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        redirect: '/dashboard',
+        redirect: '/dashboard'
       },
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: () => import('@/features/admin/DashboardPage.vue'), // I'll create a placeholder
+        component: () => import('@/features/admin/DashboardPage.vue') // I'll create a placeholder
       },
       {
         path: 'roles',
@@ -77,32 +77,35 @@ const routes: RouteRecordRaw[] = [
         name: 'products-update',
         component: () => import('@/features/product/pages/ProductFormPage.vue'),
         meta: { feature: 'product', action: 'create' }
-      },
-    ],
+      }
+    ]
   },
   {
     path: '/:pathMatch(.*)*',
-    component: ErrorPage,
+    component: ErrorPage
   }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes
 });
 
 router.beforeEach(async (to, _from, next) => {
   const authStore = useAuthStore();
-  
+
   // Wait for auth to initialize if it's the first load
   if (authStore.isLoading && localStorage.getItem('token')) {
     await new Promise((resolve) => {
-      const unwatch = watch(() => authStore.isLoading, (loading) => {
-        if (!loading) {
-          unwatch();
-          resolve(true);
+      const unwatch = watch(
+        () => authStore.isLoading,
+        (loading) => {
+          if (!loading) {
+            unwatch();
+            resolve(true);
+          }
         }
-      });
+      );
     });
   }
 

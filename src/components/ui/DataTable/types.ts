@@ -1,5 +1,9 @@
 /* v8 ignore start */
 export type SortDirection = 'asc' | 'desc' | undefined;
+export interface TableSort {
+  orderBy?: string;
+  orderDirection?: SortDirection;
+}
 
 export interface HeaderMapItem<T> {
   title: string;
@@ -11,7 +15,7 @@ export interface HeaderMapItem<T> {
 
 export interface PaginationProps {
   currentPage: number;
-  totalPages: number;
+  totalPages?: number;
   pageSize: number;
   onPageChange: (page: number) => void;
   totalItems?: number;

@@ -13,16 +13,8 @@ import { userService } from '../services/user.service';
 import { getUserColumns } from '../constants/userHeaderMap';
 import { USER_SEARCHABLE_FIELDS as searchFields } from '../constants/user.constants';
 
-const {
-  page,
-  size,
-  searchWord,
-  filters,
-  sort,
-  handleSearch,
-  handleFilter,
-  tableProps
-} = useDataTable();
+const { page, size, searchWord, filters, sort, handleSearch, handleFilter, tableProps } =
+  useDataTable();
 
 const isFilterOpen = ref(false);
 const router = useRouter();
@@ -33,24 +25,33 @@ const toastStore = useToastStore();
 const permissions = computed(() => ({
   canCreate: authStore.hasPermission('user', 'create'),
   canUpdate: authStore.hasPermission('user', 'create'),
-  canDelete: authStore.hasPermission('user', 'delete'),
+  canDelete: authStore.hasPermission('user', 'delete')
 }));
 
 const { data, isError, isFetching } = useQuery({
-  queryKey: computed(() => ['users', page.value, size.value, searchWord.value, filters.value, sort.value]),
-  queryFn: () => userService.getUsers({
-    page: page.value, 
-    size: size.value, 
-    searchWord: searchWord.value, 
-    searchFields, 
-    filters: filters.value,
-    sort: sort.value,
-    all: true
-  }),
+  queryKey: computed(() => [
+    'users',
+    page.value,
+    size.value,
+    searchWord.value,
+    filters.value,
+    sort.value
+  ]),
+  queryFn: () =>
+    userService.getUsers({
+      page: page.value,
+      size: size.value,
+      searchWord: searchWord.value,
+      searchFields,
+      filters: filters.value,
+      sort: sort.value,
+      all: true
+    })
 });
 
 const toggleStatusMutation = useMutation({
-  mutationFn: ({ id, active }: { id: string; active: boolean }) => userService.toggleStatus(id, active),
+  mutationFn: ({ id, active }: { id: string; active: boolean }) =>
+    userService.toggleStatus(id, active),
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['users'] });
     toastStore.success('Status do usuário atualizado!');
@@ -71,12 +72,14 @@ const deleteMutation = useMutation({
   }
 });
 
-const columns = computed(() => getUserColumns(
-  (id, active) => toggleStatusMutation.mutate({ id, active }),
-  (id) => router.push(`/users/update/${id}`),
-  (id) => deleteMutation.mutate(id),
-  permissions.value
-));
+const columns = computed(() =>
+  getUserColumns(
+    (id, active) => toggleStatusMutation.mutate({ id, active }),
+    (id) => router.push(`/users/update/${id}`),
+    (id) => deleteMutation.mutate(id),
+    permissions.value
+  )
+);
 </script>
 
 <template>

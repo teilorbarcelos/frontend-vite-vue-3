@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export type ToastVariant = "default" | "success" | "error" | "warning" | "info";
+export type ToastVariant = 'default' | 'success' | 'error' | 'warning' | 'info';
 
 export interface Toast {
   id: string;
@@ -46,6 +46,6 @@ export const useToastStore = defineStore('toast', () => {
     success,
     error,
     info,
-    warning,
+    warning
   };
 });

@@ -1,10 +1,10 @@
 /* v8 ignore start */
-export { 
-  SelectRoot as Select, 
-  SelectGroup, 
-  SelectValue, 
-  SelectLabel, 
-  SelectSeparator 
+export {
+  SelectRoot as Select,
+  SelectGroup,
+  SelectValue,
+  SelectLabel,
+  SelectSeparator
 } from 'radix-vue';
 
 export { default as SelectTrigger } from './SelectTrigger.vue';

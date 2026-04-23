@@ -12,15 +12,15 @@ vi.mock('../../services/user.service', () => ({
   userService: {
     getUser: vi.fn(),
     createUser: vi.fn(),
-    updateUser: vi.fn(),
-  },
+    updateUser: vi.fn()
+  }
 }));
 
 vi.mock('@/features/role/services/role.service', () => ({
   roleService: {
     mageSelect: vi.fn(),
-    mageHydrate: vi.fn(),
-  },
+    mageHydrate: vi.fn()
+  }
 }));
 
 vi.mock('vue-router', async (importOriginal) => {
@@ -28,7 +28,7 @@ vi.mock('vue-router', async (importOriginal) => {
   return {
     ...actual,
     useRoute: vi.fn(),
-    useRouter: vi.fn(),
+    useRouter: vi.fn()
   };
 });
 
@@ -40,7 +40,10 @@ describe('UserFormPage', () => {
     vi.clearAllMocks();
     (useRoute as Mock).mockReturnValue({ params: { id: 'new' } });
     (useRouter as Mock).mockReturnValue({ push: mockNavigate });
-    (roleService.mageSelect as Mock).mockResolvedValue({ items: [{ id: 'role-1', name: 'Admin' }], hasMore: false });
+    (roleService.mageSelect as Mock).mockResolvedValue({
+      items: [{ id: 'role-1', name: 'Admin' }],
+      hasMore: false
+    });
     (roleService.mageHydrate as Mock).mockResolvedValue([{ id: 'role-1', name: 'Admin' }]);
     queryClient = createTestQueryClient();
   });
@@ -68,12 +71,14 @@ describe('UserFormPage', () => {
     await user.click(screen.getByRole('button', { name: /Save User/i }));
 
     await waitFor(() => {
-      expect(userService.createUser).toHaveBeenCalledWith(expect.objectContaining({
-        name: 'New User',
-        email: 'new@example.com',
-        phone: '11999999999',
-        document: '12345678901'
-      }));
+      expect(userService.createUser).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'New User',
+          email: 'new@example.com',
+          phone: '11999999999',
+          document: '12345678901'
+        })
+      );
       expect(mockNavigate).toHaveBeenCalledWith('/users');
     });
   });
@@ -86,11 +91,11 @@ describe('UserFormPage', () => {
 
     await user.type(screen.getByLabelText(/Name/i), 'New User');
     await user.type(screen.getByLabelText(/Email/i), 'new@example.com');
-    
+
     await user.click(screen.getByLabelText(/Perfil/i));
     await waitFor(() => screen.getByText('Admin'));
     await user.click(screen.getByText('Admin'));
-    
+
     await user.click(screen.getByRole('button', { name: /Save User/i }));
 
     await waitFor(() => {
@@ -108,7 +113,7 @@ describe('UserFormPage', () => {
       id_role: 'role-1'
     });
     (userService.updateUser as Mock).mockResolvedValue({});
-    
+
     renderWithProviders(UserFormPage, { queryClient });
 
     await waitFor(() => {
@@ -121,9 +126,12 @@ describe('UserFormPage', () => {
     await user.click(screen.getByRole('button', { name: /Save User/i }));
 
     await waitFor(() => {
-      expect(userService.updateUser).toHaveBeenCalledWith('1', expect.objectContaining({
-        name: 'John Updated',
-      }));
+      expect(userService.updateUser).toHaveBeenCalledWith(
+        '1',
+        expect.objectContaining({
+          name: 'John Updated'
+        })
+      );
       expect(mockNavigate).toHaveBeenCalledWith('/users');
     });
   });
@@ -131,11 +139,11 @@ describe('UserFormPage', () => {
   it('navigates back when cancel is clicked', async () => {
     userEvent.setup();
     renderWithProviders(UserFormPage, { queryClient });
-    
+
     const cancelButtons = screen.getAllByRole('button', { name: /Cancel/i });
     await fireEvent.click(cancelButtons[0]);
     expect(mockNavigate).toHaveBeenCalledWith('/users');
-    
+
     await fireEvent.click(cancelButtons[1]);
     expect(mockNavigate).toHaveBeenCalledTimes(2);
   });
@@ -145,19 +153,19 @@ describe('UserFormPage', () => {
     (userService.createUser as Mock).mockRejectedValue({
       response: { data: { message: 'API Error Message' } }
     });
-    
+
     renderWithProviders(UserFormPage, { queryClient });
-    
+
     await user.type(screen.getByLabelText(/Name/i), 'New User');
     await user.type(screen.getByLabelText(/Email/i), 'new@example.com');
     await user.type(screen.getByLabelText(/Password/i), 'password123');
-    
+
     await user.click(screen.getByLabelText(/Perfil/i));
     await waitFor(() => screen.getByText('Admin'));
     await user.click(screen.getByText('Admin'));
 
     await user.click(screen.getByRole('button', { name: /Save User/i }));
-    
+
     expect(await screen.findByText(/API Error Message/i)).toBeInTheDocument();
   });
 
@@ -166,20 +174,22 @@ describe('UserFormPage', () => {
     (userService.createUser as Mock).mockRejectedValue({
       response: { data: {} }
     });
-    
+
     renderWithProviders(UserFormPage, { queryClient });
-    
+
     await user.type(screen.getByLabelText(/Name/i), 'New User');
     await user.type(screen.getByLabelText(/Email/i), 'new@example.com');
     await user.type(screen.getByLabelText(/Password/i), 'password123');
-    
+
     await user.click(screen.getByLabelText(/Perfil/i));
     await waitFor(() => screen.getByText('Admin'));
     await user.click(screen.getByText('Admin'));
 
     await user.click(screen.getByRole('button', { name: /Save User/i }));
-    
-    expect(await screen.findByText(/Erro ao salvar usuário. Tente novamente./i)).toBeInTheDocument();
+
+    expect(
+      await screen.findByText(/Erro ao salvar usuário. Tente novamente./i)
+    ).toBeInTheDocument();
   });
 
   it('shows "Saving..." text when mutation is pending', async () => {
@@ -189,11 +199,11 @@ describe('UserFormPage', () => {
     await user.type(screen.getByLabelText(/Name/i), 'New User');
     await user.type(screen.getByLabelText(/Email/i), 'new@example.com');
     await user.type(screen.getByLabelText(/Password/i), 'password123');
-    
+
     await user.click(screen.getByLabelText(/Perfil/i));
     await waitFor(() => screen.getByText('Admin'));
     await user.click(screen.getByText('Admin'));
-    
+
     await user.click(screen.getByRole('button', { name: /Save User/i }));
     await waitFor(() => {
       expect(screen.getByText('Saving...')).toBeInTheDocument();
@@ -203,9 +213,9 @@ describe('UserFormPage', () => {
   it('shows loading state when fetching user data', async () => {
     (useRoute as Mock).mockReturnValue({ params: { id: '1' } });
     (userService.getUser as Mock).mockReturnValue(new Promise(() => {}));
-    
+
     renderWithProviders(UserFormPage, { queryClient });
-    
+
     expect(screen.getByText('Loading user data...')).toBeInTheDocument();
   });
 });

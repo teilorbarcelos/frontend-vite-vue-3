@@ -2,10 +2,10 @@
 /* v8 ignore start */
 // Ignorado para coverage pois não está em uso direto na aplicação e apresenta instabilidade no ambiente JSDOM.
 import { cn } from '@/utils/cn';
-import { 
-  CalendarRoot, 
-  type CalendarRootProps, 
-  CalendarHeader, 
+import {
+  CalendarRoot,
+  type CalendarRootProps,
+  CalendarHeader,
   CalendarHeading,
   CalendarGrid,
   CalendarGridHead,
@@ -31,11 +31,7 @@ const forwarded = useForwardPropsEmits(props, emits);
 </script>
 
 <template>
-  <CalendarRoot
-    v-bind="forwarded"
-    v-slot="{ grid, weekDays }"
-    :class="cn('p-4', props.class)"
-  >
+  <CalendarRoot v-bind="forwarded" v-slot="{ grid, weekDays }" :class="cn('p-4', props.class)">
     <CalendarHeader class="flex justify-between items-center mb-4">
       <CalendarPrev class="p-2 hover:bg-gray-100 rounded-md transition-colors">
         <ChevronLeft class="w-4 h-4" />
@@ -47,7 +43,11 @@ const forwarded = useForwardPropsEmits(props, emits);
     </CalendarHeader>
 
     <div class="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-      <CalendarGrid v-for="month in grid" :key="month.value.toString()" class="w-full border-collapse space-y-1">
+      <CalendarGrid
+        v-for="month in grid"
+        :key="month.value.toString()"
+        class="w-full border-collapse space-y-1"
+      >
         <CalendarGridHead>
           <CalendarGridRow class="flex w-full mt-2">
             <CalendarHeadCell
@@ -60,7 +60,11 @@ const forwarded = useForwardPropsEmits(props, emits);
           </CalendarGridRow>
         </CalendarGridHead>
         <CalendarGridBody>
-          <CalendarGridRow v-for="(weekDates, index) in month.rows" :key="`weekDate-${index}`" class="flex w-full mt-2">
+          <CalendarGridRow
+            v-for="(weekDates, index) in month.rows"
+            :key="`weekDate-${index}`"
+            class="flex w-full mt-2"
+          >
             <CalendarCell
               v-for="weekDate in weekDates"
               :key="weekDate.toString()"
@@ -70,13 +74,15 @@ const forwarded = useForwardPropsEmits(props, emits);
               <CalendarCellTrigger
                 :day="weekDate"
                 :month="month.value"
-                :class="cn(
-                  'h-10 w-10 p-0 font-normal rounded-md transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer',
-                  'data-selected:bg-indigo-600 data-selected:text-white data-selected:hover:bg-indigo-600 data-selected:focus:bg-indigo-600',
-                  'data-outside-view:text-gray-500 data-outside-view:opacity-50',
-                  'data-disabled:text-gray-500 data-disabled:opacity-50',
-                  'data-today:bg-gray-100 data-today:text-gray-900'
-                )"
+                :class="
+                  cn(
+                    'h-10 w-10 p-0 font-normal rounded-md transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer',
+                    'data-selected:bg-indigo-600 data-selected:text-white data-selected:hover:bg-indigo-600 data-selected:focus:bg-indigo-600',
+                    'data-outside-view:text-gray-500 data-outside-view:opacity-50',
+                    'data-disabled:text-gray-500 data-disabled:opacity-50',
+                    'data-today:bg-gray-100 data-today:text-gray-900'
+                  )
+                "
               />
             </CalendarCell>
           </CalendarGridRow>
