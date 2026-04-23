@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterView } from 'vue-router';
+import ToastProvider from '@/components/ui/Toast/ToastProvider.vue';
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools';
 </script>
 
 <template>
-  <HelloWorld />
+  <ToastProvider>
+    <RouterView />
+    <VueQueryDevtools />
+  </ToastProvider>
 </template>
