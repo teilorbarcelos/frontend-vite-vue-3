@@ -1,0 +1,223 @@
+import { screen, waitFor } from '@testing-library/vue';
+import userEvent from '@testing-library/user-event';
+import {{pascalCase name}}ListPage from '../{{pascalCase name}}ListPage.vue';
+import { {{camelCase name}}Service } from '../../services/{{kebabCase name}}.service';
+import { renderWithProviders, createTestQueryClient } from '@/test/test-utils';
+
+vi.mock('../../services/{{kebabCase name}}.service', () => ({
+  {{camelCase name}}Service: {
+    get{{pascalCase name}}s: vi.fn(),
+    toggleStatus: vi.fn(),
+    delete{{pascalCase name}}: vi.fn(),
+  },
+}));
+
+describe('{{pascalCase name}}ListPage', () => {
+  let queryClient: any;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    queryClient = createTestQueryClient();
+    
+    // Setup default auth state
+    queryClient.setQueryData(['auth-user'], {
+      id: '1',
+      name: 'Test User',
+      role: {
+        permissions: [
+          { feature: '{{kebabCase name}}', view: true, create: true, delete: true, activate: true }
+        ]
+      }
+    });
+
+    vi.mocked({{camelCase name}}Service.get{{pascalCase name}}s).mockResolvedValue({
+      items: [{ id: '1', name: 'Test {{pascalCase name}}', active: true, created_at: new Date().toISOString() }],
+      total: 1,
+    });
+  });
+
+  it('renders correctly and performs search', async () => {
+    const user = userEvent.setup();
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    expect(screen.getByText('{{pascalCase name}}s')).toBeInTheDocument();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test {{pascalCase name}}')).toBeInTheDocument();
+    });
+
+    const searchInput = screen.getByPlaceholderText(/Pesquisar/i);
+    await user.type(searchInput, 'query');
+    
+    await waitFor(() => {
+      expect({{camelCase name}}Service.get{{pascalCase name}}s).toHaveBeenCalled();
+    }, { timeout: 1500 });
+  });
+
+  it('handles toggle status mutation', async () => {
+    const user = userEvent.setup();
+    vi.mocked({{camelCase name}}Service.toggleStatus).mockResolvedValueOnce({});
+    
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    const statusBadge = await screen.findByText('Ativo');
+    await user.click(statusBadge);
+
+    await waitFor(() => {
+      expect({{camelCase name}}Service.toggleStatus).toHaveBeenCalledWith('1', false);
+    });
+  });
+
+  it('handles toggle status error with message', async () => {
+    const user = userEvent.setup();
+    vi.mocked({{camelCase name}}Service.toggleStatus).mockRejectedValueOnce({
+      response: { data: { message: 'Toggle failed' } }
+    });
+    
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    const statusBadge = await screen.findByText('Ativo');
+    await user.click(statusBadge);
+
+    await waitFor(() => {
+      expect(screen.getByText('Toggle failed')).toBeInTheDocument();
+    });
+  });
+
+  it('handles toggle status error without message', async () => {
+    const user = userEvent.setup();
+    vi.mocked({{camelCase name}}Service.toggleStatus).mockRejectedValueOnce(new Error('Generic Error'));
+    
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    const statusBadge = await screen.findByText('Ativo');
+    await user.click(statusBadge);
+
+    await waitFor(() => {
+      expect(screen.getByText('Erro ao atualizar status.')).toBeInTheDocument();
+    });
+  });
+
+  it('performs delete mutation with confirmation', async () => {
+    const user = userEvent.setup();
+    vi.mocked({{camelCase name}}Service.delete{{pascalCase name}}).mockResolvedValueOnce({});
+    
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    await waitFor(() => screen.getByText('Test {{pascalCase name}}'));
+
+    const menuTriggers = screen.getAllByRole('button', { name: /Abrir menu/i });
+    await user.click(menuTriggers[0]);
+
+    const deleteOption = await screen.findByText('Excluir');
+    await user.click(deleteOption);
+
+    const confirmButton = await screen.findByRole('button', { name: /^Excluir$/ });
+    await user.click(confirmButton);
+
+    await waitFor(() => {
+      expect({{camelCase name}}Service.delete{{pascalCase name}}).toHaveBeenCalledWith('1');
+    });
+  });
+
+  it('handles delete mutation error with message', async () => {
+    const user = userEvent.setup();
+    vi.mocked({{camelCase name}}Service.delete{{pascalCase name}}).mockRejectedValueOnce({
+      response: { data: { message: 'Delete failed' } }
+    });
+    
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    await waitFor(() => screen.getByText('Test {{pascalCase name}}'));
+    await user.click(screen.getAllByRole('button', { name: /Abrir menu/i })[0]);
+    await user.click(await screen.findByText('Excluir'));
+    await user.click(await screen.findByRole('button', { name: /^Excluir$/ }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Delete failed')).toBeInTheDocument();
+    });
+  });
+
+  it('handles delete mutation error without message', async () => {
+    const user = userEvent.setup();
+    vi.mocked({{camelCase name}}Service.delete{{pascalCase name}}).mockRejectedValueOnce(new Error('Generic Error'));
+    
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    await waitFor(() => screen.getByText('Test {{pascalCase name}}'));
+    await user.click(screen.getAllByRole('button', { name: /Abrir menu/i })[0]);
+    await user.click(await screen.findByText('Excluir'));
+    await user.click(await screen.findByRole('button', { name: /^Excluir$/ }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Erro ao excluir.')).toBeInTheDocument();
+    });
+  });
+
+  it('navigates to create page', async () => {
+    const user = userEvent.setup();
+    const { router } = renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+    const pushSpy = vi.spyOn(router, 'push');
+
+    const newButton = await screen.findByText(/Novo {{pascalCase name}}/i);
+    await user.click(newButton);
+
+    expect(pushSpy).toHaveBeenCalledWith('/{{kebabCase name}}s/new');
+  });
+
+  it('navigates to edit page', async () => {
+    const user = userEvent.setup();
+    const { router } = renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+    const pushSpy = vi.spyOn(router, 'push');
+
+    await waitFor(() => screen.getByText('Test {{pascalCase name}}'));
+    await user.click(screen.getAllByRole('button', { name: /Abrir menu/i })[0]);
+    await user.click(screen.getByText('Editar'));
+
+    expect(pushSpy).toHaveBeenCalledWith('/{{kebabCase name}}s/update/1');
+  });
+
+  it('opens filter drawer', async () => {
+    const user = userEvent.setup();
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    const filterButton = await screen.findByText(/Filtros/i);
+    await user.click(filterButton);
+  });
+
+  it('handles empty data and null dates', async () => {
+    vi.mocked({{camelCase name}}Service.get{{pascalCase name}}s).mockResolvedValue({
+      items: [{ id: '1', name: 'No Date', active: true, created_at: null as any }],
+      total: 1,
+    });
+
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    await waitFor(() => {
+      expect(screen.getByText('No Date')).toBeInTheDocument();
+      expect(screen.getByText('-')).toBeInTheDocument();
+    });
+  });
+
+  it('hides create button when missing permission', async () => {
+    queryClient.setQueryData(['auth-user'], {
+      id: '1',
+      name: 'No Perms User',
+      role: { permissions: [] }
+    });
+
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    expect(screen.queryByText(/Novo {{pascalCase name}}/i)).not.toBeInTheDocument();
+  });
+
+  it('shows error state when fetch fails', async () => {
+    vi.mocked({{camelCase name}}Service.get{{pascalCase name}}s).mockRejectedValue(new Error('Fetch failed'));
+    
+    renderWithProviders({{pascalCase name}}ListPage, { queryClient });
+
+    await waitFor(() => {
+      expect(screen.getByText('Erro ao carregar dados')).toBeInTheDocument();
+    });
+  });
+});

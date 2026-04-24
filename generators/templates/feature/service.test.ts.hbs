@@ -1,0 +1,99 @@
+import { api } from '@/lib/axios';
+import { {{camelCase name}}Service } from '../{{kebabCase name}}.service';
+
+vi.mock('@/lib/axios', () => ({
+  api: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+    patch: vi.fn(),
+  },
+}));
+
+describe('{{pascalCase name}}Service', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should fetch {{camelCase name}}s with default params', async () => {
+    const mockData = { items: [], total: 0 };
+    vi.mocked(api.get).mockResolvedValueOnce({ data: mockData });
+
+    const result = await {{camelCase name}}Service.get{{pascalCase name}}s({});
+
+    expect(api.get).toHaveBeenCalledWith('/v1/{{kebabCase name}}', expect.objectContaining({
+      params: expect.objectContaining({ page: 0, size: 25 })
+    }));
+    expect(result).toEqual(mockData);
+  });
+
+  it('should fetch {{camelCase name}}s with all params (search, filters, sort)', async () => {
+    const mockData = { items: [], total: 0 };
+    vi.mocked(api.get).mockResolvedValueOnce({ data: mockData });
+
+    await {{camelCase name}}Service.get{{pascalCase name}}s({ 
+      all: true,
+      searchWord: 'test', 
+      searchFields: ['name'],
+      sort: { orderBy: 'name', orderDirection: 'asc' },
+      filters: { active: 'true' }
+    });
+
+    expect(api.get).toHaveBeenCalledWith('/v1/{{kebabCase name}}/all', expect.objectContaining({
+      params: expect.objectContaining({ 
+        searchWord: 'test', 
+        searchFields: 'name',
+        orderBy: 'name',
+        orderDirection: 'asc',
+        active: 'true'
+      })
+    }));
+  });
+
+  it('should fetch a single {{camelCase name}}', async () => {
+    const mockData = { id: '1', name: 'Test' };
+    vi.mocked(api.get).mockResolvedValueOnce({ data: mockData });
+
+    const result = await {{camelCase name}}Service.get{{pascalCase name}}('1');
+
+    expect(api.get).toHaveBeenCalledWith('/v1/{{kebabCase name}}/1');
+    expect(result).toEqual(mockData);
+  });
+
+  it('should create a {{camelCase name}}', async () => {
+    const mockData = { name: 'New {{pascalCase name}}' };
+    vi.mocked(api.post).mockResolvedValueOnce({ data: { id: '1', ...mockData } });
+
+    const result = await {{camelCase name}}Service.create{{pascalCase name}}(mockData);
+
+    expect(api.post).toHaveBeenCalledWith('/v1/{{kebabCase name}}', mockData);
+    expect(result.id).toBe('1');
+  });
+
+  it('should update a {{camelCase name}}', async () => {
+    const mockData = { name: 'Updated' };
+    vi.mocked(api.put).mockResolvedValueOnce({ data: { id: '1', ...mockData } });
+
+    const result = await {{camelCase name}}Service.update{{pascalCase name}}('1', mockData);
+
+    expect(api.put).toHaveBeenCalledWith('/v1/{{kebabCase name}}/1', mockData);
+    expect(result.name).toBe('Updated');
+  });
+
+  it('should delete a {{camelCase name}}', async () => {
+    vi.mocked(api.delete).mockResolvedValueOnce({ data: {} });
+
+    await {{camelCase name}}Service.delete{{pascalCase name}}('1');
+
+    expect(api.delete).toHaveBeenCalledWith('/v1/{{kebabCase name}}/1');
+  });
+
+  it('should toggle {{camelCase name}} status', async () => {
+    vi.mocked(api.patch).mockResolvedValueOnce({ data: {} });
+
+    await {{camelCase name}}Service.toggleStatus('1', true);
+
+    expect(api.patch).toHaveBeenCalledWith('/v1/{{kebabCase name}}/1/status', { active: true });
+  });
+});
