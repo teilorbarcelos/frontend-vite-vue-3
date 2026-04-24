@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, h } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import type { AxiosError } from 'axios';
-import { DataTable } from '@/components/ui/DataTable';
+import { DataTable, DataTableActions } from '@/components/ui/DataTable';
 import ListPageHeader from '@/components/ui/ListPageHeader.vue';
+import StatusBadge from '@/components/ui/StatusBadge.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useToastStore } from '@/stores/toast';
 import { useDataTable } from '@/hooks/useDataTable';
@@ -28,13 +29,13 @@ const authStore = useAuthStore();
 const toastStore = useToastStore();
 
 const permissions = computed(() => ({
-  canCreate: authStore.hasPermission('{{camelCase name}}', 'create'),
-  canUpdate: authStore.hasPermission('{{camelCase name}}', 'update'),
-  canDelete: authStore.hasPermission('{{camelCase name}}', 'delete'),
+  canCreate: authStore.hasPermission('{{kebabCase name}}', 'create'),
+  canUpdate: authStore.hasPermission('{{kebabCase name}}', 'view'),
+  canDelete: authStore.hasPermission('{{kebabCase name}}', 'delete'),
 }));
 
 const { data, isError, isFetching } = useQuery({
-  queryKey: computed(() => ['{{camelCase name}}s', page.value, size.value, searchWord.value, filters.value, sort.value]),
+  queryKey: computed(() => ['{{kebabCase name}}s', page.value, size.value, searchWord.value, filters.value, sort.value]),
   queryFn: () => {{camelCase name}}Service.get{{pascalCase name}}s({
     page: page.value, 
     size: size.value, 
@@ -48,7 +49,7 @@ const { data, isError, isFetching } = useQuery({
 const toggleStatusMutation = useMutation({
   mutationFn: ({ id, active }: { id: string; active: boolean }) => {{camelCase name}}Service.toggleStatus(id, active),
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['{{camelCase name}}s'] });
+    queryClient.invalidateQueries({ queryKey: ['{{kebabCase name}}s'] });
     toastStore.success('Status atualizado!');
   },
   onError: (err: AxiosError<{ message?: string }>) => {
@@ -59,7 +60,7 @@ const toggleStatusMutation = useMutation({
 const deleteMutation = useMutation({
   mutationFn: (id: string) => {{camelCase name}}Service.delete{{pascalCase name}}(id),
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['{{camelCase name}}s'] });
+    queryClient.invalidateQueries({ queryKey: ['{{kebabCase name}}s'] });
     toastStore.success('Excluído com sucesso!');
   },
   onError: (err: AxiosError<{ message?: string }>) => {
@@ -67,11 +68,34 @@ const deleteMutation = useMutation({
   }
 });
 
-// Define columns here or in a separate file
 const columns = computed(() => [
-  { key: 'name', label: 'Nome', sortable: true },
-  { key: 'active', label: 'Status', type: 'boolean' },
-  // Add more columns
+  { title: 'Nome', keyItem: 'name', sortable: true, truncate: true },
+  { 
+    title: 'Status', 
+    keyItem: 'active', 
+    sortable: true,
+    parseItem: (active: any, item: any) => h(StatusBadge, {
+      active: !!active,
+      feature: '{{kebabCase name}}',
+      onClick: () => toggleStatusMutation.mutate({ id: item.id, active: !active })
+    })
+  },
+  {
+    title: 'Data de Criação',
+    keyItem: 'created_at',
+    sortable: true,
+    parseItem: (val: any) => val ? new Date(val).toLocaleDateString() : '-'
+  },
+  {
+    title: '',
+    keyItem: 'id',
+    parseItem: (id: any) => h(DataTableActions, {
+      id: id as string,
+      onEdit: permissions.value.canUpdate ? () => router.push(`/{{kebabCase name}}s/update/${id}`) : undefined,
+      onDelete: permissions.value.canDelete ? () => deleteMutation.mutate(id as string) : undefined,
+      deleteMessage: 'Tem certeza que deseja excluir?'
+    })
+  }
 ]);
 </script>
 

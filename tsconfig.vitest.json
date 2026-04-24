@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "lib": ["ESNext", "DOM"],
-    "types": ["node", "jsdom", "vitest/globals"]
+    "types": ["node", "jsdom", "vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
     "src/**/*.ts",

@@ -72,6 +72,9 @@ importers:
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.2.1(jiti@2.6.1))
+      '@pinia/testing':
+        specifier: ^1.0.3
+        version: 1.0.3(pinia@2.3.1(typescript@6.0.3)(vue@3.5.33(typescript@6.0.3)))
       '@tailwindcss/vite':
         specifier: ^4.2.4
         version: 4.2.4(vite@8.0.9(@types/node@24.12.2)(jiti@2.6.1)(yaml@2.8.3))
@@ -403,6 +406,11 @@ packages:
 
   '@oxc-project/types@0.126.0':
     resolution: {integrity: sha512-oGfVtjAgwQVVpfBrbtk4e1XDyWHRFta6BS3GWVzrF8xYBT2VGQAk39yJS/wFSMrZqoiCU4oghT3Ch0HaHGIHcQ==}
+
+  '@pinia/testing@1.0.3':
+    resolution: {integrity: sha512-g+qR49GNdI1Z8rZxKrQC3GN+LfnGTNf5Kk8Nz5Cz6mIGva5WRS+ffPXQfzhA0nu6TveWzPNYTjGl4nJqd3Cu9Q==}
+    peerDependencies:
+      pinia: '>=3.0.4'
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -3025,6 +3033,10 @@ snapshots:
   '@one-ini/wasm@0.1.1': {}
 
   '@oxc-project/types@0.126.0': {}
+
+  '@pinia/testing@1.0.3(pinia@2.3.1(typescript@6.0.3)(vue@3.5.33(typescript@6.0.3)))':
+    dependencies:
+      pinia: 2.3.1(typescript@6.0.3)(vue@3.5.33(typescript@6.0.3))
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
