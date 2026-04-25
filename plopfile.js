@@ -33,6 +33,18 @@ export default function (plop) {
         path: 'src/features/{{kebabCase name}}/pages/__tests__/{{pascalCase name}}ListPage.test.tsx',
         templateFile: 'generators/templates/feature/list-page.test.tsx.hbs'
       },
+      // Form Page
+      {
+        type: 'add',
+        path: 'src/features/{{kebabCase name}}/pages/{{pascalCase name}}FormPage.vue',
+        templateFile: 'generators/templates/feature/form-page.vue.hbs'
+      },
+      // Form Page Test
+      {
+        type: 'add',
+        path: 'src/features/{{kebabCase name}}/pages/__tests__/{{pascalCase name}}FormPage.test.tsx',
+        templateFile: 'generators/templates/feature/form-page.test.tsx.hbs'
+      },
       // Placeholder directories
       {
         type: 'add',

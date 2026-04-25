@@ -1,9 +1,6 @@
 /* v8 ignore start */
-export type SortDirection = 'asc' | 'desc' | undefined;
-export interface TableSort {
-  orderBy?: string;
-  orderDirection?: SortDirection;
-}
+import type { TableSort, SortDirection } from '@/lib/types';
+export type { TableSort, SortDirection };
 
 export interface HeaderMapItem<T> {
   title: string;

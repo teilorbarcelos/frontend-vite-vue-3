@@ -13,7 +13,7 @@ vi.mock('../../services/{{kebabCase name}}.service', () => ({
 }));
 
 describe('{{pascalCase name}}ListPage', () => {
-  let queryClient: any;
+  let queryClient: ReturnType<typeof createTestQueryClient>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -177,17 +177,35 @@ describe('{{pascalCase name}}ListPage', () => {
     expect(pushSpy).toHaveBeenCalledWith('/{{kebabCase name}}s/update/1');
   });
 
-  it('opens filter drawer', async () => {
+  it('handles filter drawer interactions', async () => {
     const user = userEvent.setup();
     renderWithProviders({{pascalCase name}}ListPage, { queryClient });
 
+    // Abrir o drawer
     const filterButton = await screen.findByText(/Filtros/i);
     await user.click(filterButton);
+    
+    // Aplicar filtros (cobre emit filter e close)
+    const applyButton = screen.getByText('Aplicar');
+    await user.click(applyButton);
+    
+    await waitFor(() => {
+      expect({{camelCase name}}Service.get{{pascalCase name}}s).toHaveBeenCalled();
+    });
+
+    // Abrir novamente para testar o limpar
+    await user.click(filterButton);
+    const resetButton = screen.getByText('Limpar');
+    await user.click(resetButton);
+
+    await waitFor(() => {
+      expect({{camelCase name}}Service.get{{pascalCase name}}s).toHaveBeenCalled();
+    });
   });
 
   it('handles empty data and null dates', async () => {
     vi.mocked({{camelCase name}}Service.get{{pascalCase name}}s).mockResolvedValue({
-      items: [{ id: '1', name: 'No Date', active: true, created_at: null as any }],
+      items: [{ id: '1', name: 'No Date', active: true, created_at: null as unknown as string }],
       total: 1,
     });
 

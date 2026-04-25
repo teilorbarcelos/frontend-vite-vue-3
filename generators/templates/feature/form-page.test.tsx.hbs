@@ -1,0 +1,135 @@
+import { screen, waitFor } from '@testing-library/vue';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import {{pascalCase name}}FormPage from '../{{pascalCase name}}FormPage.vue';
+import { renderWithProviders, createTestQueryClient } from '@/test/test-utils';
+import { {{camelCase name}}Service } from '../../services/{{kebabCase name}}.service';
+import { useRoute, useRouter } from 'vue-router';
+
+vi.mock('../../services/{{kebabCase name}}.service', () => ({
+  {{camelCase name}}Service: {
+    get{{pascalCase name}}: vi.fn(),
+    create{{pascalCase name}}: vi.fn(),
+    update{{pascalCase name}}: vi.fn()
+  }
+}));
+
+vi.mock('vue-router', async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    useRoute: vi.fn(),
+    useRouter: vi.fn()
+  };
+});
+
+describe('{{pascalCase name}}FormPage', () => {
+  const mockNavigate = vi.fn();
+  let queryClient: ReturnType<typeof createTestQueryClient>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    (useRoute as Mock).mockReturnValue({ params: { id: 'new' } });
+    (useRouter as Mock).mockReturnValue({ push: mockNavigate });
+    queryClient = createTestQueryClient();
+  });
+
+  it('renders "Novo {{pascalCase name}}" title', () => {
+    renderWithProviders({{pascalCase name}}FormPage, { queryClient });
+    expect(screen.getByText('Novo {{pascalCase name}}')).toBeInTheDocument();
+  });
+
+  it('submits correctly for new {{camelCase name}}', async () => {
+    const user = userEvent.setup();
+    ({{camelCase name}}Service.create{{pascalCase name}} as Mock).mockResolvedValue({});
+    renderWithProviders({{pascalCase name}}FormPage, { queryClient });
+
+    await user.type(screen.getByLabelText(/Nome/i), 'New Item');
+    await user.type(screen.getByLabelText(/Descrição/i), 'Desc');
+
+    await user.click(screen.getByText('Salvar'));
+
+    await waitFor(() => {
+      expect({{camelCase name}}Service.create{{pascalCase name}}).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith('/{{kebabCase name}}s');
+    });
+  });
+
+  it('submits correctly in edit mode', async () => {
+    const user = userEvent.setup();
+    const mockData = {
+      id: '1',
+      name: 'Item A',
+      description: 'D1'
+    };
+    (useRoute as Mock).mockReturnValue({ params: { id: '1' } });
+    ({{camelCase name}}Service.get{{pascalCase name}} as Mock).mockResolvedValue(mockData);
+    ({{camelCase name}}Service.update{{pascalCase name}} as Mock).mockResolvedValue({});
+
+    renderWithProviders({{pascalCase name}}FormPage, { queryClient });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Nome/i)).toHaveValue('Item A');
+    });
+
+    await user.click(screen.getByText('Salvar'));
+    await waitFor(() => {
+      expect({{camelCase name}}Service.update{{pascalCase name}}).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith('/{{kebabCase name}}s');
+    });
+  });
+
+  it('navigates back when cancel is clicked', async () => {
+    const user = userEvent.setup();
+    renderWithProviders({{pascalCase name}}FormPage, { queryClient });
+
+    const cancelButtons = screen.getAllByRole('button', { name: /Cancelar/i });
+    await user.click(cancelButtons[0]);
+    expect(mockNavigate).toHaveBeenCalledWith('/{{kebabCase name}}s');
+
+    await user.click(cancelButtons[1]);
+    expect(mockNavigate).toHaveBeenCalledTimes(2);
+  });
+
+  it('handles submission error with message', async () => {
+    const user = userEvent.setup();
+    ({{camelCase name}}Service.create{{pascalCase name}} as Mock).mockRejectedValue({
+      response: { data: { message: 'API Error Message' } }
+    });
+
+    renderWithProviders({{pascalCase name}}FormPage, { queryClient });
+
+    await user.type(screen.getByLabelText(/Nome/i), 'New Item');
+    await user.click(screen.getByText('Salvar'));
+
+    expect(await screen.findByText(/API Error Message/i)).toBeInTheDocument();
+  });
+
+  it('handles submission error without message', async () => {
+    const user = userEvent.setup();
+    ({{camelCase name}}Service.create{{pascalCase name}} as Mock).mockRejectedValue(new Error('Generic Error'));
+
+    renderWithProviders({{pascalCase name}}FormPage, { queryClient });
+
+    await user.type(screen.getByLabelText(/Nome/i), 'New Item');
+    await user.click(screen.getByText('Salvar'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Erro ao salvar. Tente novamente.')).toBeInTheDocument();
+    });
+  });
+
+  it('shows "Salvando..." text when mutation is pending', async () => {
+    const user = userEvent.setup();
+    ({{camelCase name}}Service.create{{pascalCase name}} as Mock).mockReturnValue(new Promise(() => {}));
+
+    renderWithProviders({{pascalCase name}}FormPage, { queryClient });
+
+    await user.type(screen.getByLabelText(/Nome/i), 'New Item');
+    await user.click(screen.getByText('Salvar'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Salvando...')).toBeInTheDocument();
+    });
+  });
+});

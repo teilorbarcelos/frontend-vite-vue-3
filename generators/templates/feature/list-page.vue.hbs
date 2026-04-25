@@ -6,10 +6,11 @@ import type { AxiosError } from 'axios';
 import { DataTable, DataTableActions } from '@/components/ui/DataTable';
 import ListPageHeader from '@/components/ui/ListPageHeader.vue';
 import StatusBadge from '@/components/ui/StatusBadge.vue';
+import FilterDrawer, { type FilterField } from '@/components/ui/FilterDrawer.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useToastStore } from '@/stores/toast';
 import { useDataTable } from '@/hooks/useDataTable';
-import { {{camelCase name}}Service } from '../services/{{kebabCase name}}.service';
+import { {{camelCase name}}Service, type {{pascalCase name}} } from '../services/{{kebabCase name}}.service';
 
 const {
   page,
@@ -33,6 +34,10 @@ const permissions = computed(() => ({
   canUpdate: authStore.hasPermission('{{kebabCase name}}', 'view'),
   canDelete: authStore.hasPermission('{{kebabCase name}}', 'delete'),
 }));
+
+const filterFields: FilterField[] = [
+  // { name: 'field_name', label: 'Field Label', type: 'text' }
+];
 
 const { data, isError, isFetching } = useQuery({
   queryKey: computed(() => ['{{kebabCase name}}s', page.value, size.value, searchWord.value, filters.value, sort.value]),
@@ -74,24 +79,24 @@ const columns = computed(() => [
     title: 'Status', 
     keyItem: 'active', 
     sortable: true,
-    parseItem: (active: any, item: any) => h(StatusBadge, {
+    parseItem: (active: unknown, item: {{pascalCase name}}) => h(StatusBadge, {
       active: !!active,
       feature: '{{kebabCase name}}',
-      onClick: () => toggleStatusMutation.mutate({ id: item.id, active: !active })
+      onClick: () => toggleStatusMutation.mutate({ id: item.id, active: !active as boolean })
     })
   },
   {
     title: 'Data de Criação',
     keyItem: 'created_at',
     sortable: true,
-    parseItem: (val: any) => val ? new Date(val).toLocaleDateString() : '-'
+    parseItem: (val: unknown) => val ? new Date(val as string).toLocaleDateString() : '-'
   },
   {
     title: '',
     keyItem: 'id',
-    parseItem: (id: any) => h(DataTableActions, {
+    parseItem: (id: unknown) => h(DataTableActions, {
       id: id as string,
-      onEdit: permissions.value.canUpdate ? () => router.push(`/{{kebabCase name}}s/update/${id}`) : undefined,
+      onEdit: permissions.value.canUpdate ? () => router.push(`/{{kebabCase name}}s/update/${id as string}`) : undefined,
       onDelete: permissions.value.canDelete ? () => deleteMutation.mutate(id as string) : undefined,
       deleteMessage: 'Tem certeza que deseja excluir?'
     })
@@ -108,6 +113,14 @@ const columns = computed(() => [
       :filter-count="Object.keys(filters).length"
       :on-create-click="permissions.canCreate ? () => router.push('/{{kebabCase name}}s/new') : undefined"
       create-label="Novo {{pascalCase name}}"
+    />
+
+    <FilterDrawer
+      :is-open="isFilterOpen"
+      :fields="filterFields"
+      :initial-values="filters"
+      @close="isFilterOpen = false"
+      @filter="handleFilter"
     />
 
     <div v-if="isError" class="p-8 text-center text-red-500">Erro ao carregar dados</div>

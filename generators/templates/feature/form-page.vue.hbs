@@ -1,0 +1,133 @@
+<script setup lang="ts">
+import { computed, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
+import type { AxiosError } from 'axios';
+import { z } from 'zod';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import { {{camelCase name}}Service } from '../services/{{kebabCase name}}.service';
+import { useLoadingStore } from '@/stores/loading';
+import { useToastStore } from '@/stores/toast';
+
+const {{camelCase name}}Schema = z.object({
+  name: z.string().min(1, 'Nome é obrigatório'),
+  description: z.string().optional()
+});
+
+type {{pascalCase name}}Form = z.infer<typeof {{camelCase name}}Schema>;
+
+const router = useRouter();
+const route = useRoute();
+const queryClient = useQueryClient();
+const id = route.params.id as string;
+const isEditing = computed(() => Boolean(id && id !== 'new'));
+const toastStore = useToastStore();
+const loadingStore = useLoadingStore();
+
+const { data: {{camelCase name}}, isLoading: isLoading{{pascalCase name}} } = useQuery({
+  queryKey: computed(() => ['{{kebabCase name}}', id]),
+  queryFn: () => {{camelCase name}}Service.get{{pascalCase name}}(id),
+  enabled: isEditing
+});
+
+const { handleSubmit, resetForm, defineField, errors } = useForm<{{pascalCase name}}Form>({
+  validationSchema: toTypedSchema({{camelCase name}}Schema),
+  initialValues: {
+    name: '',
+    description: ''
+  }
+});
+
+const [name, nameProps] = defineField('name');
+const [description, descriptionProps] = defineField('description');
+
+watch(
+  () => {{camelCase name}}.value,
+  (newVal) => {
+    if (newVal) {
+      resetForm({
+        values: {
+          name: newVal.name,
+          description: newVal.description || ''
+        }
+      });
+    }
+  },
+  { immediate: true }
+);
+
+const mutation = useMutation({
+  mutationFn: (data: {{pascalCase name}}Form) => {
+    loadingStore.showLoading('Salvando...');
+    if (isEditing.value) {
+      return {{camelCase name}}Service.update{{pascalCase name}}(id, data);
+    }
+    return {{camelCase name}}Service.create{{pascalCase name}}(data);
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['{{kebabCase name}}s'] });
+    loadingStore.hideLoading();
+    toastStore.success(
+      isEditing.value ? 'Atualizado com sucesso!' : 'Criado com sucesso!'
+    );
+    router.push('/{{kebabCase name}}s');
+  },
+  onError: (err: AxiosError<{ message?: string }>) => {
+    loadingStore.hideLoading();
+    toastStore.error(err.response?.data?.message || 'Erro ao salvar. Tente novamente.');
+  }
+});
+
+const onSubmit = handleSubmit((data) => {
+  mutation.mutate(data);
+});
+</script>
+
+<template>
+  <div v-if="isEditing && isLoading{{pascalCase name}}" class="p-8 text-center text-gray-500">
+    Carregando dados...
+  </div>
+
+  <div v-else class="overflow-y-auto flex-1 pb-8">
+    <div
+      class="max-w-2xl mx-auto space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+    >
+      <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+        <h1 class="text-xl font-bold text-gray-900">
+          \{{ isEditing ? 'Editar {{pascalCase name}}' : 'Novo {{pascalCase name}}' }}
+        </h1>
+        <Button variant="ghost" @click="router.push('/{{kebabCase name}}s')"> Cancelar </Button>
+      </div>
+
+      <form @submit="onSubmit" class="space-y-4">
+        <Input
+          label="Nome"
+          v-bind="nameProps"
+          v-model="name"
+          :error="errors.name"
+          placeholder="Nome"
+        />
+
+        <Input
+          label="Descrição"
+          v-bind="descriptionProps"
+          v-model="description"
+          :error="errors.description"
+          placeholder="Descrição"
+        />
+
+        <div class="pt-4 flex justify-end space-x-3">
+          <Button type="button" variant="secondary" @click="router.push('/{{kebabCase name}}s')">
+            Cancelar
+          </Button>
+          <Button type="submit" :disabled="mutation.isPending.value">
+            \{{ mutation.isPending.value ? 'Salvando...' : 'Salvar' }}
+          </Button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
