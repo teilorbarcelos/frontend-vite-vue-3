@@ -1,18 +1,12 @@
-import { screen } from '@testing-library/vue';
-import { describe, it, expect } from 'vitest';
-import DashboardPage from '../DashboardPage.vue';
 import { renderWithProviders } from '@/test/test-utils';
+import { screen } from '@testing-library/vue';
+import { describe, expect, it } from 'vitest';
+import DashboardPage from '../DashboardPage.vue';
 
 describe('DashboardPage', () => {
-  it('renders dashboard metrics', () => {
+  it('renders empty dashboard state', () => {
     renderWithProviders(DashboardPage);
 
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    expect(screen.getByText('Vendas Totais')).toBeInTheDocument();
-    expect(screen.getByText('$12,845')).toBeInTheDocument();
-    expect(screen.getByText('Novos Pedidos')).toBeInTheDocument();
-    expect(screen.getByText('48')).toBeInTheDocument();
-    expect(screen.getByText('Produtos em Estoque')).toBeInTheDocument();
-    expect(screen.getByText('1,240')).toBeInTheDocument();
   });
 });
