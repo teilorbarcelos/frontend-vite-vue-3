@@ -58,7 +58,7 @@ const { handleSubmit, resetForm, defineField, values, errors } = useForm<RoleFor
 
 const [name, nameProps] = defineField('name');
 const [description, descriptionProps] = defineField('description');
-const { fields } = useFieldArray('permissions');
+const { fields } = useFieldArray<RoleFeature>('permissions');
 
 watch(
   [features, role],
@@ -209,28 +209,28 @@ const onSubmit = handleSubmit((data) => {
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <input
                       type="checkbox"
-                      v-model="values.permissions[index].view"
+                      v-model="field.value.view"
                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <input
                       type="checkbox"
-                      v-model="values.permissions[index].create"
+                      v-model="field.value.create"
                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <input
                       type="checkbox"
-                      v-model="values.permissions[index].delete"
+                      v-model="field.value.delete"
                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <input
                       type="checkbox"
-                      v-model="values.permissions[index].activate"
+                      v-model="field.value.activate"
                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
                   </td>
