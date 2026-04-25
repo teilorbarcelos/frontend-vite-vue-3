@@ -9,7 +9,7 @@ import { computed } from 'vue';
 const route = useRoute();
 const authStore = useAuthStore();
 
-const handleLogout = () => {
+const handleLogout = (): void => {
   authStore.logout();
   window.location.href = '/login';
 };
@@ -23,7 +23,7 @@ const navItems = computed(() =>
   ].filter((item) => !item.feature || authStore.hasPermission(item.feature, 'view'))
 );
 
-const isActive = (path: string) => route.path.startsWith(path);
+const isActive = (path: string): boolean => route.path.startsWith(path);
 </script>
 
 <template>

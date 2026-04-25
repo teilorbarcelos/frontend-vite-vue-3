@@ -1,4 +1,5 @@
 import { api } from '@/lib/axios';
+import type { PaginatedResponse } from '@/lib/types';
 
 export interface RoleFeature {
   id_feature: string;
@@ -28,10 +29,10 @@ export const roleService = {
     size?: number;
     searchWord?: string;
     searchFields?: string[];
-    filters?: Record<string, any>;
+    filters?: Record<string, unknown>;
     sort?: { orderBy?: string; orderDirection?: string };
     all?: boolean;
-  }) => {
+  }): Promise<PaginatedResponse<Role>> => {
     const { page = 0, size = 25, searchWord, searchFields, filters = {}, sort, all } = options;
     const res = await api.get(`/v1/role${all ? '/all' : ''}`, {
       params: {
@@ -44,7 +45,7 @@ export const roleService = {
     });
     return res.data;
   },
-  getRole: async (id: string) => {
+  getRole: async (id: string): Promise<Role> => {
     const res = await api.get(`/v1/role/${id}`);
     return res.data;
   },
@@ -52,28 +53,36 @@ export const roleService = {
     const res = await api.get('/v1/role/features');
     return res.data;
   },
-  createRole: async (data: { name: string; description: string; permissions: RoleFeature[] }) => {
+  createRole: async (data: {
+    name: string;
+    description: string;
+    permissions: RoleFeature[];
+  }): Promise<Role> => {
     const res = await api.post('/v1/role', data);
     return res.data;
   },
   updateRole: async (
     id: string,
     data: { name: string; description: string; permissions: RoleFeature[] }
-  ) => {
+  ): Promise<Role> => {
     const res = await api.put(`/v1/role/${id}`, data);
     return res.data;
   },
-  deleteRole: async (id: string) => {
+  deleteRole: async (id: string): Promise<void> => {
     const res = await api.delete(`/v1/role/${id}`);
     return res.data;
   },
-  toggleStatus: async (id: string, active: boolean) => {
+  toggleStatus: async (id: string, active: boolean): Promise<void> => {
     const res = await api.patch(`/v1/role/${id}/status`, { active });
     return res.data;
   },
 
   // DynamicSelect Helpers
-  mageSelect: async (page: number, query: string, options: { searchFields?: string[] }) => {
+  mageSelect: async (
+    page: number,
+    query: string,
+    options: { searchFields?: string[] }
+  ): Promise<{ items: Role[]; hasMore: boolean }> => {
     const size = 10;
     const res = await roleService.getRoles({
       page,

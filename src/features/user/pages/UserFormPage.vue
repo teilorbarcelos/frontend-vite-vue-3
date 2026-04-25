@@ -88,7 +88,7 @@ const mutation = useMutation({
     if (isEditing.value) {
       return userService.updateUser(id, payload);
     }
-    return userService.createUser(payload as any);
+    return userService.createUser(payload);
   },
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['users'] });

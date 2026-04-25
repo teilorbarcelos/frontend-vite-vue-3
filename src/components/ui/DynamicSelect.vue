@@ -59,7 +59,7 @@ watch(
 const observerTarget = ref<HTMLDivElement | null>(null);
 let observer: IntersectionObserver | null = null;
 
-const setupObserver = () => {
+const setupObserver = (): void => {
   observer?.disconnect();
   if (observerTarget.value) {
     observer = new IntersectionObserver(
@@ -88,31 +88,30 @@ watch(open, (isOpen) => {
   }
 });
 
-const handleSelect = (item: any) => {
-  const typedItem = item as T;
+const handleSelect = (item: T): void => {
   if (props.multiple) {
-    engine.toggleSelection(typedItem);
+    engine.toggleSelection(item);
     // Use nextTick or wait for state update
     setTimeout(() => {
       const currentSelected = engine.getState().selectedItems;
       emit('update:modelValue', currentSelected.map(props.getOptionValue));
     }, 0);
   } else {
-    engine.setValue([props.getOptionValue(typedItem)]);
-    emit('update:modelValue', props.getOptionValue(typedItem));
+    engine.setValue([props.getOptionValue(item)]);
+    emit('update:modelValue', props.getOptionValue(item));
     open.value = false;
   }
 };
 
-const handleRemove = (item: any) => {
-  engine.toggleSelection(item as T);
+const handleRemove = (item: T): void => {
+  engine.toggleSelection(item);
   setTimeout(() => {
     const currentSelected = engine.getState().selectedItems;
     emit('update:modelValue', currentSelected.map(props.getOptionValue));
   }, 0);
 };
 
-const handleOpenChange = (isOpen: boolean) => {
+const handleOpenChange = (isOpen: boolean): void => {
   open.value = isOpen;
   if (isOpen && !state.value.initialized && !state.value.isLoading) {
     engine.initialLoad();

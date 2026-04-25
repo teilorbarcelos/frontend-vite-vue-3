@@ -1,4 +1,5 @@
 import { api } from '@/lib/axios';
+import type { PaginatedResponse } from '@/lib/types';
 
 export interface Product {
   id: string;
@@ -17,10 +18,10 @@ export const productService = {
     size?: number;
     searchWord?: string;
     searchFields?: string[];
-    filters?: Record<string, any>;
+    filters?: Record<string, unknown>;
     sort?: { orderBy?: string; orderDirection?: string };
     all?: boolean;
-  }) => {
+  }): Promise<PaginatedResponse<Product>> => {
     const { page = 0, size = 25, searchWord, searchFields, filters = {}, sort, all } = options;
     const res = await api.get(`/v1/product${all ? '/all' : ''}`, {
       params: {
@@ -33,23 +34,23 @@ export const productService = {
     });
     return res.data;
   },
-  getProduct: async (id: string) => {
+  getProduct: async (id: string): Promise<Product> => {
     const res = await api.get(`/v1/product/${id}`);
     return res.data;
   },
-  createProduct: async (data: Omit<Product, 'id' | 'active'>) => {
+  createProduct: async (data: Omit<Product, 'id' | 'active'>): Promise<Product> => {
     const res = await api.post('/v1/product', data);
     return res.data;
   },
-  updateProduct: async (id: string, data: Partial<Product>) => {
+  updateProduct: async (id: string, data: Partial<Product>): Promise<Product> => {
     const res = await api.put(`/v1/product/${id}`, data);
     return res.data;
   },
-  deleteProduct: async (id: string) => {
+  deleteProduct: async (id: string): Promise<void> => {
     const res = await api.delete(`/v1/product/${id}`);
     return res.data;
   },
-  toggleStatus: async (id: string, active: boolean) => {
+  toggleStatus: async (id: string, active: boolean): Promise<void> => {
     const res = await api.patch(`/v1/product/${id}/status`, { active });
     return res.data;
   }

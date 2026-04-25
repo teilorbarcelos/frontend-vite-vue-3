@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import type { Component } from 'vue';
 import { Edit2, Trash2, MoreHorizontal } from 'lucide-vue-next';
 import Button from '@/components/ui/Button.vue';
 import {
@@ -24,7 +25,7 @@ interface Props {
   deleteMessage?: string;
   extraActions?: {
     label: string;
-    icon?: any;
+    icon?: Component;
     onClick: (id: string) => void;
     className?: string;
   }[];
@@ -37,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const isDeleteDialogOpen = ref(false);
 
-const handleDelete = () => {
+const handleDelete = (): void => {
   isDeleteDialogOpen.value = false;
   props.onDelete?.(props.id);
 };
@@ -49,7 +50,7 @@ const actions = computed(() => {
     result.push({
       label: 'Editar',
       icon: Edit2,
-      onClick: () => props.onEdit!(props.id)
+      onClick: () => props.onEdit?.(props.id)
     });
   }
 

@@ -23,21 +23,23 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['update:modelValue']);
 
-const toCalendarDate = (date?: Date) => {
+const toCalendarDate = (date?: Date): CalendarDate | undefined => {
   if (!date) return undefined;
   return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
 };
 
-const toDate = (dateValue?: DateValue) => {
+const toDate = (dateValue?: DateValue): Date | undefined => {
   if (!dateValue) return undefined;
   return new Date(dateValue.year, dateValue.month - 1, dateValue.day);
 };
 
-const internalValue = ref<any>(
+type RadixDateRange = { start: DateValue | undefined; end: DateValue | undefined };
+
+const internalValue = ref<RadixDateRange | undefined>(
   props.modelValue?.from
     ? {
         start: toCalendarDate(props.modelValue.from),
-        ...(props.modelValue.to ? { end: toCalendarDate(props.modelValue.to) } : {})
+        end: props.modelValue.to ? toCalendarDate(props.modelValue.to) : undefined
       }
     : undefined
 );
@@ -52,14 +54,14 @@ watch(
 
     internalValue.value = {
       start: toCalendarDate(newVal.from),
-      ...(newVal.to ? { end: toCalendarDate(newVal.to) } : {})
+      end: newVal.to ? toCalendarDate(newVal.to) : undefined
     };
   },
   { immediate: true }
 );
 /* v8 ignore stop */
 
-const handleUpdate = (val: any) => {
+const handleUpdate = (val: RadixDateRange | undefined): void => {
   const from = toDate(val?.start);
   const to = toDate(val?.end);
 
@@ -98,7 +100,11 @@ const formattedDate = computed(() => {
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-auto p-0 rounded-xl overflow-hidden" align="start">
-        <RangeCalendar v-model="internalValue" @update:model-value="handleUpdate" initial-focus />
+        <RangeCalendar
+          :model-value="internalValue as any"
+          @update:model-value="handleUpdate"
+          initial-focus
+        />
       </PopoverContent>
     </Popover>
   </div>

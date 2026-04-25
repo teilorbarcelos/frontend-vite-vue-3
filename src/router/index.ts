@@ -91,6 +91,15 @@ const router = createRouter({
   routes
 });
 
+type PermissionAction = 'view' | 'create' | 'delete' | 'activate';
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    feature?: string;
+    action?: PermissionAction;
+  }
+}
+
 router.beforeEach(async (to, _from, next) => {
   const authStore = useAuthStore();
 
@@ -112,7 +121,7 @@ router.beforeEach(async (to, _from, next) => {
   if (to.name !== 'login' && !authStore.isAuthenticated) {
     next({ name: 'login' });
   } else if (to.meta.feature && to.meta.action) {
-    if (!authStore.hasPermission(to.meta.feature as string, to.meta.action as any)) {
+    if (!authStore.hasPermission(to.meta.feature, to.meta.action)) {
       next({ name: 'dashboard' });
     } else {
       next();

@@ -17,9 +17,9 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['search']);
 
 const value = ref(props.defaultValue);
-let timeout: any = null;
+let timeout: ReturnType<typeof setTimeout> | null = null;
 
-const debouncedSearch = (val: string) => {
+const debouncedSearch = (val: string): void => {
   if (timeout) clearTimeout(timeout);
   timeout = setTimeout(() => {
     emit('search', val);
@@ -30,7 +30,7 @@ watch(value, (newVal) => {
   debouncedSearch(newVal);
 });
 
-const handleClear = () => {
+const handleClear = (): void => {
   value.value = '';
   /* v8 ignore next */
   if (timeout) clearTimeout(timeout);

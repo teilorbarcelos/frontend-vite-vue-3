@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { formatDateRange } from '@/utils/validation';
+import type { DateRange } from '@/lib/types';
 import { parseISO } from 'date-fns';
 import { Filter } from 'lucide-vue-next';
 import Button from './Button.vue';
@@ -19,7 +20,7 @@ export interface FilterField {
 interface Props {
   isOpen: boolean;
   fields: FilterField[];
-  initialValues?: Record<string, any>;
+  initialValues?: Record<string, unknown>;
 }
 
 /* v8 ignore start */
@@ -30,15 +31,16 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['close', 'filter']);
 /* v8 ignore stop */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const formValues = ref<Record<string, any>>({});
 
-const initForm = () => {
-  const values: Record<string, any> = { ...props.initialValues };
+const initForm = (): void => {
+  const values: Record<string, unknown> = { ...props.initialValues };
 
   props.fields.forEach((field) => {
     if (field.type === 'dateRange') {
-      const start = props.initialValues[`${field.name}_start`];
-      const end = props.initialValues[`${field.name}_end`];
+      const start = props.initialValues?.[`${field.name}_start`];
+      const end = props.initialValues?.[`${field.name}_end`];
 
       /* v8 ignore start */
       if (start || end) {
@@ -69,15 +71,15 @@ watch(
 );
 /* v8 ignore stop */
 
-const onSubmit = () => {
+const onSubmit = (): void => {
   const data = { ...formValues.value };
-  const formattedData: Record<string, any> = { ...data };
+  const formattedData: Record<string, unknown> = { ...data };
 
   props.fields.forEach((field) => {
     /* v8 ignore next */
     if (field.type === 'dateRange' && data[field.name]) {
       /* v8 ignore start */
-      const range = data[field.name];
+      const range = data[field.name] as DateRange | undefined;
       delete formattedData[field.name];
 
       if (range?.from) {
@@ -98,7 +100,7 @@ const onSubmit = () => {
   emit('close');
 };
 
-const handleReset = () => {
+const handleReset = (): void => {
   emit('filter', {});
   emit('close');
 };
@@ -106,7 +108,7 @@ const handleReset = () => {
 /* v8 ignore start */
 // Ignorado pois o evento update:open é disparado internamente pelo componente Drawer (Radix/Vaul),
 // cujo comportamento de fechar via interação (clique fora, tecla Esc) é complexo de simular deterministicamente no JSDOM.
-const handleOpenChange = (open: boolean) => {
+const handleOpenChange = (open: boolean): void => {
   if (!open) emit('close');
 };
 /* v8 ignore stop */

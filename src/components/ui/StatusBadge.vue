@@ -14,7 +14,7 @@ const emit = defineEmits(['click']);
 const authStore = useAuthStore();
 const canActivate = computed(() => authStore.hasPermission(props.feature, 'activate'));
 
-const handleClick = () => {
+const handleClick = (): void => {
   if (canActivate.value) {
     emit('click');
   }

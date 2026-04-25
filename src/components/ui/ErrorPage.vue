@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import Button from './Button.vue';
 
 interface Props {
-  error?: any;
+  error?: unknown;
 }
 
 const props = defineProps<Props>();
@@ -18,10 +18,13 @@ const errorMessage = computed(() => {
 });
 
 const errorStatus = computed(() => {
-  return props.error?.status || '404';
+  if (typeof props.error === 'object' && props.error !== null && 'status' in props.error) {
+    return (props.error as { status: string | number }).status.toString();
+  }
+  return '404';
 });
 
-const handleReload = () => {
+const handleReload = (): void => {
   window.location.reload();
 };
 </script>

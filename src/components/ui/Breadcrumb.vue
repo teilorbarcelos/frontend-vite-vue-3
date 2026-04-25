@@ -15,9 +15,15 @@ const routeMap: Record<string, string> = {
 const route = useRoute();
 const pathnames = computed(() => route.path.split('/').filter((x) => x));
 
+interface BreadcrumbItem {
+  to: string;
+  displayName: string;
+  isLast: boolean;
+}
+
 const breadcrumbs = computed(() => {
   const paths = pathnames.value;
-  const result: any[] = [];
+  const result: BreadcrumbItem[] = [];
 
   paths.forEach((value, index) => {
     // Skip IDs after 'update'

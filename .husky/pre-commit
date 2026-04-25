@@ -1,1 +1,1 @@
-npx lint-staged && pnpm test:coverage
+npx lint-staged && bun run build && bun test:coverage

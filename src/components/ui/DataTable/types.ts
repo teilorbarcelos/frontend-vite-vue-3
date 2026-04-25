@@ -10,7 +10,7 @@ export interface HeaderMapItem<T> {
   keyItem: string;
   sortable?: boolean;
   truncate?: boolean;
-  parseItem?: (value: any, item: T) => any;
+  parseItem?: (value: unknown, item: T) => unknown;
 }
 
 export interface PaginationProps {

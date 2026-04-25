@@ -46,20 +46,20 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!user.value);
 
-  const login = (token: string, refreshToken: string, userData: User) => {
+  const login = (token: string, refreshToken: string, userData: User): void => {
     localStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
     queryClient.setQueryData(['auth-user'], userData);
   };
 
-  const logout = () => {
+  const logout = (): void => {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     queryClient.removeQueries({ queryKey: ['auth-user'] });
     queryClient.clear();
   };
 
-  const hasPermission = (feature: string, action: keyof Omit<Permission, 'feature'>) => {
+  const hasPermission = (feature: string, action: keyof Omit<Permission, 'feature'>): boolean => {
     if (!user.value || !user.value.role) return false;
     const permissions = getRolePermissions(user.value.role) as Permission[];
     const permission = permissions.find((p) => p.feature === feature);
