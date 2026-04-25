@@ -101,7 +101,7 @@ const formattedDate = computed(() => {
       </PopoverTrigger>
       <PopoverContent class="w-auto p-0 rounded-xl overflow-hidden" align="start">
         <RangeCalendar
-          :model-value="internalValue as any"
+          :model-value="internalValue as RadixDateRange | undefined"
           @update:model-value="handleUpdate"
           initial-focus
         />

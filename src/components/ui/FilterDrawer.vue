@@ -9,6 +9,15 @@ import DateRangePicker from './DateRangePicker.vue';
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from './Drawer';
 import Input from './Input.vue';
 
+interface VModelDate {
+  from?: Date | undefined;
+  to?: Date | undefined;
+}
+
+interface VModel extends VModelDate {
+  values: Record<string, unknown>;
+}
+
 export interface FilterField {
   name: string;
   label: string;
@@ -31,8 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['close', 'filter']);
 /* v8 ignore stop */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const formValues = ref<Record<string, any>>({});
+const formValues = ref<Record<string, VModel>>({});
 
 const initForm = (): void => {
   const values: Record<string, unknown> = { ...props.initialValues };
@@ -58,7 +66,7 @@ const initForm = (): void => {
     }
   });
 
-  formValues.value = values;
+  formValues.value = values as Record<string, VModel>;
 };
 
 /* v8 ignore start */
@@ -155,7 +163,7 @@ const handleOpenChange = (open: boolean): void => {
               :id="field.name"
               :type="field.type"
               :placeholder="field.placeholder"
-              v-model="formValues[field.name]"
+              v-model="formValues[field.name] as unknown as string | number | undefined"
             />
             <!-- v8 ignore stop -->
           </div>
