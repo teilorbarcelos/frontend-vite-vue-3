@@ -1,0 +1,44 @@
+import { DataTableActions, type HeaderMapItem } from '@/components/ui/DataTable';
+import StatusBadge from '@/components/ui/StatusBadge.vue';
+import type { {{pascalCase name}} } from '../services/{{kebabCase name}}.service';
+import { h } from 'vue';
+
+export const get{{pascalCase name}}Columns = (
+  onToggleStatus: (id: string, active: boolean) => void,
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+  permissions: {
+    canUpdate: boolean;
+    canDelete: boolean;
+  }
+): HeaderMapItem<{{pascalCase name}}>[] => [
+  { title: 'Nome', keyItem: 'name', truncate: true, sortable: true },
+  {
+    title: 'Status',
+    keyItem: 'active',
+    sortable: true,
+    parseItem: (active, item) =>
+      h(StatusBadge, {
+        active: !!active,
+        feature: '{{kebabCase name}}',
+        onClick: () => onToggleStatus(item.id, !item.active)
+      })
+  },
+  {
+    title: 'Data de Criação',
+    keyItem: 'created_at',
+    sortable: true,
+    parseItem: (val) => (val ? new Date(val as string).toLocaleDateString() : '-')
+  },
+  {
+    title: '',
+    keyItem: 'id',
+    parseItem: (id) =>
+      h(DataTableActions, {
+        id: id as string,
+        onEdit: permissions.canUpdate ? () => onEdit(id as string) : undefined,
+        onDelete: permissions.canDelete ? () => onDelete(id as string) : undefined,
+        deleteMessage: 'Tem certeza que deseja excluir?'
+      })
+  }
+];

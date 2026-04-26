@@ -132,4 +132,30 @@ describe('{{pascalCase name}}FormPage', () => {
       expect(screen.getByText('Salvando...')).toBeInTheDocument();
     });
   });
+
+  it('shows loading state during fetch in edit mode', async () => {
+    (useRoute as Mock).mockReturnValue({ params: { id: '1' } });
+    ({{camelCase name}}Service.get{{pascalCase name}} as Mock).mockReturnValue(new Promise(() => {}));
+
+    renderWithProviders({{pascalCase name}}FormPage, { queryClient });
+
+    expect(screen.getByText('Carregando dados...')).toBeInTheDocument();
+  });
+
+  it('handles missing description in edit mode', async () => {
+    const mockData = {
+      id: '1',
+      name: 'Item A',
+      description: null
+    };
+    (useRoute as Mock).mockReturnValue({ params: { id: '1' } });
+    ({{camelCase name}}Service.get{{pascalCase name}} as Mock).mockResolvedValue(mockData);
+
+    renderWithProviders({{pascalCase name}}FormPage, { queryClient });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Nome/i)).toHaveValue('Item A');
+      expect(screen.getByLabelText(/Descrição/i)).toHaveValue('');
+    });
+  });
 });

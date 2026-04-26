@@ -51,6 +51,26 @@ describe('{{pascalCase name}}Service', () => {
     }));
   });
 
+  it('should fetch {{camelCase name}}s with searchWord but no searchFields', async () => {
+    vi.mocked(api.get).mockResolvedValueOnce({ data: { items: [], total: 0 } });
+
+    await {{camelCase name}}Service.get{{pascalCase name}}s({ searchWord: 'test' });
+
+    expect(api.get).toHaveBeenCalledWith('/v1/{{kebabCase name}}', expect.objectContaining({
+      params: expect.objectContaining({ searchWord: 'test' })
+    }));
+  });
+
+  it('should fetch {{camelCase name}}s with sort but no orderBy', async () => {
+    vi.mocked(api.get).mockResolvedValueOnce({ data: { items: [], total: 0 } });
+
+    await {{camelCase name}}Service.get{{pascalCase name}}s({ sort: { orderDirection: 'asc' } as any });
+
+    expect(api.get).toHaveBeenCalledWith('/v1/{{kebabCase name}}', expect.objectContaining({
+      params: expect.not.objectContaining({ orderDirection: 'asc' })
+    }));
+  });
+
   it('should fetch a single {{camelCase name}}', async () => {
     const mockData = { id: '1', name: 'Test' };
     vi.mocked(api.get).mockResolvedValueOnce({ data: mockData });

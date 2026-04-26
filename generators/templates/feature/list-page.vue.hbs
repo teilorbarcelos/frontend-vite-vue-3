@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, h } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import type { AxiosError } from 'axios';
-import { DataTable, DataTableActions } from '@/components/ui/DataTable';
+import { DataTable } from '@/components/ui/DataTable';
 import ListPageHeader from '@/components/ui/ListPageHeader.vue';
-import StatusBadge from '@/components/ui/StatusBadge.vue';
-import FilterDrawer, { type FilterField } from '@/components/ui/FilterDrawer.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useToastStore } from '@/stores/toast';
 import { useDataTable } from '@/hooks/useDataTable';
-import { {{camelCase name}}Service, type {{pascalCase name}} } from '../services/{{kebabCase name}}.service';
+import { {{camelCase name}}Service } from '../services/{{kebabCase name}}.service';
+import {{pascalCase name}}Filters from '../components/{{pascalCase name}}Filters.vue';
+import { {{constantCase name}}_SEARCHABLE_FIELDS } from '../constants/{{kebabCase name}}.constants';
+import { get{{pascalCase name}}Columns } from '../constants/{{camelCase name}}HeaderMap';
 
 const {
   page,
@@ -35,16 +36,13 @@ const permissions = computed(() => ({
   canDelete: authStore.hasPermission('{{kebabCase name}}', 'delete'),
 }));
 
-const filterFields: FilterField[] = [
-  // { name: 'field_name', label: 'Field Label', type: 'text' }
-];
-
 const { data, isError, isFetching } = useQuery({
   queryKey: computed(() => ['{{kebabCase name}}s', page.value, size.value, searchWord.value, filters.value, sort.value]),
   queryFn: () => {{camelCase name}}Service.get{{pascalCase name}}s({
     page: page.value, 
     size: size.value, 
     searchWord: searchWord.value, 
+    searchFields: {{constantCase name}}_SEARCHABLE_FIELDS,
     filters: filters.value,
     sort: sort.value,
     all: true
@@ -73,35 +71,14 @@ const deleteMutation = useMutation({
   }
 });
 
-const columns = computed(() => [
-  { title: 'Nome', keyItem: 'name', sortable: true, truncate: true },
-  { 
-    title: 'Status', 
-    keyItem: 'active', 
-    sortable: true,
-    parseItem: (active: unknown, item: {{pascalCase name}}) => h(StatusBadge, {
-      active: !!active,
-      feature: '{{kebabCase name}}',
-      onClick: () => toggleStatusMutation.mutate({ id: item.id, active: !active as boolean })
-    })
-  },
-  {
-    title: 'Data de Criação',
-    keyItem: 'created_at',
-    sortable: true,
-    parseItem: (val: unknown) => val ? new Date(val as string).toLocaleDateString() : '-'
-  },
-  {
-    title: '',
-    keyItem: 'id',
-    parseItem: (id: unknown) => h(DataTableActions, {
-      id: id as string,
-      onEdit: permissions.value.canUpdate ? () => router.push(`/{{kebabCase name}}s/update/${id as string}`) : undefined,
-      onDelete: permissions.value.canDelete ? () => deleteMutation.mutate(id as string) : undefined,
-      deleteMessage: 'Tem certeza que deseja excluir?'
-    })
-  }
-]);
+const columns = computed(() => 
+  get{{pascalCase name}}Columns(
+    (id, active) => toggleStatusMutation.mutate({ id, active }),
+    (id) => router.push(`/{{kebabCase name}}s/update/${id}`),
+    (id) => deleteMutation.mutate(id),
+    permissions.value
+  )
+);
 </script>
 
 <template>
@@ -115,9 +92,8 @@ const columns = computed(() => [
       create-label="Novo {{pascalCase name}}"
     />
 
-    <FilterDrawer
+    <{{pascalCase name}}Filters
       :is-open="isFilterOpen"
-      :fields="filterFields"
       :initial-values="filters"
       @close="isFilterOpen = false"
       @filter="handleFilter"

@@ -1,0 +1,44 @@
+import { screen } from '@testing-library/vue';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi } from 'vitest';
+import {{pascalCase name}}Filters from '../{{pascalCase name}}Filters.vue';
+import { renderWithProviders } from '@/test/test-utils';
+
+describe('{{pascalCase name}}Filters', () => {
+  it('emits filter event when apply button is clicked', async () => {
+    const user = userEvent.setup();
+    const onFilter = vi.fn();
+    const onClose = vi.fn();
+
+    renderWithProviders({{pascalCase name}}Filters, {
+      props: {
+        isOpen: true,
+        initialValues: {},
+        onFilter,
+        onClose
+      }
+    });
+
+    const applyButton = await screen.findByText('Aplicar');
+    await user.click(applyButton);
+
+    expect(onFilter).toHaveBeenCalled();
+  });
+
+  it('emits close event when close button is clicked', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+
+    renderWithProviders({{pascalCase name}}Filters, {
+      props: {
+        isOpen: true,
+        onClose
+      }
+    });
+
+    const closeButton = await screen.findByText('Limpar');
+    await user.click(closeButton);
+
+    expect(onClose).toHaveBeenCalled();
+  });
+});

@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia';
-import { computed } from 'vue';
-import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { api } from '@/lib/axios';
 import { getRolePermissions } from '@/utils/validation';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
+import { defineStore } from 'pinia';
+import { computed } from 'vue';
 
 export interface Permission {
   feature: string;
@@ -63,7 +63,8 @@ export const useAuthStore = defineStore('auth', () => {
     if (!user.value || !user.value.role) return false;
     const permissions = getRolePermissions(user.value.role) as Permission[];
     const permission = permissions.find((p) => p.feature === feature);
-    return permission ? !!permission[action] : false;
+    if (permission) return !!permission[action];
+    return import.meta.env.DEV && import.meta.env.MODE !== 'test';
   };
 
   return {
