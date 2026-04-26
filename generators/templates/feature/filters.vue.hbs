@@ -9,7 +9,7 @@ interface Props {
 defineProps<Props>();
 const emit = defineEmits(['close', 'filter']);
 
-const USER_FILTER_CONFIG: FilterField[] = [
+const {{constantCase name}}_FILTER_CONFIG: FilterField[] = [
   {
     name: 'active',
     label: 'Status',
@@ -26,7 +26,7 @@ const USER_FILTER_CONFIG: FilterField[] = [
 <template>
   <FilterDrawer
     :is-open="isOpen"
-    :fields="USER_FILTER_CONFIG"
+    :fields="{{constantCase name}}_FILTER_CONFIG"
     :initial-values="initialValues"
     @close="emit('close')"
     @filter="emit('filter', $event)"

@@ -14,28 +14,28 @@ export interface Toast {
 export const useToastStore = defineStore('toast', () => {
   const toasts = ref<Toast[]>([]);
 
-  const addToast = (options: Omit<Toast, 'id'>) => {
+  const addToast = (options: Omit<Toast, 'id'>): void => {
     const id = Math.random().toString(36).substring(2, 9);
     toasts.value.push({ ...options, id });
   };
 
-  const removeToast = (id: string) => {
+  const removeToast = (id: string): void => {
     toasts.value = toasts.value.filter((t) => t.id !== id);
   };
 
-  const success = (message: string, title: string = 'Sucesso!') => {
+  const success = (message: string, title: string = 'Sucesso!'): void => {
     addToast({ description: message, title, variant: 'success' });
   };
 
-  const error = (message: string, title: string = 'Erro!') => {
+  const error = (message: string, title: string = 'Erro!'): void => {
     addToast({ description: message, title, variant: 'error' });
   };
 
-  const info = (message: string, title: string = 'Informação') => {
+  const info = (message: string, title: string = 'Informação'): void => {
     addToast({ description: message, title, variant: 'info' });
   };
 
-  const warning = (message: string, title: string = 'Atenção!') => {
+  const warning = (message: string, title: string = 'Atenção!'): void => {
     addToast({ description: message, title, variant: 'warning' });
   };
 

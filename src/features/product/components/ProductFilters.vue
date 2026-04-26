@@ -3,7 +3,7 @@ import FilterDrawer, { type FilterField } from '@/components/ui/FilterDrawer.vue
 
 interface Props {
   isOpen: boolean;
-  initialValues?: Record<string, any>;
+  initialValues?: Record<string, unknown>;
 }
 
 defineProps<Props>();

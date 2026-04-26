@@ -10,10 +10,10 @@ import { useAuthStore } from '@/stores/auth';
 
 const loginSchema = z.object({
   email: z.email('Invalid email address'),
-  password: z
-    .string({ required_error: 'Password is required' } as any)
-    .min(1, 'Password is required')
+  password: z.string().min(1, 'Password is required')
 });
+
+type LoginForm = z.infer<typeof loginSchema>;
 
 const { handleSubmit, errors, defineField } = useForm({
   validationSchema: toTypedSchema(loginSchema),
@@ -30,7 +30,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 const loginMutation = useMutation({
-  mutationFn: async (data: any) => {
+  mutationFn: async (data: LoginForm) => {
     const response = await api.post('/v1/auth/login', data);
     return response.data;
   },

@@ -50,7 +50,10 @@ export default [
     rules: {
       ...typescriptEslint.configs.recommended.rules,
       'no-undef': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
@@ -78,12 +81,14 @@ export default [
 
   {
     ...pluginVitest.configs.recommended,
-    files: ['src/**/__tests__/*'],
+    files: ['src/**/__tests__/**/*', 'src/**/*.{test,spec}.{ts,tsx,js,jsx}', 'src/test/**/*'],
     rules: {
       ...pluginVitest.configs.recommended.rules,
       'vitest/expect-expect': 'off',
       'vitest/no-commented-out-tests': 'off',
       'vitest/no-conditional-expect': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-vars': 'off'
     }

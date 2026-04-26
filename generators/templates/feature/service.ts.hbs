@@ -1,9 +1,12 @@
 import { api } from '@/lib/axios';
+import type { PaginatedResponse, TableSort } from '@/lib/types';
 
 export interface {{pascalCase name}} {
   id: string;
   name: string;
+  description?: string;
   active: boolean;
+  created_at: string;
   // Add other fields here
 }
 
@@ -13,10 +16,10 @@ export const {{camelCase name}}Service = {
     size?: number;
     searchWord?: string;
     searchFields?: string[];
-    filters?: Record<string, any>;
-    sort?: { orderBy?: string; orderDirection?: string };
+    filters?: Record<string, unknown>;
+    sort?: TableSort;
     all?: boolean;
-  }) => {
+  }): Promise<PaginatedResponse<{{pascalCase name}}>> => {
     const { page = 0, size = 25, searchWord, searchFields, filters = {}, sort, all } = options;
     const res = await api.get(`/v1/{{kebabCase name}}${all ? '/all' : ''}`, { 
       params: { 
@@ -29,23 +32,23 @@ export const {{camelCase name}}Service = {
     });
     return res.data;
   },
-  get{{pascalCase name}}: async (id: string) => {
+  get{{pascalCase name}}: async (id: string): Promise<{{pascalCase name}}> => {
     const res = await api.get(`/v1/{{kebabCase name}}/${id}`);
     return res.data;
   },
-  create{{pascalCase name}}: async (data: Omit<{{pascalCase name}}, 'id' | 'active'>) => {
+  create{{pascalCase name}}: async (data: Omit<{{pascalCase name}}, 'id' | 'active' | 'created_at'>): Promise<{{pascalCase name}}> => {
     const res = await api.post('/v1/{{kebabCase name}}', data);
     return res.data;
   },
-  update{{pascalCase name}}: async (id: string, data: Partial<{{pascalCase name}}>) => {
+  update{{pascalCase name}}: async (id: string, data: Partial<{{pascalCase name}}>): Promise<{{pascalCase name}}> => {
     const res = await api.put(`/v1/{{kebabCase name}}/${id}`, data);
     return res.data;
   },
-  delete{{pascalCase name}}: async (id: string) => {
+  delete{{pascalCase name}}: async (id: string): Promise<void> => {
     const res = await api.delete(`/v1/{{kebabCase name}}/${id}`);
     return res.data;
   },
-  toggleStatus: async (id: string, active: boolean) => {
+  toggleStatus: async (id: string, active: boolean): Promise<void> => {
     const res = await api.patch(`/v1/{{kebabCase name}}/${id}/status`, { active });
     return res.data;
   }

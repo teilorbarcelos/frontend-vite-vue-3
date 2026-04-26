@@ -1,0 +1,22 @@
+import type { RouteRecordRaw } from 'vue-router';
+
+export const {{camelCase name}}Routes: RouteRecordRaw[] = [
+  {
+    path: '{{kebabCase name}}s',
+    name: '{{kebabCase name}}s',
+    component: () => import('./pages/{{pascalCase name}}ListPage.vue'),
+    meta: { feature: '{{kebabCase name}}', action: 'view' }
+  },
+  {
+    path: '{{kebabCase name}}s/new',
+    name: '{{kebabCase name}}s-new',
+    component: () => import('./pages/{{pascalCase name}}FormPage.vue'),
+    meta: { feature: '{{kebabCase name}}', action: 'create' }
+  },
+  {
+    path: '{{kebabCase name}}s/update/:id',
+    name: '{{kebabCase name}}s-update',
+    component: () => import('./pages/{{pascalCase name}}FormPage.vue'),
+    meta: { feature: '{{kebabCase name}}', action: 'create' }
+  }
+];

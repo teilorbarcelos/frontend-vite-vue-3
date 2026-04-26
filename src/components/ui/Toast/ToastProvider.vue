@@ -16,7 +16,7 @@ const toastStore = useToastStore();
 
 const toastState = ref<Record<string, boolean>>({});
 
-const handleOpenChange = (id: string, isOpen: boolean) => {
+const handleOpenChange = (id: string, isOpen: boolean): void => {
   toastState.value[id] = isOpen;
   /* v8 ignore start */
   if (!isOpen) {

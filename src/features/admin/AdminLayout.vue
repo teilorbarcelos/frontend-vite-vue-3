@@ -1,29 +1,25 @@
 <script setup lang="ts">
 import { useRoute, RouterView, RouterLink } from 'vue-router';
-import { LogOut, User as UserIcon, LayoutDashboard, Users, Shield, Package } from 'lucide-vue-next';
+import { LogOut, User as UserIcon } from 'lucide-vue-next';
 import { cn } from '@/utils/cn';
 import Breadcrumb from '@/components/ui/Breadcrumb.vue';
 import { useAuthStore } from '@/stores/auth';
 import { computed } from 'vue';
+import { navItems as modularNavItems } from '@/router/navItems';
 
 const route = useRoute();
 const authStore = useAuthStore();
 
-const handleLogout = () => {
+const handleLogout = (): void => {
   authStore.logout();
   window.location.href = '/login';
 };
 
 const navItems = computed(() =>
-  [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, feature: 'dashboard' },
-    { name: 'Perfis', path: '/roles', icon: Shield, feature: 'role' },
-    { name: 'Usuários', path: '/users', icon: Users, feature: 'user' },
-    { name: 'Produtos', path: '/products', icon: Package, feature: 'product' }
-  ].filter((item) => !item.feature || authStore.hasPermission(item.feature, 'view'))
+  modularNavItems.filter((item) => !item.feature || authStore.hasPermission(item.feature, 'view'))
 );
 
-const isActive = (path: string) => route.path.startsWith(path);
+const isActive = (path: string): boolean => route.path.startsWith(path);
 </script>
 
 <template>
