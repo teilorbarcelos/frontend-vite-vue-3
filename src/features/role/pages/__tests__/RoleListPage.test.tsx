@@ -167,7 +167,7 @@ describe('RoleListPage', () => {
   it('renders without create button when permission is missing', async () => {
     queryClient.setQueryData(['auth-user'], {
       id: '1',
-      name: 'Test User',
+      name: 'No Perms User',
       role: { id: '1', name: 'Admin', permissions: [] }
     });
 
