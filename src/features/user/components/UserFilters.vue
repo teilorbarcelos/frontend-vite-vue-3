@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import FilterDrawer, { type FilterField } from '@/components/ui/FilterDrawer.vue';
+import FilterDrawer from '@/components/ui/FilterDrawer.vue';
+import { USER_FILTER_CONFIG } from '../constants/user.constants';
 
 interface Props {
   isOpen: boolean;
@@ -8,19 +9,6 @@ interface Props {
 
 defineProps<Props>();
 const emit = defineEmits(['close', 'filter']);
-
-const USER_FILTER_CONFIG: FilterField[] = [
-  {
-    name: 'active',
-    label: 'Status',
-    type: 'select',
-    options: [
-      { label: 'Ativo', value: 'true' },
-      { label: 'Inativo', value: 'false' }
-    ]
-  },
-  { name: 'createdAt', label: 'Data de Criação', type: 'dateRange' }
-];
 </script>
 
 <template>

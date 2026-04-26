@@ -12,11 +12,10 @@ export const get{{pascalCase name}}Columns = (
     canDelete: boolean;
   }
 ): HeaderMapItem<{{pascalCase name}}>[] => [
-  { title: 'Nome', keyItem: 'name', truncate: true, sortable: true },
+  { title: 'Nome', keyItem: 'name', truncate: true },
   {
     title: 'Status',
     keyItem: 'active',
-    sortable: true,
     parseItem: (active, item) =>
       h(StatusBadge, {
         active: !!active,
@@ -27,7 +26,6 @@ export const get{{pascalCase name}}Columns = (
   {
     title: 'Data de Criação',
     keyItem: 'created_at',
-    sortable: true,
     parseItem: (val) => (val ? new Date(val as string).toLocaleDateString() : '-')
   },
   {
