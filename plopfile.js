@@ -92,9 +92,10 @@ $1`
       {
         type: 'modify',
         path: 'src/router/index.ts',
-        pattern: /(\/\/ \[PLOP_ROUTE_MARKER\])/g,
-        template: `...{{camelCase name}}Routes,
-      $1`
+        pattern: /(,?)\s*(\/\/ \[PLOP_ROUTE_MARKER\])/g,
+        template: `,
+      ...{{camelCase name}}Routes,
+      $2`
       },
       // Menu Registration - Import
       {
@@ -108,9 +109,10 @@ $1`
       {
         type: 'modify',
         path: 'src/router/navItems.ts',
-        pattern: /(\/\/ \[PLOP_MENU_MARKER\])/g,
-        template: `{{camelCase name}}Menu,
-  $1`
+        pattern: /(,?)\s*(\/\/ \[PLOP_MENU_MARKER\])/g,
+        template: `,
+  {{camelCase name}}Menu,
+  $2`
       }
     ]
   });

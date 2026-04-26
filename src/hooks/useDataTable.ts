@@ -1,6 +1,6 @@
-import { ref, reactive } from 'vue';
+import type { TableSort } from '@/components/ui/DataTable/types';
 import type { Ref } from 'vue';
-import type { SortDirection, TableSort } from '@/components/ui/DataTable/types';
+import { reactive, ref } from 'vue';
 
 interface UseDataTableOptions {
   defaultSize?: number;
@@ -28,10 +28,7 @@ export interface UseDataTableReturn {
 }
 
 export function useDataTable(options: UseDataTableOptions = {}): UseDataTableReturn {
-  const {
-    defaultSize = 25,
-    defaultSort = { orderBy: 'name', orderDirection: 'asc' as SortDirection }
-  } = options;
+  const { defaultSize = 25, defaultSort = {} as TableSort } = options;
 
   const page = ref(0);
   const size = ref(defaultSize);

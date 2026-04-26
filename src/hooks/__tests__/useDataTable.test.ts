@@ -6,7 +6,7 @@ describe('useDataTable', () => {
     const { page, size, sort } = useDataTable();
     expect(page.value).toBe(0);
     expect(size.value).toBe(25);
-    expect(sort.value).toEqual({ orderBy: 'name', orderDirection: 'asc' });
+    expect(sort.value).toEqual({});
   });
 
   it('handles search and resets page', () => {
