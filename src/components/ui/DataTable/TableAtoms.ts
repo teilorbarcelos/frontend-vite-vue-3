@@ -1,11 +1,11 @@
 import { cn } from '@/utils/cn';
-import { defineComponent, h } from 'vue';
+import { defineComponent, h, type VNode } from 'vue';
 
 export const Table = defineComponent({
   name: 'Table',
   props: { class: { type: String, default: '' } },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h('table', { class: cn('w-full caption-bottom text-sm', props.class) }, slots.default?.());
   }
 });
@@ -14,7 +14,7 @@ export const TableHeader = defineComponent({
   name: 'TableHeader',
   props: { class: { type: String, default: '' } },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h(
         'thead',
         {
@@ -32,7 +32,7 @@ export const TableBody = defineComponent({
   name: 'TableBody',
   props: { class: { type: String, default: '' } },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h(
         'tbody',
         { class: cn('[&_tr:last-child]:border-0 bg-white', props.class) },
@@ -45,7 +45,7 @@ export const TableRow = defineComponent({
   name: 'TableRow',
   props: { class: { type: String, default: '' } },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h(
         'tr',
         {
@@ -63,7 +63,7 @@ export const TableHead = defineComponent({
   name: 'TableHead',
   props: { class: { type: String, default: '' } },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h(
         'th',
         {
@@ -81,7 +81,7 @@ export const TableCell = defineComponent({
   name: 'TableCell',
   props: { class: { type: String, default: '' } },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h(
         'td',
         { class: cn('p-4 align-middle text-gray-900 [&:has([role=checkbox])]:pr-0', props.class) },

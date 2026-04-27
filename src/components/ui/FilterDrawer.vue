@@ -32,13 +32,11 @@ interface Props {
   initialValues?: Record<string, unknown>;
 }
 
-/* v8 ignore start */
 const props = withDefaults(defineProps<Props>(), {
   initialValues: () => ({})
 });
 
 const emit = defineEmits(['close', 'filter']);
-/* v8 ignore stop */
 
 const formValues = ref<Record<string, VModel>>({});
 
@@ -50,14 +48,12 @@ const initForm = (): void => {
       const start = props.initialValues?.[`${field.name}_start`];
       const end = props.initialValues?.[`${field.name}_end`];
 
-      /* v8 ignore start */
       if (start || end) {
         values[field.name] = {
           from: start ? parseISO(start as string) : undefined,
           to: end ? parseISO(end as string) : undefined
         };
       }
-      /* v8 ignore stop */
     } else if (
       field.type === 'select' &&
       (values[field.name] === undefined || values[field.name] === null)
@@ -69,7 +65,6 @@ const initForm = (): void => {
   formValues.value = values as Record<string, VModel>;
 };
 
-/* v8 ignore start */
 watch(
   () => props.isOpen,
   (val) => {
@@ -77,16 +72,13 @@ watch(
   },
   { immediate: true }
 );
-/* v8 ignore stop */
 
 const onSubmit = (): void => {
   const data = { ...formValues.value };
   const formattedData: Record<string, unknown> = { ...data };
 
   props.fields.forEach((field) => {
-    /* v8 ignore next */
     if (field.type === 'dateRange' && data[field.name]) {
-      /* v8 ignore start */
       const range = data[field.name] as DateRange | undefined;
       delete formattedData[field.name];
 
@@ -94,15 +86,12 @@ const onSubmit = (): void => {
         const dates = formatDateRange(field.name, range.from, range.to);
         Object.assign(formattedData, dates);
       }
-      /* v8 ignore stop */
     }
   });
 
-  /* v8 ignore start */
   const cleanData = Object.fromEntries(
     Object.entries(formattedData).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
   );
-  /* v8 ignore stop */
 
   emit('filter', cleanData);
   emit('close');
@@ -113,13 +102,9 @@ const handleReset = (): void => {
   emit('close');
 };
 
-/* v8 ignore start */
-// Ignorado pois o evento update:open é disparado internamente pelo componente Drawer (Radix/Vaul),
-// cujo comportamento de fechar via interação (clique fora, tecla Esc) é complexo de simular deterministicamente no JSDOM.
 const handleOpenChange = (open: boolean): void => {
   if (!open) emit('close');
 };
-/* v8 ignore stop */
 </script>
 
 <template>
@@ -139,7 +124,6 @@ const handleOpenChange = (open: boolean): void => {
               {{ field.label }}
             </label>
 
-            <!-- v8 ignore start -->
             <DateRangePicker
               v-if="field.type === 'dateRange'"
               :id="field.name"
@@ -165,7 +149,6 @@ const handleOpenChange = (open: boolean): void => {
               :placeholder="field.placeholder"
               v-model="formValues[field.name] as unknown as string | number | undefined"
             />
-            <!-- v8 ignore stop -->
           </div>
         </div>
       </div>

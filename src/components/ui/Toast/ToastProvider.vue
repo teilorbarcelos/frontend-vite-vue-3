@@ -18,14 +18,12 @@ const toastState = ref<Record<string, boolean>>({});
 
 const handleOpenChange = (id: string, isOpen: boolean): void => {
   toastState.value[id] = isOpen;
-  /* v8 ignore start */
   if (!isOpen) {
     setTimeout(() => {
       toastStore.removeToast(id);
       delete toastState.value[id];
     }, 500); // Animation duration is 500ms
   }
-  /* v8 ignore stop */
 };
 </script>
 

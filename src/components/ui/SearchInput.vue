@@ -32,7 +32,6 @@ watch(value, (newVal) => {
 
 const handleClear = (): void => {
   value.value = '';
-  /* v8 ignore next */
   if (timeout) clearTimeout(timeout);
   emit('search', '');
 };

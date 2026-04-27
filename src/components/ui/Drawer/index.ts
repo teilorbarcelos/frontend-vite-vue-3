@@ -1,5 +1,5 @@
 import { cn } from '@/utils/cn';
-import { defineComponent, h } from 'vue';
+import { defineComponent, h, type VNode } from 'vue';
 
 export {
   DialogRoot as Drawer,
@@ -18,7 +18,7 @@ export const DrawerHeader = defineComponent({
     class: { type: String, default: '' }
   },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h(
         'div',
         {
@@ -38,7 +38,7 @@ export const DrawerFooter = defineComponent({
     class: { type: String, default: '' }
   },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h(
         'div',
         {
