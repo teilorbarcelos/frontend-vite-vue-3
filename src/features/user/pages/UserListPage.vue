@@ -1,26 +1,23 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import type { AxiosError } from 'axios';
+import { useQuery } from '@tanstack/vue-query';
 import { DataTable } from '@/components/ui/DataTable';
 import ListPageHeader from '@/components/ui/ListPageHeader.vue';
 import UserFilters from '../components/UserFilters.vue';
 import { useAuthStore } from '@/stores/auth';
-import { useToastStore } from '@/stores/toast';
 import { useDataTable } from '@/hooks/useDataTable';
 import { userService } from '../services/user.service';
 import { getUserColumns } from '../constants/userHeaderMap';
 import { USER_SEARCHABLE_FIELDS as searchFields } from '../constants/user.constants';
+import { userMutations } from '../hooks/user.mutations';
 
 const { page, size, searchWord, filters, sort, handleSearch, handleFilter, tableProps } =
   useDataTable();
 
 const isFilterOpen = ref(false);
 const router = useRouter();
-const queryClient = useQueryClient();
 const authStore = useAuthStore();
-const toastStore = useToastStore();
 
 const permissions = computed(() => ({
   canCreate: authStore.hasPermission('user', 'create'),
@@ -49,28 +46,8 @@ const { data, isError, isFetching } = useQuery({
     })
 });
 
-const toggleStatusMutation = useMutation({
-  mutationFn: ({ id, active }: { id: string; active: boolean }) =>
-    userService.toggleStatus(id, active),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['users'] });
-    toastStore.success('Status do usuário atualizado!');
-  },
-  onError: (err: AxiosError<{ message?: string }>) => {
-    toastStore.error(err.response?.data?.message || 'Erro ao atualizar status.');
-  }
-});
-
-const deleteMutation = useMutation({
-  mutationFn: (id: string) => userService.deleteUser(id),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['users'] });
-    toastStore.success('Usuário excluído com sucesso!');
-  },
-  onError: (err: AxiosError<{ message?: string }>) => {
-    toastStore.error(err.response?.data?.message || 'Erro ao excluir usuário.');
-  }
-});
+const toggleStatusMutation = userMutations.useToggleStatus();
+const deleteMutation = userMutations.useDelete();
 
 const columns = computed(() =>
   getUserColumns(

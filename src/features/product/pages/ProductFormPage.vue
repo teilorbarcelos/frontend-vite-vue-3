@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import type { AxiosError } from 'axios';
+import { useQuery } from '@tanstack/vue-query';
 import { z } from 'zod';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import { productService } from '../services/product.service';
-import { useLoadingStore } from '@/stores/loading';
-import { useToastStore } from '@/stores/toast';
+import { productMutations } from '../hooks/product.mutations';
 
 const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -25,11 +23,8 @@ type ProductForm = z.infer<typeof productSchema>;
 
 const router = useRouter();
 const route = useRoute();
-const queryClient = useQueryClient();
 const id = route.params.id as string;
 const isEditing = computed(() => Boolean(id && id !== 'new'));
-const toastStore = useToastStore();
-const loadingStore = useLoadingStore();
 
 const { data: product, isLoading: isLoadingProduct } = useQuery({
   queryKey: computed(() => ['product', id]),
@@ -75,25 +70,9 @@ watch(
   { immediate: true }
 );
 
-const mutation = useMutation({
-  mutationFn: (data: ProductForm) => {
-    loadingStore.showLoading('Salvando produto...');
-    if (isEditing.value) {
-      return productService.updateProduct(id, data);
-    }
-    return productService.createProduct(data);
-  },
+const mutation = productMutations.useSave(isEditing.value, id, {
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['products'] });
-    loadingStore.hideLoading();
-    toastStore.success(
-      isEditing.value ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!'
-    );
     router.push('/products');
-  },
-  onError: (err: AxiosError<{ message?: string }>) => {
-    loadingStore.hideLoading();
-    toastStore.error(err.response?.data?.message || 'Erro ao salvar produto. Tente novamente.');
   }
 });
 
