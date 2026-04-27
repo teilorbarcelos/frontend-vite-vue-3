@@ -20,23 +20,31 @@ export function renderWithProviders(component: Component, options: any = {}) {
   const pinia = options.pinia || createPinia();
   setActivePinia(pinia);
 
-  const router = createRouter({
-    history: createMemoryHistory(),
-    routes: [
-      { path: '/', component: { template: '<div>Home</div>' } },
-      { path: '/login', component: { template: '<div>Login</div>' } },
-      {
-        path: '/dashboard',
-        component: { template: '<div>Dashboard</div>' },
-        meta: { title: 'Dashboard' }
-      },
-      { path: '/products', component: { template: '<div>Products</div>' } },
-      { path: '/products/new', component: { template: '<div>New Product</div>' } },
-      { path: '/products/update/:id', component: { template: '<div>Update Product</div>' } },
-      { path: '/users', component: { template: '<div>Users</div>' } },
-      { path: '/roles', component: { template: '<div>Roles</div>' } }
-    ]
-  });
+  const router =
+    options.router ||
+    createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/', component: { template: '<div>Home</div>' } },
+        { path: '/login', component: { template: '<div>Login</div>' } },
+        {
+          path: '/dashboard',
+          component: { template: '<div>Dashboard</div>' },
+          meta: { title: 'Dashboard' }
+        },
+        { path: '/products', component: { template: '<div>Products</div>' } },
+        { path: '/products/new', component: { template: '<div>New Product</div>' } },
+        { path: '/products/update/:id', component: { template: '<div>Update Product</div>' } },
+        { path: '/users', component: { template: '<div>Users</div>' } },
+        { path: '/roles', component: { template: '<div>Roles</div>' } },
+        { path: '/forgot-password', component: { template: '<div>Forgot Password</div>' } },
+        { path: '/reset-password', component: { template: '<div>Reset Password</div>' } }
+      ]
+    });
+
+  if (options.initialRoute) {
+    router.push(options.initialRoute);
+  }
 
   // Wrap component in ToastProvider to support toast testing
   const WrappedComponent = {

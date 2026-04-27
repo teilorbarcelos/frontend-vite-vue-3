@@ -46,8 +46,10 @@ class IntersectionObserverMock {
 if (typeof window !== 'undefined') {
   // @ts-expect-error - mock PointerEvent
   window.PointerEvent = class PointerEvent extends MouseEvent {
+    pointerId: number;
     constructor(type: string, params: PointerEventInit = {}) {
       super(type, params);
+      this.pointerId = params.pointerId || 0;
     }
   };
 

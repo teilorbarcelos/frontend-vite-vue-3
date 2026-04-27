@@ -1,5 +1,5 @@
-/* v8 ignore start */
 import type { UseMutationReturnType } from '@tanstack/vue-query';
+
 import type { AxiosError } from 'axios';
 import { useBaseMutation, type MutationOptions } from './useBaseMutation';
 
@@ -61,13 +61,11 @@ export function createMutationRegistry<TEntity = unknown>(
         errorMessage: messages?.saveError,
         showLoadingLabel: messages?.loadingLabel || 'Salvando...',
         successMessage:
-          /* v8 ignore start */
           options?.successMessage ||
           messages?.saveSuccess?.(isEditing) ||
           (isEditing
             ? `${capitalizeName} atualizado com sucesso!`
             : `${capitalizeName} criado com sucesso!`),
-        /* v8 ignore stop */
         ...options
       } as MutationOptions<TEntity, TForm>);
     },
@@ -85,11 +83,9 @@ export function createMutationRegistry<TEntity = unknown>(
         invalidateQueries: [[config.queryKey]],
         errorMessage: messages?.deleteError,
         successMessage:
-          /* v8 ignore start */
           options?.successMessage ||
           messages?.deleteSuccess ||
           `${capitalizeName} excluído com sucesso!`,
-        /* v8 ignore stop */
         ...options
       } as MutationOptions<void, string>);
     },
@@ -113,9 +109,7 @@ export function createMutationRegistry<TEntity = unknown>(
         invalidateQueries: [[config.queryKey]],
         errorMessage: messages?.toggleStatusError,
         successMessage:
-          /* v8 ignore start */
           options?.successMessage || messages?.toggleStatusSuccess || 'Status atualizado!',
-        /* v8 ignore stop */
         ...options
       } as MutationOptions<void, { id: string; active: boolean }>);
     }

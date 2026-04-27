@@ -1,4 +1,3 @@
-/* v8 ignore start */
 import {
   useMutation,
   useQueryClient,
@@ -46,15 +45,12 @@ export function useBaseMutation<TData = unknown, TVariables = void, TContext = u
   return useMutation({
     ...mutationOptions,
     onMutate: (variables: TVariables, context: unknown): TContext | Promise<TContext> => {
-      /* v8 ignore next 3 */
       if (showLoadingLabel) {
         loadingStore.showLoading(showLoadingLabel);
       }
-      /* v8 ignore start */
       if (onMutate) {
         return onMutate(variables, context as never) as TContext | Promise<TContext>;
       }
-      /* v8 ignore stop */
       return undefined as TContext;
     },
     onSuccess: (data: TData, variables: TVariables, result: TContext): void => {
@@ -71,21 +67,30 @@ export function useBaseMutation<TData = unknown, TVariables = void, TContext = u
           typeof successMessage === 'function' ? successMessage(data, variables) : successMessage;
         toastStore.success(msg);
       }
-      /* v8 ignore next */
       onSuccess?.(data, variables, result, {} as never);
     },
+
     onError: (
       err: AxiosError<{ message?: string }>,
       variables: TVariables,
       result: TContext | undefined
     ): void => {
       loadingStore.hideLoading();
-      const msg = err.response?.data?.message || errorMessage || 'Ocorreu um erro inesperado.';
+
+      let msg = err.response?.data?.message || errorMessage;
+
+      if (!msg) {
+        if (err.code === 'ERR_NETWORK') {
+          msg = 'O servidor está offline. Por favor, verifique sua conexão.';
+        } else {
+          msg = 'Ocorreu um erro inesperado.';
+        }
+      }
+
       toastStore.error(msg);
-      /* v8 ignore next */
       onError?.(err, variables, result, {} as never);
     },
-    /* v8 ignore start */
+
     onSettled: (
       data: TData | undefined,
       error: AxiosError<{ message?: string }> | null,
@@ -95,6 +100,5 @@ export function useBaseMutation<TData = unknown, TVariables = void, TContext = u
       loadingStore.hideLoading();
       onSettled?.(data, error, variables, result, {} as never);
     }
-    /* v8 ignore stop */
   });
 }

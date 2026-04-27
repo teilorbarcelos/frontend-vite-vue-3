@@ -1,19 +1,23 @@
 <script setup lang="ts">
-import { api } from '@/lib/axios';
-import { useMutation } from '@tanstack/vue-query';
-import axios from 'axios';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { z } from 'zod';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
+import * as z from 'zod';
+import { CheckCircle2, Eye, EyeOff } from 'lucide-vue-next';
+import { authMutations } from '../hooks/auth.mutations';
 import { useAuthStore } from '@/stores/auth';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+
+const router = useRouter();
+const authStore = useAuthStore();
+const showPassword = ref(false);
 
 const loginSchema = z.object({
-  email: z.email('Invalid email address'),
-  password: z.string().min(1, 'Password is required')
+  email: z.string({ message: 'E-mail é obrigatório' }).email('E-mail inválido'),
+  password: z.string({ message: 'Senha é obrigatória' }).min(1, 'Senha é obrigatória')
 });
-
-type LoginForm = z.infer<typeof loginSchema>;
 
 const { handleSubmit, errors, defineField } = useForm({
   validationSchema: toTypedSchema(loginSchema),
@@ -26,91 +30,82 @@ const { handleSubmit, errors, defineField } = useForm({
 const [email, emailProps] = defineField('email');
 const [password, passwordProps] = defineField('password');
 
-const router = useRouter();
-const authStore = useAuthStore();
-
-const loginMutation = useMutation({
-  mutationFn: async (data: LoginForm) => {
-    const response = await api.post('/v1/auth/login', data);
-    return response.data;
-  },
-  onSuccess: (data) => {
-    authStore.login(data.token, data.refreshToken, data.user);
-    router.push('/dashboard');
-  }
-});
+const loginMutation = authMutations.useLogin();
 
 const onSubmit = handleSubmit((values) => {
-  loginMutation.mutate(values);
+  loginMutation.mutate(values, {
+    onSuccess: (res) => {
+      authStore.login(res.token, res.refreshToken, res.user);
+      router.push('/dashboard');
+    }
+  });
 });
 </script>
 
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
-      <div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
-        </h2>
+    <div
+      class="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transition-all duration-300"
+    >
+      <div class="text-center">
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 mb-4"
+        >
+          <CheckCircle2 class="w-8 h-8 text-indigo-600" />
+        </div>
+        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Acesse sua conta</h2>
+        <p class="mt-2 text-sm text-gray-500">Bem-vindo de volta ao Admin Panel</p>
       </div>
+
       <form class="mt-8 space-y-6" @submit="onSubmit">
         <div class="space-y-4">
-          <div>
-            <label htmlFor="email" class="block text-sm font-medium text-gray-700">
-              Email address
-            </label>
-            <input
-              v-model="email"
-              v-bind="emailProps"
-              id="email"
-              type="email"
-              :class="[
-                'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
-                errors.email ? 'border-red-300' : 'border-gray-300'
-              ]"
-            />
-            <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
-          </div>
-          <div>
-            <label htmlFor="password" class="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
+          <Input
+            label="E-mail"
+            type="email"
+            placeholder="seu@email.com"
+            v-model="email"
+            v-bind="emailProps"
+            :error="errors.email"
+          />
+          <div class="space-y-1">
+            <Input
+              label="Senha"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="••••••••"
               v-model="password"
               v-bind="passwordProps"
-              id="password"
-              type="password"
-              :class="[
-                'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
-                errors.password ? 'border-red-300' : 'border-gray-300'
-              ]"
-            />
-            <p v-if="errors.password" class="mt-1 text-sm text-red-600">{{ errors.password }}</p>
+              :error="errors.password"
+            >
+              <template #right-element>
+                <button
+                  type="button"
+                  @click="showPassword = !showPassword"
+                  class="focus:outline-none"
+                >
+                  <EyeOff v-if="showPassword" class="w-5 h-5" />
+                  <Eye v-else class="w-5 h-5" />
+                </button>
+              </template>
+            </Input>
+            <div class="flex justify-end">
+              <button
+                type="button"
+                @click="router.push('/forgot-password')"
+                class="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+              >
+                Esqueceu a senha?
+              </button>
+            </div>
           </div>
         </div>
 
-        <div
-          v-if="loginMutation.isError.value"
-          class="text-red-600 text-sm text-center bg-red-50 p-3 rounded-md border border-red-200 font-medium"
+        <Button
+          type="submit"
+          class="w-full h-11 text-base font-semibold"
+          :is-loading="loginMutation.isPending.value"
         >
-          {{
-            axios.isAxiosError(loginMutation.error.value) &&
-            (loginMutation.error.value.code === 'ERR_NETWORK' ||
-              !loginMutation.error.value.response)
-              ? 'O servidor está offline. Tente novamente mais tarde.'
-              : 'Usuário ou senha incorretos. Verifique seus dados.'
-          }}
-        </div>
-
-        <div>
-          <button
-            type="submit"
-            :disabled="loginMutation.isPending.value"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {{ loginMutation.isPending.value ? 'Signing in...' : 'Sign in' }}
-          </button>
-        </div>
+          Entrar
+        </Button>
       </form>
     </div>
   </div>

@@ -1,9 +1,9 @@
-import { screen, waitFor, fireEvent } from '@testing-library/vue';
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import LoginPage from '../LoginPage.vue';
-import { renderWithProviders } from '@/test/test-utils';
 import { api } from '@/lib/axios';
+import { renderWithProviders } from '@/test/test-utils';
+import userEvent from '@testing-library/user-event';
+import { screen, waitFor } from '@testing-library/vue';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import LoginPage from '../LoginPage.vue';
 
 vi.mock('@/lib/axios', () => ({
   api: {
@@ -30,24 +30,25 @@ describe('LoginPage', () => {
 
   it('renders login form', () => {
     renderWithProviders(LoginPage);
-    expect(screen.getByText(/Sign in to your account/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Email address/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
+    expect(screen.getByText(/Acesse sua conta/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/E-mail/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Senha/i)).toBeInTheDocument();
   });
 
   it('shows validation errors for empty fields', async () => {
+    const user = userEvent.setup();
     renderWithProviders(LoginPage);
 
-    const submitButton = screen.getByRole('button', { name: /Sign in/i });
-    await fireEvent.click(submitButton);
+    const submitButton = screen.getByRole('button', { name: /Entrar/i });
+    await user.click(submitButton);
 
     await waitFor(() => {
       // Expect either custom or default zod messages if custom ones fail to trigger
       expect(
-        screen.queryByText(/Invalid email address/i) || screen.queryByText(/Invalid email/i)
+        screen.queryByText(/E-mail inválido/i) || screen.queryByText(/Invalid email/i)
       ).toBeInTheDocument();
       expect(
-        screen.queryByText(/Password is required/i) || screen.queryByText(/expected string/i)
+        screen.queryByText(/Senha é obrigatória/i) || screen.queryByText(/Expected string/i)
       ).toBeInTheDocument();
     });
   });
@@ -66,10 +67,10 @@ describe('LoginPage', () => {
     const { router } = renderWithProviders(LoginPage);
     const pushSpy = vi.spyOn(router, 'push');
 
-    await user.type(screen.getByLabelText(/Email address/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/Password/i), 'password123');
+    await user.type(screen.getByLabelText(/E-mail/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/Senha/i), 'password123');
 
-    const submitButton = screen.getByRole('button', { name: /Sign in/i });
+    const submitButton = screen.getByRole('button', { name: /Entrar/i });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -87,9 +88,9 @@ describe('LoginPage', () => {
 
     renderWithProviders(LoginPage);
 
-    await user.type(screen.getByLabelText(/Email address/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/Password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /Sign in/i }));
+    await user.type(screen.getByLabelText(/E-mail/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/Senha/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/O servidor está offline/i)).toBeInTheDocument();
@@ -99,15 +100,15 @@ describe('LoginPage', () => {
   it('shows error message on invalid credentials', async () => {
     const user = userEvent.setup();
     (api.post as any).mockRejectedValue({
-      response: { status: 401, data: { message: 'Invalid credentials' } },
+      response: { status: 401, data: { message: 'Usuário ou senha incorretos' } },
       isAxiosError: true
     });
 
     renderWithProviders(LoginPage);
 
-    await user.type(screen.getByLabelText(/Email address/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/Password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /Sign in/i }));
+    await user.type(screen.getByLabelText(/E-mail/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/Senha/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/Usuário ou senha incorretos/i)).toBeInTheDocument();
@@ -121,14 +122,36 @@ describe('LoginPage', () => {
 
     renderWithProviders(LoginPage);
 
-    await user.type(screen.getByLabelText(/Email address/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/Password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /Sign in/i }));
-
+    await user.type(screen.getByLabelText(/E-mail/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/Senha/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /Entrar/i }));
     await waitFor(() => {
-      const button = screen.getByRole('button');
-      expect(button).toHaveTextContent(/Signing in/i);
+      const button = screen.getByRole('button', { name: /Entrar/i });
       expect(button).toBeDisabled();
     });
+  });
+
+  it('toggles password visibility', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(LoginPage);
+
+    const passwordInput = screen.getByLabelText(/Senha/i);
+    expect(passwordInput).toHaveAttribute('type', 'password');
+
+    const toggleButton = screen.getByRole('button', { name: '' });
+    await user.click(toggleButton);
+    expect(passwordInput).toHaveAttribute('type', 'text');
+
+    await user.click(toggleButton);
+    expect(passwordInput).toHaveAttribute('type', 'password');
+  });
+
+  it('navigates to forgot password page', async () => {
+    const user = userEvent.setup();
+    const { router } = renderWithProviders(LoginPage);
+    const pushSpy = vi.spyOn(router, 'push');
+
+    await user.click(screen.getByText(/Esqueceu a senha?/i));
+    expect(pushSpy).toHaveBeenCalledWith('/forgot-password');
   });
 });

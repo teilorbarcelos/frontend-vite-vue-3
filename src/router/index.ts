@@ -17,6 +17,16 @@ const routes: RouteRecordRaw[] = [
     component: LoginPage
   },
   {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/features/auth/pages/ForgotPasswordPage.vue')
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: () => import('@/features/auth/pages/ResetPasswordPage.vue')
+  },
+  {
     path: '/',
     component: AppLayout,
     children: [
@@ -73,7 +83,9 @@ router.beforeEach(async (to, _from, next) => {
     });
   }
 
-  if (to.name !== 'login' && !authStore.isAuthenticated) {
+  const publicRoutes = ['login', 'forgot-password', 'reset-password'];
+
+  if (!publicRoutes.includes(to.name as string) && !authStore.isAuthenticated) {
     next({ name: 'login' });
   } else if (to.meta.feature && to.meta.action) {
     if (!authStore.hasPermission(to.meta.feature, to.meta.action)) {
