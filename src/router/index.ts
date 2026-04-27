@@ -1,7 +1,7 @@
 import { watch } from 'vue';
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import AdminLayout from '@/features/admin/AdminLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import LoginPage from '@/features/auth/pages/LoginPage.vue';
 import ErrorPage from '@/components/ui/ErrorPage.vue';
 
@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/',
-    component: AdminLayout,
+    component: AppLayout,
     children: [
       {
         path: '',
@@ -27,7 +27,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: () => import('@/features/admin/DashboardPage.vue')
+        component: () => import('@/features/dashboard/pages/DashboardPage.vue')
       },
       ...roleRoutes,
       ...userRoutes,

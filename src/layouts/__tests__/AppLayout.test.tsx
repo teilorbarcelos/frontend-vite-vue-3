@@ -3,7 +3,7 @@ import { renderWithProviders } from '@/test/test-utils';
 import { fireEvent, screen, waitFor } from '@testing-library/vue';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import AdminLayout from '../AdminLayout.vue';
+import AppLayout from '../AppLayout.vue';
 
 vi.mock('@tanstack/vue-query', async (importOriginal) => {
   const actual = await importOriginal<any>();
@@ -21,7 +21,7 @@ vi.mock('@tanstack/vue-query', async (importOriginal) => {
   };
 });
 
-describe('AdminLayout', () => {
+describe('AppLayout', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -34,9 +34,9 @@ describe('AdminLayout', () => {
     // Mock hasPermission to return true for everything
     authStore.hasPermission = vi.fn().mockReturnValue(true);
 
-    renderWithProviders(AdminLayout, { pinia });
+    renderWithProviders(AppLayout, { pinia });
 
-    expect(await screen.findByText('Admin Panel')).toBeInTheDocument();
+    expect(await screen.findByText('Admin')).toBeInTheDocument();
     expect(await screen.findByText('Dashboard')).toBeInTheDocument();
     expect(await screen.findByText('John Doe')).toBeInTheDocument();
   });
@@ -49,9 +49,10 @@ describe('AdminLayout', () => {
     // Only allow dashboard
     authStore.hasPermission = vi.fn().mockImplementation((feature) => feature === 'dashboard');
 
-    renderWithProviders(AdminLayout, { pinia });
+    renderWithProviders(AppLayout, { pinia });
 
     await waitFor(() => {
+      expect(screen.getByText('Admin')).toBeInTheDocument();
       expect(screen.getByText('Dashboard')).toBeInTheDocument();
     });
 
@@ -70,7 +71,7 @@ describe('AdminLayout', () => {
     delete (window as any).location;
     window.location = { href: '' } as any;
 
-    renderWithProviders(AdminLayout, { pinia });
+    renderWithProviders(AppLayout, { pinia });
 
     const logoutButton = await screen.findByTitle('Sair');
     await fireEvent.click(logoutButton);
@@ -88,7 +89,7 @@ describe('AdminLayout', () => {
     authStore.user = { id: '1' } as any; // No name
     authStore.hasPermission = vi.fn().mockReturnValue(true);
 
-    renderWithProviders(AdminLayout, { pinia });
+    renderWithProviders(AppLayout, { pinia });
 
     expect(await screen.findByText('User')).toBeInTheDocument();
   });
@@ -100,7 +101,7 @@ describe('AdminLayout', () => {
     authStore.user = { id: '1', name: 'John Doe' } as any;
     authStore.hasPermission = vi.fn().mockReturnValue(true);
 
-    const { router } = renderWithProviders(AdminLayout, { pinia });
+    const { router } = renderWithProviders(AppLayout, { pinia });
 
     // Navigate to /dashboard
     await router.push('/dashboard');
