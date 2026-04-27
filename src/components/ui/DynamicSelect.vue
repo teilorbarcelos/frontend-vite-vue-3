@@ -1,8 +1,3 @@
-/* v8 ignore start */
-<!-- 
-  Ignorado para coverage pois depende de Portals da Radix UI e IntersectionObserver, 
-  que apresentam comportamento instável no JSDOM, dificultando o teste automatizado determinístico.
--->
 <script setup lang="ts" generic="T extends { id: string | number }">
 import { ref, computed, watch, onUnmounted, useId, nextTick } from 'vue';
 import { Check, ChevronDown, Search, X } from 'lucide-vue-next';
@@ -244,5 +239,3 @@ onUnmounted(() => {
     <p v-if="error" class="text-xs text-red-500 mt-1">{{ error }}</p>
   </div>
 </template>
-
-/* v8 ignore stop */

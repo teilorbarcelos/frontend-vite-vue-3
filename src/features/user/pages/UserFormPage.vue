@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import type { AxiosError } from 'axios';
+import { useQuery } from '@tanstack/vue-query';
 import { z } from 'zod';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -10,9 +9,9 @@ import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import DynamicSelect from '@/components/ui/DynamicSelect.vue';
 import { roleService, type Role } from '@/features/role/services/role.service';
-import { useLoadingStore } from '@/stores/loading';
 import { useToastStore } from '@/stores/toast';
 import { userService } from '../services/user.service';
+import { userMutations } from '../hooks/user.mutations';
 
 const userSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -27,11 +26,9 @@ type UserForm = z.infer<typeof userSchema>;
 
 const router = useRouter();
 const route = useRoute();
-const queryClient = useQueryClient();
 const id = route.params.id as string;
 const isEditing = computed(() => Boolean(id && id !== 'new'));
 const toastStore = useToastStore();
-const loadingStore = useLoadingStore();
 
 const { data: user, isLoading: isLoadingUser } = useQuery({
   queryKey: computed(() => ['user', id]),
@@ -77,9 +74,8 @@ watch(
   { immediate: true }
 );
 
-const mutation = useMutation({
+const mutation = userMutations.useSave(isEditing.value, id, {
   mutationFn: (data: UserForm) => {
-    loadingStore.showLoading('Salvando usuário...');
     const payload = { ...data };
     if (!payload.password) {
       delete payload.password;
@@ -91,16 +87,7 @@ const mutation = useMutation({
     return userService.createUser(payload);
   },
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['users'] });
-    loadingStore.hideLoading();
-    toastStore.success(
-      isEditing.value ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!'
-    );
     router.push('/users');
-  },
-  onError: (err: AxiosError<{ message?: string }>) => {
-    loadingStore.hideLoading();
-    toastStore.error(err.response?.data?.message || 'Erro ao salvar usuário. Tente novamente.');
   }
 });
 

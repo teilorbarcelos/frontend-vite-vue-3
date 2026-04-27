@@ -1,6 +1,5 @@
 <script setup lang="ts">
-/* v8 ignore start */
-// Ignorado para coverage pois é um componente auxiliar que no momento não está em uso direto na aplicação e possui branches de scroll difíceis de simular.
+// Componente auxiliar.
 import { cn } from '@/utils/cn';
 import {
   SelectContent,

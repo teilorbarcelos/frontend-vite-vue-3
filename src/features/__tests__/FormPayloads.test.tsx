@@ -203,10 +203,10 @@ describe('Form Payloads Verification', () => {
 
       renderWithProviders(LoginPage, { queryClient });
 
-      await user.type(screen.getByLabelText(/Email address/i), 'test@example.com');
-      await user.type(screen.getByLabelText(/Password/i), 'password123');
+      await user.type(screen.getByLabelText(/E-mail/i), 'test@example.com');
+      await user.type(screen.getByLabelText(/Senha/i), 'password123');
 
-      await user.click(screen.getByRole('button', { name: /Sign in/i }));
+      await user.click(screen.getByRole('button', { name: /Entrar/i }));
 
       await waitFor(() => {
         expect(api.post).toHaveBeenCalledWith('/v1/auth/login', {

@@ -1,26 +1,23 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import type { AxiosError } from 'axios';
+import { useQuery } from '@tanstack/vue-query';
 import { DataTable } from '@/components/ui/DataTable';
 import ListPageHeader from '@/components/ui/ListPageHeader.vue';
 import RoleFilters from '../components/RoleFilters.vue';
 import { useAuthStore } from '@/stores/auth';
-import { useToastStore } from '@/stores/toast';
 import { useDataTable } from '@/hooks/useDataTable';
 import { roleService } from '../services/role.service';
 import { getRoleColumns } from '../constants/roleHeaderMap';
 import { ROLE_SEARCHABLE_FIELDS as searchFields } from '../constants/role.constants';
+import { roleMutations } from '../hooks/role.mutations';
 
 const { page, size, searchWord, filters, sort, handleSearch, handleFilter, tableProps } =
   useDataTable();
 
 const isFilterOpen = ref(false);
 const router = useRouter();
-const queryClient = useQueryClient();
 const authStore = useAuthStore();
-const toastStore = useToastStore();
 
 const permissions = computed(() => ({
   canCreate: authStore.hasPermission('role', 'create'),
@@ -49,28 +46,8 @@ const { data, isError, isFetching } = useQuery({
     })
 });
 
-const toggleStatusMutation = useMutation({
-  mutationFn: ({ id, active }: { id: string; active: boolean }) =>
-    roleService.toggleStatus(id, active),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['roles'] });
-    toastStore.success('Status da role atualizado!');
-  },
-  onError: (err: AxiosError<{ message?: string }>) => {
-    toastStore.error(err.response?.data?.message || 'Erro ao atualizar status.');
-  }
-});
-
-const deleteMutation = useMutation({
-  mutationFn: (id: string) => roleService.deleteRole(id),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['roles'] });
-    toastStore.success('Role excluída com sucesso!');
-  },
-  onError: (err: AxiosError<{ message?: string }>) => {
-    toastStore.error(err.response?.data?.message || 'Erro ao excluir role.');
-  }
-});
+const toggleStatusMutation = roleMutations.useToggleStatus();
+const deleteMutation = roleMutations.useDelete();
 
 const columns = computed(() =>
   getRoleColumns(

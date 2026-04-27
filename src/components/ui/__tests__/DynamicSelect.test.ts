@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import DynamicSelect from '../DynamicSelect.vue';
 
-describe.skip('DynamicSelect', () => {
+describe('DynamicSelect', () => {
   const mockItems = [
     { id: '1', name: 'Option 1' },
     { id: '2', name: 'Option 2' }
@@ -111,7 +111,7 @@ describe.skip('DynamicSelect', () => {
 
     await waitFor(() => {
       expect(emitted()['update:modelValue']).toBeTruthy();
-      expect(emitted()['update:modelValue'][0][0]).toEqual(['1']);
+      expect((emitted()['update:modelValue'] as any[][])[0][0]).toEqual(['1']);
     });
   });
 
@@ -137,7 +137,7 @@ describe.skip('DynamicSelect', () => {
 
     await waitFor(() => {
       expect(emitted()['update:modelValue']).toBeTruthy();
-      expect(emitted()['update:modelValue'][0][0]).toEqual([]);
+      expect((emitted()['update:modelValue'] as any[][])[0][0]).toEqual([]);
     });
   });
 
@@ -156,14 +156,6 @@ describe.skip('DynamicSelect', () => {
 
   it('sets up intersection observer for infinite scroll', async () => {
     const user = userEvent.setup();
-    const observe = vi.fn();
-    const mockObserver = vi.fn().mockImplementation(() => ({
-      observe,
-      disconnect: vi.fn(),
-      unobserve: vi.fn()
-    }));
-    vi.stubGlobal('IntersectionObserver', mockObserver);
-
     render(DynamicSelect, {
       props: {
         fetchPage,
@@ -175,14 +167,11 @@ describe.skip('DynamicSelect', () => {
 
     await user.click(screen.getByRole('combobox'));
 
-    // Wait for the observer to be initialized and observe called
-    await waitFor(
-      () => {
-        expect(observe).toHaveBeenCalled();
-      },
-      { timeout: 2000 }
-    );
+    // Trigger intersection using the global helper from setup.ts
+    (globalThis as any).fireIntersection(true);
 
-    vi.unstubAllGlobals();
+    await waitFor(() => {
+      expect(fetchPage).toHaveBeenCalled();
+    });
   });
 });

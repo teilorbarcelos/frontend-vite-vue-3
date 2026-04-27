@@ -21,11 +21,15 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    const isLoginRequest = originalRequest.url?.includes('/v1/auth/login');
+    const isPublicAuthRequest =
+      originalRequest.url?.includes('/v1/auth/login') ||
+      originalRequest.url?.includes('/v1/auth/password/validate') ||
+      originalRequest.url?.includes('/v1/auth/password/change');
 
-    if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isPublicAuthRequest) {
       originalRequest._retry = true;
       const refreshToken = localStorage.getItem('refreshToken');
+
       if (refreshToken) {
         try {
           const res = await axios.post('http://localhost:8888/v1/auth/refresh', { refreshToken });

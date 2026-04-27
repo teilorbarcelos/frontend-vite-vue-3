@@ -1,26 +1,23 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import type { AxiosError } from 'axios';
+import { useQuery } from '@tanstack/vue-query';
 import { DataTable } from '@/components/ui/DataTable';
 import ListPageHeader from '@/components/ui/ListPageHeader.vue';
 import ProductFilters from '../components/ProductFilters.vue';
 import { useAuthStore } from '@/stores/auth';
-import { useToastStore } from '@/stores/toast';
 import { useDataTable } from '@/hooks/useDataTable';
 import { productService } from '../services/product.service';
 import { getProductColumns } from '../constants/productHeaderMap';
 import { PRODUCT_SEARCHABLE_FIELDS as searchFields } from '../constants/product.constants';
+import { productMutations } from '../hooks/product.mutations';
 
 const { page, size, searchWord, filters, sort, handleSearch, handleFilter, tableProps } =
   useDataTable();
 
 const isFilterOpen = ref(false);
 const router = useRouter();
-const queryClient = useQueryClient();
 const authStore = useAuthStore();
-const toastStore = useToastStore();
 
 const permissions = computed(() => ({
   canCreate: authStore.hasPermission('product', 'create'),
@@ -49,28 +46,8 @@ const { data, isError, isFetching } = useQuery({
     })
 });
 
-const toggleStatusMutation = useMutation({
-  mutationFn: ({ id, active }: { id: string; active: boolean }) =>
-    productService.toggleStatus(id, active),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['products'] });
-    toastStore.success('Status do produto atualizado!');
-  },
-  onError: (err: AxiosError<{ message?: string }>) => {
-    toastStore.error(err.response?.data?.message || 'Erro ao atualizar status.');
-  }
-});
-
-const deleteMutation = useMutation({
-  mutationFn: (id: string) => productService.deleteProduct(id),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['products'] });
-    toastStore.success('Produto excluído com sucesso!');
-  },
-  onError: (err: AxiosError<{ message?: string }>) => {
-    toastStore.error(err.response?.data?.message || 'Erro ao excluir produto.');
-  }
-});
+const toggleStatusMutation = productMutations.useToggleStatus();
+const deleteMutation = productMutations.useDelete();
 
 const columns = computed(() =>
   getProductColumns(

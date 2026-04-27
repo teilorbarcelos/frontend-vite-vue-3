@@ -26,7 +26,7 @@ const isActive = (path: string): boolean => route.path.startsWith(path);
   <div class="flex h-screen w-full bg-gray-50">
     <aside class="w-64 bg-white border-r border-gray-200 flex flex-col overflow-y-auto">
       <div class="h-16 flex items-center px-6 border-b border-gray-200 shrink-0">
-        <span class="text-xl font-bold text-gray-800">Admin Panel</span>
+        <span class="text-xl font-bold text-gray-800">Admin</span>
       </div>
       <nav class="flex-1 p-4 space-y-1">
         <RouterLink

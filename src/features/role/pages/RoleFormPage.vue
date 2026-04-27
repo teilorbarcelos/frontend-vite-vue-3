@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
-import type { AxiosError } from 'axios';
+import { useQuery } from '@tanstack/vue-query';
 import { z } from 'zod';
 import { useForm, useFieldArray } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
-import { useLoadingStore } from '@/stores/loading';
-import { useToastStore } from '@/stores/toast';
 import { roleService, type RoleFeature } from '../services/role.service';
+import { roleMutations } from '../hooks/role.mutations';
 
 const roleSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
@@ -30,11 +28,8 @@ type RoleForm = z.infer<typeof roleSchema>;
 
 const router = useRouter();
 const route = useRoute();
-const queryClient = useQueryClient();
 const id = route.params.id as string;
 const isEditing = computed(() => Boolean(id && id !== 'new'));
-const toastStore = useToastStore();
-const loadingStore = useLoadingStore();
 
 const { data: features, isLoading: isLoadingFeatures } = useQuery({
   queryKey: ['features'],
@@ -89,25 +84,9 @@ watch(
   { immediate: true }
 );
 
-const mutation = useMutation({
-  mutationFn: (data: RoleForm) => {
-    loadingStore.showLoading('Salvando perfil...');
-    if (isEditing.value) {
-      return roleService.updateRole(id, data);
-    }
-    return roleService.createRole(data);
-  },
+const mutation = roleMutations.useSave(isEditing.value, id, {
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['roles'] });
-    loadingStore.hideLoading();
-    toastStore.success(
-      isEditing.value ? 'Perfil atualizado com sucesso!' : 'Perfil criado com sucesso!'
-    );
     router.push('/roles');
-  },
-  onError: (err: AxiosError<{ message?: string }>) => {
-    loadingStore.hideLoading();
-    toastStore.error(err.response?.data?.message || 'Erro ao salvar perfil. Tente novamente.');
   }
 });
 
