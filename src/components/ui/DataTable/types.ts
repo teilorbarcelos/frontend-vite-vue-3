@@ -1,6 +1,5 @@
-/* v8 ignore start */
-import type { TableSort, SortDirection } from '@/lib/types';
-export type { TableSort, SortDirection };
+import type { SortDirection, TableSort } from '@/lib/types';
+export type { SortDirection, TableSort };
 
 export interface HeaderMapItem<T> {
   title: string;

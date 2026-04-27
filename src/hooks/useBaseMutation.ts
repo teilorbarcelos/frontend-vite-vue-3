@@ -1,13 +1,13 @@
+import { useLoadingStore } from '@/stores/loading';
+import { useToastStore } from '@/stores/toast';
 import {
   useMutation,
   useQueryClient,
   type QueryKey,
-  type MutationOptions as VueMutationOptions,
-  type UseMutationReturnType
+  type UseMutationReturnType,
+  type MutationOptions as VueMutationOptions
 } from '@tanstack/vue-query';
 import type { AxiosError } from 'axios';
-import { useLoadingStore } from '@/stores/loading';
-import { useToastStore } from '@/stores/toast';
 
 export type BaseMutationOptions<TData, TVariables, TContext = unknown> = VueMutationOptions<
   TData,
@@ -55,13 +55,11 @@ export function useBaseMutation<TData = unknown, TVariables = void, TContext = u
     },
     onSuccess: (data: TData, variables: TVariables, result: TContext): void => {
       loadingStore.hideLoading();
-      /* v8 ignore next 5 */
       if (invalidateQueries) {
         invalidateQueries.forEach((queryKey) => {
           queryClient.invalidateQueries({ queryKey });
         });
       }
-      /* v8 ignore next 7 */
       if (successMessage) {
         const msg =
           typeof successMessage === 'function' ? successMessage(data, variables) : successMessage;

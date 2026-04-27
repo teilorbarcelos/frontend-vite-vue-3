@@ -1,5 +1,5 @@
 import { cn } from '@/utils/cn';
-import { defineComponent, h } from 'vue';
+import { defineComponent, h, type VNode } from 'vue';
 
 export {
   DialogRoot as Modal,
@@ -18,7 +18,7 @@ export const ModalHeader = defineComponent({
     class: { type: String, default: '' }
   },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h(
         'div',
         {
@@ -35,7 +35,7 @@ export const ModalFooter = defineComponent({
     class: { type: String, default: '' }
   },
   setup(props, { slots }) {
-    return () =>
+    return (): VNode =>
       h(
         'div',
         {

@@ -9,16 +9,18 @@ const props = withDefaults(defineProps<DataTableWithPaginationProps<T>>(), {
 
 const currentPage = ref(0);
 
-const totalPages = computed(() => Math.ceil(props.data.length / props.pageSize));
+const totalPages = computed((): number => Math.ceil(props.data.length / props.pageSize));
 
-const safePage = computed(() => Math.min(currentPage.value, Math.max(0, totalPages.value - 1)));
+const safePage = computed((): number =>
+  Math.min(currentPage.value, Math.max(0, totalPages.value - 1))
+);
 
-const paginatedData = computed(() => {
+const paginatedData = computed((): T[] => {
   const start = safePage.value * props.pageSize;
   return props.data.slice(start, start + props.pageSize);
 });
 
-const handlePageChange = (page: number) => {
+const handlePageChange = (page: number): void => {
   currentPage.value = page;
 };
 </script>

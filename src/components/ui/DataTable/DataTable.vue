@@ -10,18 +10,15 @@ import { computed } from 'vue';
 
 const props = defineProps<DataTableProps<T>>();
 
-const handleSort = (key: string) => {
-  /* v8 ignore next */
+const handleSort = (key: string): void => {
   if (!props.sorting?.onChange) return;
 
   let nextDirection: SortDirection = 'asc';
 
-  /* v8 ignore start */
   if (props.sorting.value.orderBy === key) {
     if (props.sorting.value.orderDirection === 'asc') nextDirection = 'desc';
     else if (props.sorting.value.orderDirection === 'desc') nextDirection = undefined;
   }
-  /* v8 ignore stop */
 
   props.sorting.onChange({
     orderBy: nextDirection ? key : undefined,
@@ -33,7 +30,7 @@ const handleSort = (key: string) => {
   }
 };
 
-const computedTotalPages = computed(() => {
+const computedTotalPages = computed((): number => {
   if (props.totalItems && props.paginationProps?.pageSize) {
     return Math.ceil(props.totalItems / props.paginationProps.pageSize);
   }
@@ -120,7 +117,6 @@ const computedTotalPages = computed(() => {
                           <template v-else>{{ getValueByPath(item, col.keyItem) ?? '' }}</template>
                         </div>
                       </TooltipTrigger>
-                      <!-- v8 ignore start -->
                       <TooltipContent>
                         <div class="max-w-xs wrap-break-word">
                           <template v-if="col.parseItem">
@@ -140,7 +136,6 @@ const computedTotalPages = computed(() => {
                           <template v-else>{{ getValueByPath(item, col.keyItem) ?? '' }}</template>
                         </div>
                       </TooltipContent>
-                      <!-- v8 ignore stop -->
                     </Tooltip>
                   </template>
                   <template v-else>
@@ -170,14 +165,12 @@ const computedTotalPages = computed(() => {
           </TableBody>
         </Table>
       </div>
-      <!-- v8 ignore start -->
       <Pagination
         v-if="paginationProps"
         v-bind="paginationProps"
         :totalItems="totalItems ?? paginationProps.totalItems"
         :totalPages="computedTotalPages"
       />
-      <!-- v8 ignore stop -->
     </div>
   </TooltipProvider>
 </template>

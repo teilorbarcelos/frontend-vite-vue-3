@@ -27,15 +27,15 @@ const props = withDefaults(defineProps<PaginationProps>(), {
   pageSizeOptions: () => DEFAULT_PAGE_SIZE_OPTIONS
 });
 
-const handlePageChange = (page: number) => {
+const handlePageChange = (page: number): void => {
   if (isPageInRange(page, props.totalPages)) {
     props.onPageChange(page);
   }
 };
 
-const showPagination = computed(() => props.totalPages > 1 || !!props.onPageSizeChange);
+const showPagination = computed((): boolean => props.totalPages > 1 || !!props.onPageSizeChange);
 
-const pageNumbers = computed(() => {
+const pageNumbers = computed((): (number | string)[] => {
   const pages = [];
   const delta = 1;
   const totalPages = props.totalPages;
@@ -55,7 +55,7 @@ const pageNumbers = computed(() => {
   return pages.filter((v, i, a) => v !== '...' || a[i - 1] !== '...');
 });
 
-const handleSizeChange = (option: number) => {
+const handleSizeChange = (option: number): void => {
   props.onPageSizeChange?.(option);
   props.onPageChange(0);
 };
@@ -86,7 +86,6 @@ const handleSizeChange = (option: number) => {
     <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
       <div class="flex items-center space-x-6">
         <p class="text-sm text-gray-500 whitespace-nowrap">
-          <!-- v8 ignore start -->
           <template v-if="totalItems !== undefined">
             Exibindo
             <span class="font-semibold text-gray-900">{{
@@ -98,7 +97,6 @@ const handleSizeChange = (option: number) => {
             </span>
             de <span class="font-semibold text-gray-900">{{ totalItems }}</span>
           </template>
-          <!-- v8 ignore stop -->
           <template v-else>
             Página <span class="font-semibold text-gray-900">{{ currentPage + 1 }}</span> de
             <span class="font-semibold text-gray-900">{{ totalPages }}</span>

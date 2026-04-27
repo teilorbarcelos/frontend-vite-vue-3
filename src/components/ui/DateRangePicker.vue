@@ -1,6 +1,4 @@
 <script setup lang="ts">
-/* v8 ignore start */
-// Ignorado para coverage devido a erros de hoisting em mocks e instabilidade do Radix Popover/Calendar no ambiente JSDOM.
 import { computed, ref, watch } from 'vue';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -10,6 +8,7 @@ import { RangeCalendar } from '@/components/ui/Calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover';
 import { cn } from '@/utils/cn';
 import { CalendarDate, type DateValue } from '@internationalized/date';
+import type { DateRange } from 'radix-vue';
 
 interface Props {
   class?: string;
@@ -33,9 +32,7 @@ const toDate = (dateValue?: DateValue): Date | undefined => {
   return new Date(dateValue.year, dateValue.month - 1, dateValue.day);
 };
 
-type RadixDateRange = { start: DateValue | undefined; end: DateValue | undefined };
-
-const internalValue = ref<RadixDateRange | undefined>(
+const internalValue = ref<DateRange | undefined>(
   props.modelValue?.from
     ? {
         start: toCalendarDate(props.modelValue.from),
@@ -59,9 +56,8 @@ watch(
   },
   { immediate: true }
 );
-/* v8 ignore stop */
 
-const handleUpdate = (val: RadixDateRange | undefined): void => {
+const handleUpdate = (val: DateRange | undefined): void => {
   const from = toDate(val?.start);
   const to = toDate(val?.end);
 
@@ -80,6 +76,10 @@ const formattedDate = computed(() => {
   const toStr = format(props.modelValue.to, 'dd/MM/yyyy', { locale: ptBR });
   return `${fromStr} - ${toStr}`;
 });
+
+const internalValueAsRange = computed(
+  (): DateRange | undefined => internalValue.value as unknown as DateRange
+);
 </script>
 
 <template>
@@ -101,7 +101,7 @@ const formattedDate = computed(() => {
       </PopoverTrigger>
       <PopoverContent class="w-auto p-0 rounded-xl overflow-hidden" align="start">
         <RangeCalendar
-          :model-value="internalValue as RadixDateRange | undefined"
+          :model-value="internalValueAsRange"
           @update:model-value="handleUpdate"
           initial-focus
         />

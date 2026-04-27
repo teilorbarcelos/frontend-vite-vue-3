@@ -1,6 +1,4 @@
 <script setup lang="ts">
-/* v8 ignore start */
-// Ignorado para coverage pois depende de simulação complexa da Radix UI que apresenta inconsistências no ambiente JSDOM.
 import { cn } from '@/utils/cn';
 import {
   RangeCalendarRoot,

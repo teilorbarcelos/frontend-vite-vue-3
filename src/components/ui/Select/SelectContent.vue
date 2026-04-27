@@ -39,7 +39,6 @@ const forwarded = useForwardPropsEmits(props, emits);
         )
       "
     >
-      <!-- v8 ignore next 3 -->
       <SelectScrollUpButton class="flex cursor-default items-center justify-center py-1">
         <ChevronUp class="h-4 w-4" />
       </SelectScrollUpButton>
@@ -56,7 +55,6 @@ const forwarded = useForwardPropsEmits(props, emits);
         <slot />
       </SelectViewport>
 
-      <!-- v8 ignore next 3 -->
       <SelectScrollDownButton class="flex cursor-default items-center justify-center py-1">
         <ChevronDown class="h-4 w-4" />
       </SelectScrollDownButton>
