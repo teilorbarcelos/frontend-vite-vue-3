@@ -47,7 +47,7 @@ Para manter a consistência e acelerar o desenvolvimento, utilizamos o **Plop** 
 Para criar uma nova funcionalidade, execute:
 
 ```bash
-npm run generate
+make generate
 ```
 
 Siga as instruções no terminal para definir o nome do novo módulo.
@@ -59,7 +59,7 @@ Este projeto mantém uma **cobertura rígida de 100%** para statements, branches
 Para rodar os testes com coverage:
 
 ```bash
-npm run test:coverage
+make coverage
 ```
 
 ### Exceções de Testes
@@ -81,10 +81,11 @@ Nestes casos, os componentes são excluídos da contagem de cobertura no `vite.c
 
 ## 🛠️ Scripts Disponíveis
 
-- `npm run dev`: Inicia o servidor de desenvolvimento.
-- `npm run build`: Gera o build de produção com verificação de tipos.
-- `npm run test`: Roda a suite de testes.
-- `npm run test:coverage`: Roda os testes e gera o relatório de cobertura.
-- `npm run generate`: Abre o gerador de módulos.
-- `npm run lint`: Executa a verificação do linter.
-- `npm run format`: Formata o código com Prettier.
+- `make setup`: Instala as dependências do projeto.
+- `make dev`: Inicia o servidor de desenvolvimento.
+- `make build`: Gera o build de produção com verificação de tipos.
+- `make test`: Roda a suite de testes.
+- `make coverage`: Roda os testes e gera o relatório de cobertura.
+- `make generate`: Abre o gerador de módulos.
+- `make lint`: Executa a verificação do linter.
+- `make format`: Formata o código com Prettier.
