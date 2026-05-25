@@ -11,6 +11,14 @@ import { userService } from '../services/user.service';
 import { getUserColumns } from '../constants/userHeaderMap';
 import { USER_SEARCHABLE_FIELDS as searchFields } from '../constants/user.constants';
 import { userMutations } from '../hooks/user.mutations';
+import ExportPdfButton from '@/components/ui/ExportPdfButton.vue';
+
+const exportQueryParams = computed(() => ({
+  searchWord: searchWord.value,
+  searchFields,
+  filters: filters.value,
+  sort: sort.value
+}));
 
 const { page, size, searchWord, filters, sort, handleSearch, handleFilter, tableProps } =
   useDataTable();
@@ -68,7 +76,15 @@ const columns = computed(() =>
       :filter-count="Object.keys(filters).length"
       :on-create-click="permissions.canCreate ? () => router.push('/users/new') : undefined"
       create-label="Novo Usuário"
-    />
+    >
+      <template #extra-actions>
+        <ExportPdfButton
+          :on-export="userService.exportUsersPdf"
+          :query-params="exportQueryParams"
+          filename="usuarios.pdf"
+        />
+      </template>
+    </ListPageHeader>
 
     <UserFilters
       :is-open="isFilterOpen"

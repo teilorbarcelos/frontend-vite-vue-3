@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/vue';
+import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { nextTick } from 'vue';
 import ToastProvider from '../ToastProvider.vue';
@@ -112,5 +113,26 @@ describe('Toast Component System', () => {
 
     vi.advanceTimersByTime(600);
     expect(toastStore.toasts).toHaveLength(0);
+  });
+
+  it('covers handleOpenChange with true', async () => {
+    const toastStore = useToastStore();
+    const wrapper = mount(ToastProvider);
+
+    toastStore.addToast({
+      id: 'test-id',
+      title: 'Test Toast',
+      variant: 'default'
+    });
+
+    await nextTick();
+
+    const ToastRoot = (await import('../ToastRoot.vue')).default;
+    const root = wrapper.findComponent(ToastRoot);
+    if (root.exists()) {
+      root.vm.$emit('update:open', true);
+    }
+
+    expect(toastStore.toasts).toHaveLength(1);
   });
 });

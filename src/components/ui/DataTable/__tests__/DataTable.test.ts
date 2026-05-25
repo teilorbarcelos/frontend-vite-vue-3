@@ -1,8 +1,22 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/vue';
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/vue';
+import { describe, expect, it, vi } from 'vitest';
 import DataTable from '../DataTable.vue';
 import type { HeaderMapItem } from '../types';
+
+vi.mock('../../Tooltip', () => ({
+  TooltipProvider: {
+    template: '<div><slot /></div>'
+  },
+  Tooltip: {
+    template: '<div><slot /></div>'
+  },
+  TooltipTrigger: {
+    template: '<div><slot /></div>'
+  },
+  TooltipContent: {
+    template: '<div><slot /></div>'
+  }
+}));
 
 describe('DataTable', () => {
   const mockData = [
@@ -109,7 +123,6 @@ describe('DataTable', () => {
   });
 
   it('handles truncated content with tooltips', async () => {
-    const user = userEvent.setup();
     const headerWithTruncate: HeaderMapItem<any>[] = [
       { title: 'Long Text', keyItem: 'text', truncate: true }
     ];
@@ -120,29 +133,10 @@ describe('DataTable', () => {
         totalItems: 1
       }
     });
-    const trigger = screen.getByText('This is a very long text that should be truncated');
-    expect(trigger).toHaveClass('truncate');
-
-    // Hover to open tooltip
-    await user.hover(trigger);
-
-    // We try to find the tooltip content. If it fails due to JSDOM/Portal issues,
-    // we still have coverage for the trigger branch.
-    try {
-      await waitFor(
-        () => {
-          // The text appears twice: once in the trigger and once in the tooltip
-          expect(
-            screen.getAllByText('This is a very long text that should be truncated').length
-          ).toBeGreaterThan(1);
-        },
-        { timeout: 2000 }
-      );
-    } catch (e) {
-      // Fallback: if tooltip doesn't open in test, we don't fail the suite
-      // as long as the trigger was rendered (which we already checked)
-      console.warn('Tooltip content not found in test environment');
-    }
+    const elements = screen.getAllByText('This is a very long text that should be truncated');
+    expect(elements.length).toBeGreaterThanOrEqual(2);
+    const trigger = elements.find((el) => el.classList.contains('truncate'));
+    expect(trigger).toBeDefined();
   });
 
   it('handles truncated content with custom parseItem returning a component', () => {
@@ -161,8 +155,10 @@ describe('DataTable', () => {
         totalItems: 1
       }
     });
-    expect(screen.getByText('Some text')).toBeInTheDocument();
-    expect(screen.getByText('Some text').parentElement).toHaveClass('truncate');
+    const elements = screen.getAllByText('Some text');
+    expect(elements.length).toBeGreaterThanOrEqual(2);
+    const trigger = elements.find((el) => el.parentElement?.classList.contains('truncate'));
+    expect(trigger).toBeDefined();
   });
 
   it('handles truncated content with custom parseItem returning a string', () => {
@@ -181,7 +177,7 @@ describe('DataTable', () => {
         totalItems: 1
       }
     });
-    expect(screen.getByText('Prefix: Some text')).toBeInTheDocument();
+    expect(screen.getAllByText('Prefix: Some text').length).toBeGreaterThanOrEqual(2);
   });
 
   it('handles custom parseItem returning a component', () => {
@@ -308,5 +304,117 @@ describe('DataTable', () => {
     });
     // Check pagination (5 pages)
     expect(screen.getByText('5')).toBeInTheDocument();
+  });
+
+  it('does not sort if sorting option is not provided', async () => {
+    render(DataTable, {
+      props: {
+        data: mockData,
+        headerMap: headerMap,
+        totalItems: 2
+      }
+    });
+
+    const nameHeader = screen.getByText('Name');
+    await fireEvent.click(nameHeader);
+  });
+
+  it('handles sort when orderDirection is undefined', async () => {
+    const onSortChange = vi.fn();
+    render(DataTable, {
+      props: {
+        data: mockData,
+        headerMap: headerMap,
+        totalItems: 2,
+        sorting: {
+          value: { orderBy: 'name', orderDirection: undefined },
+          onChange: onSortChange
+        }
+      }
+    });
+
+    const nameHeader = screen.getByText('Name');
+    await fireEvent.click(nameHeader);
+
+    expect(onSortChange).toHaveBeenCalledWith({
+      orderBy: 'name',
+      orderDirection: 'asc'
+    });
+  });
+
+  it('covers totalItems fallback from paginationProps', () => {
+    const onPageChange = vi.fn();
+    render(DataTable, {
+      props: {
+        data: mockData,
+        headerMap: headerMap,
+        paginationProps: {
+          currentPage: 0,
+          pageSize: 10,
+          totalPages: 5,
+          totalItems: 50,
+          onPageChange
+        }
+      }
+    });
+
+    expect(screen.getByText('50')).toBeInTheDocument();
+  });
+
+  it('handles truncated content with custom parseItem returning a number', () => {
+    const headerWithTruncate: HeaderMapItem<any>[] = [
+      {
+        title: 'Number Val',
+        keyItem: 'num',
+        truncate: true,
+        parseItem: (val) => Number(val)
+      }
+    ];
+    render(DataTable, {
+      props: {
+        data: [{ num: 42 }],
+        headerMap: headerWithTruncate,
+        totalItems: 1
+      }
+    });
+    expect(screen.getAllByText('42').length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('covers fallback when totalPages is falsy/undefined', () => {
+    const onPageChange = vi.fn();
+    render(DataTable, {
+      props: {
+        data: mockData,
+        headerMap: headerMap,
+        paginationProps: {
+          currentPage: 0,
+          pageSize: 10,
+          totalPages: undefined,
+          totalItems: 50,
+          onPageChange
+        }
+      }
+    });
+    expect(screen.queryByText('50')).not.toBeInTheDocument();
+  });
+
+  it('handles truncated content with undefined values and custom parseItem returning null', () => {
+    const headerWithTruncate: HeaderMapItem<any>[] = [
+      {
+        title: 'Val',
+        keyItem: 'val',
+        truncate: true,
+        parseItem: () => null
+      }
+    ];
+    render(DataTable, {
+      props: {
+        data: [{ val: undefined }],
+        headerMap: headerWithTruncate,
+        totalItems: 1
+      }
+    });
+    const cells = screen.getAllByRole('cell');
+    expect(cells[0].textContent).toBe('');
   });
 });

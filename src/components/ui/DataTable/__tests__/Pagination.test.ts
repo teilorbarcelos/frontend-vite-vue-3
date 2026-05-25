@@ -167,4 +167,17 @@ describe('Pagination', () => {
     await fireEvent.click(anteriorButton);
     expect(onPageChange).not.toHaveBeenCalled();
   });
+
+  it('covers pageSize fallback when undefined', () => {
+    render(Pagination, {
+      props: {
+        currentPage: 0,
+        totalPages: 5,
+        totalItems: 50,
+        onPageChange: vi.fn()
+      }
+    });
+
+    expect(screen.getByText(/Exibindo/)).toHaveTextContent('Exibindo 1 até 0 de 50');
+  });
 });

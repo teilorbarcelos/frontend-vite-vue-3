@@ -170,4 +170,33 @@ describe('useBaseMutation', () => {
     await (wrapper.vm as any).mutation.mutateAsync();
     expect(onSettled).toHaveBeenCalledWith('data', null, undefined, undefined, expect.anything());
   });
+
+  it('calls successMessage as a function', async () => {
+    const toastStore = useToastStore();
+    const successSpy = vi.spyOn(toastStore, 'success');
+    const successFn = vi
+      .fn()
+      .mockImplementation((data, variables) => `Success: ${data} with ${variables}`);
+
+    const TestComponent = defineComponent({
+      setup() {
+        const mutation = useBaseMutation({
+          mutationFn: (vars: string) => Promise.resolve('res-data'),
+          successMessage: successFn
+        });
+        return { mutation };
+      },
+      template: '<div></div>'
+    });
+
+    const wrapper = mount(TestComponent, {
+      global: {
+        plugins: [[VueQueryPlugin, { queryClient }]]
+      }
+    });
+
+    await (wrapper.vm as any).mutation.mutateAsync('vars-data');
+    expect(successFn).toHaveBeenCalledWith('res-data', 'vars-data');
+    expect(successSpy).toHaveBeenCalledWith('Success: res-data with vars-data');
+  });
 });

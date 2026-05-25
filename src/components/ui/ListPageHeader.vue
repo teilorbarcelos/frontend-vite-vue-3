@@ -37,6 +37,7 @@ const emit = defineEmits(['search', 'filter-click']);
           {{ filterCount }}
         </span>
       </Button>
+      <slot name="extra-actions" />
       <Button v-if="onCreateClick" @click="onCreateClick">
         <Plus class="w-4 h-4 mr-2" />
         {{ createLabel }}
