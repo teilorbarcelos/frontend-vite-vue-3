@@ -9,7 +9,8 @@ vi.mock('../../services/user.service', () => ({
   userService: {
     getUsers: vi.fn(),
     deleteUser: vi.fn(),
-    toggleStatus: vi.fn()
+    toggleStatus: vi.fn(),
+    exportUsersPdf: vi.fn()
   }
 }));
 
@@ -266,5 +267,19 @@ describe('UserListPage', () => {
     await waitFor(() => {
       expect(userService.toggleStatus).toHaveBeenCalled();
     });
+  });
+
+  it('triggers export users PDF flow', async () => {
+    setAdminPermissions();
+    const user = userEvent.setup();
+    const mockBlob = new Blob(['pdf-data'], { type: 'application/pdf' });
+    (userService.exportUsersPdf as Mock).mockResolvedValue(mockBlob);
+
+    renderWithProviders(UserListPage, { queryClient });
+
+    const exportButton = await screen.findByRole('button', { name: /Exportar PDF/i });
+    await user.click(exportButton);
+
+    expect(userService.exportUsersPdf).toHaveBeenCalled();
   });
 });
