@@ -4,7 +4,7 @@ import { getValueByPath } from '@/utils/getValueByPath';
 import { ArrowDown, ArrowUp, ArrowUpDown, Loader2 } from 'lucide-vue-next';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../Tooltip';
 import Pagination from './Pagination.vue';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './TableAtoms';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from './TableAtoms';
 import { type DataTableProps, type SortDirection } from './types';
 import { computed } from 'vue';
 
@@ -56,14 +56,19 @@ const computedTotalPages = computed((): number => {
       </div>
       <div class="flex-1 overflow-auto min-h-0">
         <Table>
+          <caption class="sr-only">
+            Tabela de dados
+          </caption>
           <TableHeader>
             <TableRow>
-              <TableHead
+              <th
+                scope="col"
                 v-for="(col, idx) in headerMap"
                 :key="idx"
                 @click="col.sortable && handleSort(col.keyItem)"
                 :class="
                   cn(
+                    'h-12 px-4 text-left align-middle font-medium text-gray-500 [&:has([role=checkbox])]:pr-0',
                     col.sortable &&
                       'cursor-pointer select-none hover:bg-gray-50 transition-colors group'
                   )
@@ -89,7 +94,7 @@ const computedTotalPages = computed((): number => {
                     <ArrowUpDown v-else class="w-4 h-4" />
                   </span>
                 </div>
-              </TableHead>
+              </th>
             </TableRow>
           </TableHeader>
           <TableBody>

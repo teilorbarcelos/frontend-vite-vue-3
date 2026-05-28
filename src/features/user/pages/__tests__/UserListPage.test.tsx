@@ -69,10 +69,12 @@ describe('UserListPage', () => {
   it('navigates to create user page', async () => {
     const user = userEvent.setup();
     setAdminPermissions();
-    renderWithProviders(UserListPage, { queryClient });
+    const { router } = renderWithProviders(UserListPage, { queryClient });
+    const pushSpy = vi.spyOn(router, 'push');
 
     const newButton = await screen.findByText(/Novo Usuário/i);
     await user.click(newButton);
+    expect(pushSpy).toHaveBeenCalled();
   });
 
   it('shows error state if fetch fails', async () => {

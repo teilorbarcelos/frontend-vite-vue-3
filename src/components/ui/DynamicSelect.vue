@@ -45,7 +45,12 @@ const { state, engine } = useMageSelect<T>({
 watch(
   () => props.modelValue,
   (newVal) => {
-    const ids = Array.isArray(newVal) ? newVal : newVal ? [newVal] : [];
+    let ids: string[] = [];
+    if (Array.isArray(newVal)) {
+      ids = newVal;
+    } else if (newVal) {
+      ids = [newVal];
+    }
     engine.setValue(ids);
   },
   { immediate: true, deep: true }
@@ -129,7 +134,12 @@ onUnmounted(() => {
 
 <template>
   <div class="space-y-2">
-    <label v-if="label" :id="labelId" class="text-sm font-medium text-gray-700">
+    <label
+      v-if="label"
+      :id="labelId"
+      :for="`${labelId}-trigger`"
+      class="text-sm font-medium text-gray-700"
+    >
       {{ label }}
     </label>
 
@@ -137,6 +147,7 @@ onUnmounted(() => {
       <PopoverTrigger as-child>
         <Button
           variant="outline"
+          :id="`${labelId}-trigger`"
           role="combobox"
           :aria-expanded="open"
           :aria-labelledby="label ? labelId : undefined"

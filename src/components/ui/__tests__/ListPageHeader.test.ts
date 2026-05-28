@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/vue';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ListPageHeader from '../ListPageHeader.vue';
-import { beforeEach } from 'vitest';
 
 describe('ListPageHeader', () => {
   beforeEach(() => {

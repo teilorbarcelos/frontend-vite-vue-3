@@ -98,8 +98,8 @@ describe('axios lib', () => {
 
     try {
       await responseErrorInterceptor(error);
-    } catch (e) {
-      // Expected
+    } catch (e: any) {
+      expect(e).toBeDefined();
     }
 
     expect(window.location.href).toBe('/login');

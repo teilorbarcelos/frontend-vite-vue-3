@@ -108,6 +108,7 @@ describe('HeaderMaps Coverage', () => {
           return actionsCol?.parseItem?.('1', { id: '1' } as any) as any;
         }
       });
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
       cleanup();
     });
   });
