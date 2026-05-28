@@ -8,7 +8,7 @@ import { toTypedSchema } from '@vee-validate/zod';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import DynamicSelect from '@/components/ui/DynamicSelect.vue';
-import { roleService, type Role } from '@/features/role/services/role.service';
+import { roleService } from '@/features/role/services/role.service';
 import { useToastStore } from '@/stores/toast';
 import { userService } from '../services/user.service';
 import { userMutations } from '../hooks/user.mutations';
@@ -152,8 +152,8 @@ const onSubmit = handleSubmit((data) => {
           :search-fields="['name']"
           :fetch-page="roleService.mageSelect"
           :fetch-by-ids="roleService.mageHydrate"
-          :get-option-label="(role: Role) => role.name"
-          :get-option-value="(role: Role) => role.id"
+          :get-option-label="(role: any) => role.name"
+          :get-option-value="(role: any) => role.id"
           :error="errors.id_role"
         />
 

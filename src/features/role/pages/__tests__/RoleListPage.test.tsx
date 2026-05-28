@@ -56,10 +56,12 @@ describe('RoleListPage', () => {
   it('navigates to create role page', async () => {
     const user = userEvent.setup();
     setAdminPermissions();
-    renderWithProviders(RoleListPage, { queryClient });
+    const { router } = renderWithProviders(RoleListPage, { queryClient });
+    const pushSpy = vi.spyOn(router, 'push');
 
     const newButton = await screen.findByText(/Nova Role/i);
     await user.click(newButton);
+    expect(pushSpy).toHaveBeenCalled();
   });
 
   it('triggers delete mutation', async () => {

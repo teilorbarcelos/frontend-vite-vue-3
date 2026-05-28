@@ -80,10 +80,12 @@ describe('ProductListPage', () => {
     const user = userEvent.setup();
     setAdminPermissions();
 
-    renderWithProviders(ProductListPage, { queryClient });
+    const { router } = renderWithProviders(ProductListPage, { queryClient });
+    const pushSpy = vi.spyOn(router, 'push');
 
     const newButton = await screen.findByText(/Novo Produto/i);
     await user.click(newButton);
+    expect(pushSpy).toHaveBeenCalled();
   });
 
   it('triggers toggle status mutation', async () => {

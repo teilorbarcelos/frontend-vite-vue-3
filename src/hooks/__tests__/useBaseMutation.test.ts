@@ -64,8 +64,8 @@ describe('useBaseMutation', () => {
 
     try {
       await (wrapper.vm as any).mutation.mutateAsync();
-    } catch (e) {
-      // Expected
+    } catch (e: any) {
+      expect(e).toBeDefined();
     }
 
     expect(onError).toHaveBeenCalledWith(error, undefined, undefined, expect.any(Object));
@@ -92,8 +92,8 @@ describe('useBaseMutation', () => {
 
     try {
       await (wrapper.vm as any).mutation.mutateAsync();
-    } catch (e) {
-      // Expected
+    } catch (e: any) {
+      expect(e).toBeDefined();
     }
 
     expect(errorSpy).toHaveBeenCalledWith(
@@ -122,8 +122,8 @@ describe('useBaseMutation', () => {
 
     try {
       await (wrapper.vm as any).mutation.mutateAsync();
-    } catch (e) {
-      // Expected
+    } catch (e: any) {
+      expect(e).toBeDefined();
     }
 
     expect(errorSpy).toHaveBeenCalledWith('Ocorreu um erro inesperado.');

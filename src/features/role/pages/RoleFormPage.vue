@@ -137,6 +137,9 @@ const onSubmit = handleSubmit((data) => {
           <h2 class="text-lg font-semibold text-gray-900">Matriz de Permissões</h2>
           <div class="overflow-x-auto rounded-lg border border-gray-200">
             <table class="min-w-full divide-y divide-gray-200">
+              <caption class="sr-only">
+                Matriz de Permissões
+              </caption>
               <thead class="bg-gray-50">
                 <tr>
                   <th

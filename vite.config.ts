@@ -23,6 +23,8 @@ export default defineConfig({
     css: false,
     coverage: {
       provider: 'v8',
+      all: true,
+      reporter: ['text', 'json', 'html', 'lcov'],
       thresholds: {
         statements: 90,
         branches: 90,

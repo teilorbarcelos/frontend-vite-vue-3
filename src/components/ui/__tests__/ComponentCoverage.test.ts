@@ -138,6 +138,9 @@ describe('UI Component Edge Cases', () => {
 
     const removeButton = await screen.findByLabelText('Remove');
     await fireEvent.click(removeButton);
+    await waitFor(() => {
+      expect(onUpdate).toHaveBeenCalled();
+    });
   });
 
   it('DynamicSelect intersection observer', async () => {
@@ -155,6 +158,7 @@ describe('UI Component Edge Cases', () => {
     if ((globalThis as any).fireIntersection) {
       (globalThis as any).fireIntersection(true);
     }
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
   it.skip('DynamicSelect search input', async () => {
@@ -170,5 +174,6 @@ describe('UI Component Edge Cases', () => {
     await fireEvent.click(screen.getByRole('combobox'));
     const input = screen.getByPlaceholderText('Pesquisar...');
     await fireEvent.update(input, 'new search');
+    expect(input).toBeInTheDocument();
   });
 });

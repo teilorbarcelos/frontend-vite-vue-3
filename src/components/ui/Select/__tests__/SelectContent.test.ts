@@ -20,19 +20,16 @@ vi.mock('radix-vue', async (importOriginal) => {
 describe('SelectContent', () => {
   it('renders correctly and covers scroll buttons', async () => {
     // SelectContent must be inside SelectRoot
+    const ContentNode = () =>
+      h(SelectContent, null, {
+        default: () => h('div', 'Content')
+      });
+
+    const RootNode = () => h(SelectRoot, { open: true }, { default: ContentNode });
+
     const Wrapper = {
       setup() {
-        return () =>
-          h(
-            SelectRoot,
-            { open: true },
-            {
-              default: () =>
-                h(SelectContent, null, {
-                  default: () => h('div', 'Content')
-                })
-            }
-          );
+        return RootNode;
       }
     };
 

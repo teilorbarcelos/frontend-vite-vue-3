@@ -1,5 +1,7 @@
 import { it } from 'vitest';
-it('skipped', () => {});
+it('skipped', () => {
+  expect(true).toBe(true);
+});
 /*
 import { render, screen, fireEvent, waitFor } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';

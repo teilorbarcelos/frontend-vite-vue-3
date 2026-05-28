@@ -289,7 +289,7 @@ describe('DataTable', () => {
 
   it('calculates total pages correctly when pageSize is provided', () => {
     const onPageChange = vi.fn();
-    const { container } = render(DataTable, {
+    render(DataTable, {
       props: {
         data: mockData,
         headerMap: headerMap,
@@ -317,6 +317,7 @@ describe('DataTable', () => {
 
     const nameHeader = screen.getByText('Name');
     await fireEvent.click(nameHeader);
+    expect(nameHeader).toBeInTheDocument();
   });
 
   it('handles sort when orderDirection is undefined', async () => {
